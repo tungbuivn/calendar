@@ -19,16 +19,20 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+
+
 import android.app.job.JobScheduler;
 
 public class CalendarWidget extends AppWidgetProvider {
 
     private static long lastUpdateTime = 0;
     private static final long MIN_UPDATE_INTERVAL = 60000; // 60 seconds minimum between updates
+    
+
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        android.util.Log.d("CalendarWidget", "onUpdate called with " + appWidgetIds.length + " widgets");
+        android.util.Log.d("CalendarWidget", "=== onUpdate called with " + appWidgetIds.length + " widgets ===");
 
         // Force fresh time calculation for each update
         Calendar calendar = Calendar.getInstance();
@@ -36,12 +40,13 @@ public class CalendarWidget extends AppWidgetProvider {
 
         // Always update when system calls onUpdate (no throttling for system calls)
         for (int appWidgetId : appWidgetIds) {
-            android.util.Log.d("CalendarWidget", "Updating widget " + appWidgetId + " with fresh time data");
+            android.util.Log.d("CalendarWidget", "=== Updating widget " + appWidgetId + " with fresh time data ===");
             updateAppWidget(context, appWidgetManager, appWidgetId);
         }
 
         // Start job service for periodic updates only if app is running
         schedulePeriodicUpdates(context);
+        android.util.Log.d("CalendarWidget", "=== onUpdate completed ===");
         // if (isAppRunning(context)) {
         // WidgetUpdateJobService.scheduleWidgetJob(context);
         // } else {
@@ -49,6 +54,8 @@ public class CalendarWidget extends AppWidgetProvider {
         // updates every 5 seconds");
         // }
     }
+
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -103,6 +110,9 @@ public class CalendarWidget extends AppWidgetProvider {
     public void onEnabled(Context context) {
         super.onEnabled(context);
         android.util.Log.d("CalendarWidget", "Widget enabled - starting update services");
+
+        // Force fresh weather data on first enable
+        WeatherService.clearCache();
 
         // Force an immediate update to ensure widgets show current data
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -299,14 +309,18 @@ public class CalendarWidget extends AppWidgetProvider {
         android.util.Log.d("CalendarWidget", "Lunar date: " + lunarDate);
 
         // Get weather information
+        android.util.Log.d("CalendarWidget", "=== About to call getWeatherInfo ===");
         String weatherInfo = getWeatherInfo(context);
+        android.util.Log.d("CalendarWidget", "=== getWeatherInfo returned: " + weatherInfo + " ===");
         android.util.Log.d("CalendarWidget", "Weather info: " + weatherInfo);
 
         // Set the text views with custom font sizes
+        android.util.Log.d("CalendarWidget", "=== Setting weather text to widget view: " + weatherInfo + " ===");
         views.setTextViewText(R.id.widget_time, currentTime);
         views.setTextViewText(R.id.widget_day_date, dayDateString);
         views.setTextViewText(R.id.widget_moon_calendar, lunarDate);
         views.setTextViewText(R.id.widget_weather, weatherInfo);
+        android.util.Log.d("CalendarWidget", "=== Weather text set to widget view successfully ===");
 
         // Set font sizes from preferences
         views.setTextViewTextSize(R.id.widget_time, android.util.TypedValue.COMPLEX_UNIT_SP,
@@ -450,42 +464,52 @@ public class CalendarWidget extends AppWidgetProvider {
 
     // Static method to update all widgets
     public static void updateAllWidgets(Context context) {
+        android.util.Log.d("CalendarWidget", "=== updateAllWidgets: Starting widget update process ===");
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         ComponentName componentName = new ComponentName(context, CalendarWidget.class);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
 
         if (appWidgetIds.length > 0) {
             android.util.Log.d("CalendarWidget", "Updating " + appWidgetIds.length + " widgets via JobService");
+            android.util.Log.d("CalendarWidget", "=== updateAllWidgets: Found " + appWidgetIds.length + " widgets to update ===");
             for (int appWidgetId : appWidgetIds) {
+                android.util.Log.d("CalendarWidget", "=== updateAllWidgets: Updating widget " + appWidgetId + " ===");
                 updateAppWidget(context, appWidgetManager, appWidgetId);
+                android.util.Log.d("CalendarWidget", "=== updateAllWidgets: Widget " + appWidgetId + " updated successfully ===");
             }
+            android.util.Log.d("CalendarWidget", "=== updateAllWidgets: All widgets updated successfully ===");
         } else {
             android.util.Log.d("CalendarWidget", "No widgets found to update");
+            android.util.Log.d("CalendarWidget", "=== updateAllWidgets: No widgets found to update ===");
         }
     }
 
     private static String getWeatherInfo(Context context) {
-        // For now, return a placeholder weather info
-        // In a real implementation, you would fetch weather data from a weather API
-        // For example, using OpenWeatherMap API or similar service
-
-        // Simulate weather data based on time of day
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-
-        String weatherInfo;
-        if (hour >= 6 && hour < 12) {
-            weatherInfo = "22°C ☀️";
-        } else if (hour >= 12 && hour < 18) {
-            weatherInfo = "28°C 🌤️";
-        } else if (hour >= 18 && hour < 22) {
-            weatherInfo = "24°C 🌅";
-        } else {
-            weatherInfo = "20°C 🌙";
+        // Use the WeatherService to get real weather data from Open-Meteo API
+        android.util.Log.d("CalendarWidget", "=== About to call WeatherService.getWeatherInfo ===");
+        try {
+            android.util.Log.d("CalendarWidget", "=== Testing WeatherService class loading ===");
+            Class.forName("com.calendar.tbt.WeatherService");
+            android.util.Log.d("CalendarWidget", "=== WeatherService class loaded successfully ===");
+            
+            // Test direct method call
+            android.util.Log.d("CalendarWidget", "=== Testing direct WeatherService method call ===");
+            String result = WeatherService.getWeatherInfo(context);
+            android.util.Log.d("CalendarWidget", "=== Direct method call result: " + result + " ===");
+            android.util.Log.d("CalendarWidget", "=== Weather data retrieved successfully: " + result + " ===");
+            return result;
+        } catch (ClassNotFoundException e) {
+            android.util.Log.e("CalendarWidget", "=== WeatherService class not found: " + e.getMessage() + " ===");
+            return "~ (Class not found)";
+        } catch (Exception e) {
+            android.util.Log.e("CalendarWidget", "=== WeatherService error: " + e.getMessage() + " ===");
+            return "~ (Error: " + e.getMessage() + ")";
         }
-
-        return weatherInfo;
     }
+    
+
+    
+
 
     public static void schedulePeriodicUpdates(Context context) {
         android.util.Log.d("CalendarWidget", "Scheduling periodic updates with AlarmManager");
@@ -497,34 +521,24 @@ public class CalendarWidget extends AppWidgetProvider {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
-        // AlarmManager alarmManager = (AlarmManager)
-        // context.getSystemService(Context.ALARM_SERVICE);
-        // Intent intent = new Intent(context, WidgetUpdateReceiver.class); // A
-        // BroadcastReceiver or Service
-        // PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
-        // PendingIntent.FLAG_IMMUTABLE);
         long currentTime = System.currentTimeMillis();
         long nextMinute = ((currentTime / 60000) + 1) * 60000;
-        // long triggerAtMillis = nextMinuteBoundary;
 
         alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
                 nextMinute,
                 pendingIntent);
-        // Schedule updates every 5 seconds
-        // long currentTime = System.currentTimeMillis();
-        // long nextMinute = ((currentTime / 60000) + 1) * 60000;
-        // long interval = 5000; // 5 seconds
-        // long firstRun = System.currentTimeMillis() + interval;
-
-        // if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-        // alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, firstRun,
-        // pendingIntent);
-        // } else {
-        // alarmManager.setExact(AlarmManager.RTC_WAKEUP, firstRun, pendingIntent);
-        // }
 
         android.util.Log.d("CalendarWidget", "AlarmManager scheduled for " + nextMinute + "ms intervals");
+    }
+
+    // Method to force refresh weather data
+    public static void refreshWeather(Context context) {
+        android.util.Log.d("CalendarWidget", "Forcing weather refresh (API updates every hour)");
+        // Clear cache to force fresh weather fetch
+        WeatherService.clearCache();
+        // Update all widgets
+        updateAllWidgets(context);
     }
 
     private void cancelPeriodicUpdates(Context context) {

@@ -43,4 +43,11 @@
         android:text="Test Time Update"
         android:layout_marginBottom="8dp" />
 
+    <Button
+        android:id="@+id/refresh_weather_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Refresh Weather"
+        android:layout_marginBottom="8dp" />
+
 </LinearLayout>

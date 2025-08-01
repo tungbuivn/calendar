@@ -13,6 +13,11 @@ import android.app.job.JobService;
 import android.app.job.JobParameters;
 import android.app.job.JobInfo.Builder;
 import android.app.job.JobInfo.Builder;
+import android.provider.Settings;
+import android.os.PowerManager;
+import android.content.Context;
+import android.net.Uri;
+import android.os.Build;
 import com.calendar.tbt.CalendarWidget;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        // Request battery optimization permission for Android 6.0+
+        requestBatteryOptimizationPermission();
         
         // Start the widget update service
         // WidgetUpdateJobService.scheduleWidgetJob(this);
@@ -79,6 +87,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+        
+        // Add a button to refresh weather
+        Button refreshWeatherButton = findViewById(R.id.refresh_weather_button);
+        if (refreshWeatherButton != null) {
+            refreshWeatherButton.setOnClickListener(v -> {
+                // Force refresh weather data
+                CalendarWidget.refreshWeather(this);
+                Toast.makeText(this, "Weather refreshed!", Toast.LENGTH_SHORT).show();
+            });
+        }
         CalendarWidget.schedulePeriodicUpdates(this);
     }
     
@@ -105,5 +123,33 @@ public class MainActivity extends AppCompatActivity {
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
         sendBroadcast(intent);
+    }
+    
+    /**
+     * Request battery optimization permission for Android 6.0+
+     * This is important for widgets and background services to work properly
+     */
+    private void requestBatteryOptimizationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            String packageName = getPackageName();
+            
+            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                try {
+                    Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + packageName));
+                    startActivity(intent);
+                } catch (Exception e) {
+                    // Fallback: open battery optimization settings
+                    try {
+                        Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                        startActivity(intent);
+                    } catch (Exception e2) {
+                        // If both fail, just log the error
+                        android.util.Log.e("MainActivity", "Could not open battery optimization settings", e2);
+                    }
+                }
+            }
+        }
     }
 }
