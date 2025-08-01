@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  android-builder:
+    privileged: true
+    build: .
+    volumes:
+      - .:/app
+      - /opt/android-sdk:/opt/android-sdk
+      - /dev/bus/usb:/dev/bus/usb
+      # - /home/tungbt/.gradle/wrapper/dists/gradle-8.9-bin.zip:/home/tungbt/.gradle/wrapper/dists/gradle-8.9-bin.zip
+      # - /home/tungbt/.gradle:/home/tungbt/.gradle
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+      - /dev/usb:/dev/usb
+    group_add:
+      - plugdev
+      - video
+    user: root
+    environment:
+      - ANDROID_HOME=/opt/android-sdk
+      - ANDROID_SDK_ROOT=/opt/android-sdk
+    command: sleep infinity
+
+volumes:
+  android-sdk-cache:
+  gradle-cache: 

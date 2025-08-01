@@ -1,0 +1,165 @@
+package com.calendar.tbt;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.Service;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.os.IBinder;
+import android.os.SystemClock;
+import android.util.Log;
+
+
+public class WidgetUpdateService extends Service {
+
+    private static final long UPDATE_INTERVAL = 60000; // 60 seconds in milliseconds (1 minute)
+    private static final String TAG = "WidgetUpdateService";
+    private static long lastServiceUpdate = 0;
+    private static final long MIN_SERVICE_UPDATE_INTERVAL = 60000; // 60 seconds minimum
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        long currentTime = System.currentTimeMillis();
+        
+        Log.d(TAG, "Service started - updating widget time and weather at " + currentTime);
+        
+        // Always do an immediate update when service starts
+        forceImmediateUpdate(this);
+        
+        // Check if we should do regular updates
+        if (currentTime - lastServiceUpdate < MIN_SERVICE_UPDATE_INTERVAL) {
+            // Skip regular update if too soon
+            Log.d(TAG, "Skipping regular update - too soon since last update");
+            return START_STICKY;
+        }
+        lastServiceUpdate = currentTime;
+        
+        // Force update all widgets immediately
+        forceUpdateAllWidgets();
+        
+        // Update the widget components
+        updateWidgetComponents();
+        
+        return START_STICKY;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    private void updateWidgetComponents() {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        ComponentName componentName = new ComponentName(this, CalendarWidget.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
+        
+        Log.d(TAG, "Found " + appWidgetIds.length + " widget instances");
+        
+        if (appWidgetIds.length > 0) {
+            // Use the CalendarWidget's method to update time and weather
+            CalendarWidget.updateWidgetTime(this, appWidgetManager, appWidgetIds);
+            Log.d(TAG, "Widget time and weather updated successfully");
+            
+            // Schedule next update
+            scheduleNextUpdate();
+        } else {
+            Log.d(TAG, "No widgets found - stopping service to save battery");
+            stopSelf();
+        }
+    }
+
+    private void scheduleNextUpdate() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, WidgetUpdateService.class);
+        
+        // Use the correct flags for PendingIntent
+        int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            flags |= PendingIntent.FLAG_IMMUTABLE;
+        }
+        
+        PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, flags);
+        
+        // Schedule next update in 10 seconds with exact alarm
+        long nextUpdateTime = SystemClock.elapsedRealtime() + UPDATE_INTERVAL;
+        
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            // Use setAlarmClock for Android 12+ for more precise timing
+            if (alarmManager.canScheduleExactAlarms()) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, 
+                    nextUpdateTime, pendingIntent);
+                Log.d(TAG, "Scheduled exact alarm for Android 12+");
+            } else {
+                alarmManager.setAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, 
+                    nextUpdateTime, pendingIntent);
+                Log.d(TAG, "Scheduled inexact alarm (exact not allowed)");
+            }
+        } else {
+            // Use setExactAndAllowWhileIdle for older versions
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME_WAKEUP, 
+                nextUpdateTime, pendingIntent);
+            Log.d(TAG, "Scheduled exact alarm for older Android");
+        }
+        
+        Log.d(TAG, "Next update scheduled in 60 seconds");
+    }
+
+    private void forceUpdateAllWidgets() {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        ComponentName componentName = new ComponentName(this, CalendarWidget.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
+        
+        Log.d(TAG, "Force updating " + appWidgetIds.length + " widgets");
+        
+        if (appWidgetIds.length > 0) {
+            // Force a full widget update
+            Intent intent = new Intent(this, CalendarWidget.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+            sendBroadcast(intent);
+            
+            Log.d(TAG, "Forced widget update broadcast sent");
+        }
+    }
+
+    public static void startService(Context context) {
+        Log.d(TAG, "Starting widget update service");
+        Intent intent = new Intent(context, WidgetUpdateService.class);
+        context.startService(intent);
+        
+        // Force an immediate update
+        forceImmediateUpdate(context);
+    }
+
+    public static void stopService(Context context) {
+        Log.d(TAG, "Stopping widget update service");
+        Intent intent = new Intent(context, WidgetUpdateService.class);
+        context.stopService(intent);
+    }
+    
+    public static void forceImmediateUpdate(Context context) {
+        Log.d(TAG, "Forcing immediate time and weather update");
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        ComponentName componentName = new ComponentName(context, CalendarWidget.class);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
+        
+        if (appWidgetIds.length > 0) {
+            // Update time and weather
+            CalendarWidget.updateWidgetTime(context, appWidgetManager, appWidgetIds);
+            
+            // Also force a full widget update to ensure everything is current
+            Intent intent = new Intent(context, CalendarWidget.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+            context.sendBroadcast(intent);
+            
+            Log.d(TAG, "Immediate time, weather update and full widget update completed");
+        } else {
+            Log.d(TAG, "No widgets found for immediate update");
+        }
+    }
+
+
+} 

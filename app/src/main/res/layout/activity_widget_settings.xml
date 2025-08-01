@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="#F5F5DC">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Widget Font Size Settings"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#8B4513"
+        android:gravity="center"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Language Selection -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Language"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#8B4513"
+        android:layout_marginBottom="8dp" />
+
+    <RadioGroup
+        android:id="@+id/language_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="24dp">
+
+        <RadioButton
+            android:id="@+id/radio_english"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="English"
+            android:textColor="#8B4513"
+            android:layout_marginEnd="32dp" />
+
+        <RadioButton
+            android:id="@+id/radio_vietnamese"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tiếng Việt"
+            android:textColor="#8B4513" />
+
+    </RadioGroup>
+
+    <!-- Week Font Size -->
+    <TextView
+        android:id="@+id/week_font_size_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Week Font Size: 24sp"
+        android:textSize="16sp"
+        android:textColor="#8B4513"
+        android:layout_marginBottom="8dp" />
+
+    <SeekBar
+        android:id="@+id/week_font_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:progressTint="#8B4513"
+        android:thumbTint="#8B4513" />
+
+    <!-- Time Font Size -->
+    <TextView
+        android:id="@+id/time_font_size_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Time Font Size: 48sp"
+        android:textSize="16sp"
+        android:textColor="#8B4513"
+        android:layout_marginBottom="8dp" />
+
+    <SeekBar
+        android:id="@+id/time_font_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:progressTint="#8B4513"
+        android:thumbTint="#8B4513" />
+
+    <!-- Day Font Size -->
+    <TextView
+        android:id="@+id/day_font_size_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Day Font Size: 24sp"
+        android:textSize="16sp"
+        android:textColor="#8B4513"
+        android:layout_marginBottom="8dp" />
+
+    <SeekBar
+        android:id="@+id/day_font_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:progressTint="#8B4513"
+        android:thumbTint="#8B4513" />
+
+    <!-- Weather Font Size -->
+    <TextView
+        android:id="@+id/weather_font_size_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Weather Font Size: 14sp"
+        android:textSize="16sp"
+        android:textColor="#8B4513"
+        android:layout_marginBottom="8dp" />
+
+    <SeekBar
+        android:id="@+id/weather_font_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:progressTint="#8B4513"
+        android:thumbTint="#8B4513" />
+
+    <!-- Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/apply_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Apply Settings"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/button_background"
+            android:textColor="#FFFFFF"
+            android:padding="12dp" />
+
+        <Button
+            android:id="@+id/reset_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reset to Defaults"
+            android:background="@drawable/button_background"
+            android:textColor="#FFFFFF"
+            android:padding="12dp" />
+
+    </LinearLayout>
+
+</LinearLayout> 

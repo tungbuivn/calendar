@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <!-- Top Section - Current Week -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.3"
+        android:orientation="vertical"
+        android:padding="4dp"
+        android:minHeight="60dp">
+
+        <!-- Days of Week Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="M"
+                android:id="@+id/label_day_mon"
+                android:textColor="#8B4513"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="T"
+                android:id="@+id/label_day_tue"
+                android:textColor="#8B4513"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="W"
+                android:id="@+id/label_day_wed"
+                android:textColor="#8B4513"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="T"
+                android:id="@+id/label_day_thu"
+                android:textColor="#8B4513"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="F"
+                android:id="@+id/label_day_fri"
+                android:textColor="#8B4513"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="S"
+                android:id="@+id/label_day_sat"
+                android:textColor="#8B4513"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="S"
+                android:id="@+id/label_day_sun"
+                android:textColor="#8B4513"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+        </LinearLayout>
+
+        <!-- Current Week Dates -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/day_mon"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="8"
+                android:textColor="#8B4513"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:id="@+id/day_tue"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="9"
+                android:textColor="#8B4513"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:id="@+id/day_wed"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="10"
+                android:textColor="#8B4513"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:id="@+id/day_thu"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="11"
+                android:textColor="#8B4513"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:background="@drawable/current_day_background"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:id="@+id/day_fri"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="12"
+                android:textColor="#8B4513"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:id="@+id/day_sat"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="13"
+                android:textColor="#8B4513"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+            <TextView
+                android:id="@+id/day_sun"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="14"
+                android:textColor="#8B4513"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:fontFamily="sans-serif" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom Section - Three Columns: Moon Calendar, Time/Day, Weather -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.7"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="4dp">
+
+        <!-- Moon Calendar Section -->
+        <LinearLayout
+            android:id="@+id/widget_moon_calendar_container"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="4dp">
+            <TextView
+                android:id="@+id/widget_moon_calendar_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Âm lịch"
+                android:textColor="#8B4513"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:gravity="center" />
+            <TextView
+                android:id="@+id/widget_moon_calendar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10/09"
+                android:textColor="#8B4513"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light" />
+
+        </LinearLayout>
+
+        <!-- Time and Day Section -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.0"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="4dp">
+
+            <!-- Time -->
+            <TextView
+                android:id="@+id/widget_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10:09"
+                android:textColor="#8B4513"
+                android:textSize="58sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light" />
+
+            <!-- Day and Date -->
+            <TextView
+                android:id="@+id/widget_day_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Wed Thu 11"
+                android:textColor="#8B4513"
+                android:textSize="24sp"
+                android:fontFamily="sans-serif"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Weather Section -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/widget_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="28°C"
+                android:textColor="#8B4513"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light"
+                android:singleLine="true"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout> 

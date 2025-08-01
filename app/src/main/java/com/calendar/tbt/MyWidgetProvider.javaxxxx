@@ -1,0 +1,15 @@
+public class MyWidgetProvider extends AppWidgetProvider {
+
+    @Override
+    public void onEnabled(Context context) {
+        // Schedule the job when widget is added
+        WidgetJobScheduler.scheduleWidgetJob(context);
+    }
+
+    @Override
+    public void onDisabled(Context context) {
+        // Optionally cancel job when widget is removed
+        JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
+        jobScheduler.cancel(1);
+    }
+}
