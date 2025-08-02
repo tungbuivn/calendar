@@ -214,6 +214,14 @@ Dự án này được phát triển với mục tiêu tạo ra một ứng dụ
 - **Performance Optimization**: Tối ưu hóa hiệu suất AI
 - **User Experience Enhancement**: Cải thiện trải nghiệm người dùng
 
+
+### Dự kiến các cải tiến
+
+- Hiển thị lịch tháng trong app chính bao gồm cả lịch dương và lịch âm 
+- Thêm random danh ngôn khi hiển thị trong main app và hoặc tùy chọn hiển thị trên widget 
+- Thu thập và thêm văn khấn
+- Sử dụng mẫu template trong văn khấn cho phép người dùng điền vài chỗ trong văn khấn và váuwr dụng TTS để khấn =))
+
 ## Giấy phép
 
 Dự án này được phát hành dưới giấy phép MIT. Xem file LICENSE để biết thêm chi tiết.
