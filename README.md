@@ -6,6 +6,12 @@
 
 **Asia Calendar** là ứng dụng được phát triển và hoàn thiện bởi AI (99%), với sự đóng góp nhỏ của con người trong quá trình quản lý (1%).
 
+### Các màn hình
+![alt text](imgs/main.png)
+
+![alt text](imgs/widget.png)
+
+
 ### Đặc điểm nổi bật:
 - **Widget lịch hiện đại** với thiết kế gradient đẹp mắt
 - **Hiển thị thời gian thực** với font lớn, dễ đọc
