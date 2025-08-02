@@ -220,7 +220,7 @@ Dự án này được phát triển với mục tiêu tạo ra một ứng dụ
 - Hiển thị lịch tháng trong app chính bao gồm cả lịch dương và lịch âm 
 - Thêm random danh ngôn khi hiển thị trong main app và hoặc tùy chọn hiển thị trên widget 
 - Thu thập và thêm văn khấn
-- Sử dụng mẫu template trong văn khấn cho phép người dùng điền vài chỗ trong văn khấn và váuwr dụng TTS để khấn =))
+- Sử dụng mẫu template trong văn khấn cho phép người dùng điền vài chỗ trong văn khấn và sử dụng TTS để khấn auto =))
 
 ## Giấy phép
 
