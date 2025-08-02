@@ -1,6 +1,15 @@
 # PowerShell Build Script for Android Calendar App
 # Sets up ADB path and builds/installs the app
 
+# Check for production argument
+$isProduction = $false
+if ($args -contains "prod") {
+    $isProduction = $true
+    Write-Host "Production mode detected - building release APK" -ForegroundColor Yellow
+} else {
+    Write-Host "Debug mode - building debug APK" -ForegroundColor Cyan
+}
+
 # Set ADB path from Android Studio installation
 $ADB_PATH = $null
 
@@ -70,8 +79,18 @@ function Test-DeviceConnected {
 # Function to build the app
 function Build-App {
     Write-Host "Building Android app..." -ForegroundColor Cyan
+    
+    if ($isProduction) {
+        Write-Host "Building RELEASE APK..." -ForegroundColor Yellow
+        $buildCommand = ".\gradlew.bat assembleRelease"
+    } else {
+        Write-Host "Building DEBUG APK..." -ForegroundColor Cyan
+        $buildCommand = ".\gradlew.bat assembleDebug"
+    }
+    
     try {
-        .\gradlew.bat assembleRelease
+        Write-Host "Running: $buildCommand" -ForegroundColor Gray
+        Invoke-Expression $buildCommand
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Build successful!" -ForegroundColor Green
             return $true
@@ -87,7 +106,13 @@ function Build-App {
 
 # Function to install the app
 function Install-App {
-    $apkPath = "app\build\outputs\apk\release\app-release.apk"
+    if ($isProduction) {
+        $apkPath = "app\build\outputs\apk\release\app-release.apk"
+        Write-Host "Installing RELEASE APK..." -ForegroundColor Yellow
+    } else {
+        $apkPath = "app\build\outputs\apk\debug\app-debug.apk"
+        Write-Host "Installing DEBUG APK..." -ForegroundColor Cyan
+    }
     
     # Check if APK exists
     if (-not (Test-Path $apkPath)) {
@@ -98,7 +123,7 @@ function Install-App {
     
     Write-Host "Installing app on device..." -ForegroundColor Cyan
     try {
-        $installCommand = "$ADB_PATH install `"$apkPath`""
+        $installCommand = "$ADB_PATH install -r `"$apkPath`""
         Write-Host "Running: $installCommand" -ForegroundColor Gray
         Invoke-Expression $installCommand
         if ($LASTEXITCODE -eq 0) {

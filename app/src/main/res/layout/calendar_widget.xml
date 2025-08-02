@@ -2,27 +2,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/widget_background"
     android:orientation="vertical"
-    android:padding="0dp">
+    android:padding="12dp">
 
     <!-- Top Section - Current Week -->
     <LinearLayout
-
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".12"
-        android:minHeight="40dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0"
+        android:minHeight="70dp"
         android:orientation="vertical"
-        android:padding="1dp">
+        android:padding="8dp">
 
         <!-- Days of Week Header -->
         <LinearLayout
             android:id="@+id/widget_top_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
+            android:layout_marginBottom="4dp"
             android:orientation="horizontal">
 
             <TextView
@@ -30,77 +29,84 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:text="M"
-                android:textColor="#8B4513"
-                android:textSize="16sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/label_day_tue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:text="T"
-                android:textColor="#8B4513"
-                android:textSize="16sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/label_day_wed"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:text="W"
-                android:textColor="#8B4513"
-                android:textSize="16sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/label_day_thu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:text="T"
-                android:textColor="#8B4513"
-                android:textSize="16sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/label_day_fri"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:text="F"
-                android:textColor="#8B4513"
-                android:textSize="16sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/label_day_sat"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:text="S"
-                android:textColor="#8B4513"
-                android:textSize="16sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/label_day_sun"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:text="S"
-                android:textColor="#8B4513"
-                android:textSize="16sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -108,104 +114,139 @@
         <LinearLayout
             android:id="@+id/widget_middle_section"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:background="#6277B6"
-            android:minHeight="40dp"
+            android:background="@drawable/calendar_section_background"
+            android:minHeight="50dp"
             android:orientation="horizontal"
-            android:padding="1dp">
+            android:padding="6dp">
 
             <TextView
                 android:id="@+id/day_mon"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
                 android:minHeight="40dp"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
                 android:text="8"
-                android:textColor="#8B4513"
-                android:textSize="18sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_tue"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
                 android:minHeight="40dp"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
                 android:text="9"
-                android:textColor="#8B4513"
-                android:textSize="18sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_wed"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
                 android:minHeight="40dp"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
                 android:text="10"
-                android:textColor="#8B4513"
-                android:textSize="18sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_thu"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/current_day_background"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
                 android:minHeight="40dp"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
                 android:text="11"
-                android:textColor="#8B4513"
-                android:textSize="18sp" />
+                android:textColor="#FFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_fri"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
                 android:minHeight="40dp"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
                 android:text="12"
-                android:textColor="#8B4513"
-                android:textSize="18sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_sat"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
                 android:minHeight="40dp"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
                 android:text="13"
-                android:textColor="#8B4513"
-                android:textSize="18sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_sun"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:fontFamily="sans-serif"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
                 android:minHeight="40dp"
+                android:shadowColor="#000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
                 android:text="14"
-                android:textColor="#8B4513"
-                android:textSize="18sp" />
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -215,10 +256,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.4"
+        android:layout_weight="0.82"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="0dp">
+        android:padding="8dp">
 
         <!-- Moon Calendar Section -->
         <LinearLayout
@@ -228,7 +269,7 @@
             android:layout_weight="0.4"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="1dp">
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/widget_moon_calendar_title"
@@ -239,18 +280,19 @@
                 android:gravity="center"
                 android:singleLine="true"
                 android:text="Âm lịch"
-                android:textColor="#8B4513"
-                android:textSize="20sp"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/widget_moon_calendar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:fontFamily="sans-serif-light"
                 android:text="10/09"
-                android:textColor="#8B4513"
-                android:textSize="24sp"
+                android:textColor="#FFD700"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -262,7 +304,7 @@
             android:layout_weight="1.0"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="1dp">
+            android:padding="8dp">
 
             <!-- Time -->
             <TextView
@@ -271,8 +313,8 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
                 android:text="10:09"
-                android:textColor="#8B4513"
-                android:textSize="58sp"
+                android:textColor="#FFFFFF"
+                android:textSize="52sp"
                 android:textStyle="bold" />
 
             <!-- Day and Date -->
@@ -280,12 +322,12 @@
                 android:id="@+id/widget_day_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="1dp"
+                android:layout_marginTop="4dp"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:text="Wed Thu 11"
-                android:textColor="#8B4513"
-                android:textSize="20sp" />
+                android:textColor="#E8E8E8"
+                android:textSize="18sp" />
 
         </LinearLayout>
 
@@ -296,18 +338,31 @@
             android:layout_weight="0.6"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="1dp">
+            android:padding="8dp">
 
             <TextView
-                android:id="@+id/widget_weather"
+                android:id="@+id/location_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
                 android:singleLine="true"
+                android:text="Hồ Chí Minh"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/widget_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="sans-serif-light"
+                android:gravity="center"
+                android:singleLine="true"
                 android:text="28°C"
-                android:textColor="#8B4513"
-                android:textSize="14sp"
+                android:textColor="#FFD700"
+                android:textSize="22sp"
                 android:textStyle="bold" />
 
         </LinearLayout>

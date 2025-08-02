@@ -314,13 +314,21 @@ public class CalendarWidget extends AppWidgetProvider {
         android.util.Log.d("CalendarWidget", "=== getWeatherInfo returned: " + weatherInfo + " ===");
         android.util.Log.d("CalendarWidget", "Weather info: " + weatherInfo);
 
+        // Get location name
+        android.util.Log.d("CalendarWidget", "=== About to call getLocationName ===");
+        String locationName = WeatherService.getLocationName(context);
+        android.util.Log.d("CalendarWidget", "=== getLocationName returned: " + locationName + " ===");
+        android.util.Log.d("CalendarWidget", "Location name: " + locationName);
+
         // Set the text views with custom font sizes
         android.util.Log.d("CalendarWidget", "=== Setting weather text to widget view: " + weatherInfo + " ===");
+        android.util.Log.d("CalendarWidget", "=== Setting location name to widget view: " + locationName + " ===");
         views.setTextViewText(R.id.widget_time, currentTime);
         views.setTextViewText(R.id.widget_day_date, dayDateString);
         views.setTextViewText(R.id.widget_moon_calendar, lunarDate);
         views.setTextViewText(R.id.widget_weather, weatherInfo);
-        android.util.Log.d("CalendarWidget", "=== Weather text set to widget view successfully ===");
+        views.setTextViewText(R.id.location_name, locationName);
+        android.util.Log.d("CalendarWidget", "=== Weather and location text set to widget view successfully ===");
 
         // Set font sizes from preferences
         views.setTextViewTextSize(R.id.widget_time, android.util.TypedValue.COMPLEX_UNIT_SP,

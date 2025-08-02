@@ -1,8 +1,15 @@
 package com.calendar.tbt;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,17 +21,22 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class WeatherService {
     private static final String TAG = "WeatherService";
-    private static final String WEATHER_API_URL = "https://api.open-meteo.com/v1/forecast?latitude=10.762622&longitude=106.660172&current_weather=true";
+    private static final String WEATHER_API_BASE_URL = "https://api.open-meteo.com/v1/forecast";
     private static String cachedWeatherInfo = "~";
+    private static String cachedLocationName = "Hanoi";
     private static long lastWeatherUpdate = 0;
     private static final long WEATHER_CACHE_DURATION = 3600000/2; // 1 hour cache (API updates every hour)
     private static boolean isFirstUpdate = true; // Track if this is the first update
     private static WeatherUpdateCallback weatherCallback = null;
     private static Context appContext = null; // Store application context
+    private static double lastLatitude = -1; // Initialize to -1
+    private static double lastLongitude = -1; // Initialize to -1
+    private static String locationName = "Hanoi"; // Default location name
 
     // Interface for weather update callbacks
     public interface WeatherUpdateCallback {
@@ -46,6 +58,9 @@ public class WeatherService {
         
         // Store context for later use
         setAppContext(context);
+        
+        // Get current location
+        updateLocation(context);
         
         long currentTime = System.currentTimeMillis();
         
@@ -73,14 +88,132 @@ public class WeatherService {
         return cachedWeatherInfo;
     }
 
+    public static String getLocationName(Context context) {
+        Log.d(TAG, "=== getLocationName called ===");
+        
+        // Store context for later use
+        setAppContext(context);
+        
+        // Get current location
+        updateLocation(context);
+        
+        return cachedLocationName;
+    }
+
+    private static void updateLocation(Context context) {
+        Log.d(TAG, "=== updateLocation: Getting device location ===");
+        
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.w(TAG, "=== updateLocation: Location permissions not granted, using default coordinates ===");
+            // Set default coordinates if permissions not granted
+            if (lastLatitude == -1 || lastLongitude == -1) {
+                lastLatitude = 21.0285; // Default to Hanoi
+                lastLongitude = 105.8542; // Default to Hanoi
+                Log.d(TAG, "=== updateLocation: Set default coordinates - Lat: " + lastLatitude + ", Long: " + lastLongitude + " ===");
+            }
+            return;
+        }
+
+        try {
+            LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            if (locationManager != null) {
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location == null) {
+                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+                
+                if (location != null) {
+                    lastLatitude = location.getLatitude();
+                    lastLongitude = location.getLongitude();
+                    Log.d(TAG, "=== updateLocation: Got location - Lat: " + lastLatitude + ", Long: " + lastLongitude + " ===");
+                    
+                    // Get location name using reverse geocoding
+                    updateLocationName(context, lastLatitude, lastLongitude);
+                } else {
+                    Log.w(TAG, "=== updateLocation: No location available, using default coordinates ===");
+                    // Set default coordinates if no location available
+                    if (lastLatitude == -1 || lastLongitude == -1) {
+                        lastLatitude = 21.0285; // Default to Hanoi
+                        lastLongitude = 105.8542; // Default to Hanoi
+                        Log.d(TAG, "=== updateLocation: Set default coordinates - Lat: " + lastLatitude + ", Long: " + lastLongitude + " ===");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "=== updateLocation: Error getting location: " + e.getMessage() + " ===");
+            // Set default coordinates if error occurs
+            if (lastLatitude == -1 || lastLongitude == -1) {
+                lastLatitude = 21.0285; // Default to Hanoi
+                lastLongitude = 105.8542; // Default to Hanoi
+                Log.d(TAG, "=== updateLocation: Set default coordinates after error - Lat: " + lastLatitude + ", Long: " + lastLongitude + " ===");
+            }
+        }
+    }
+
+    private static void updateLocationName(Context context, double latitude, double longitude) {
+        Log.d(TAG, "=== updateLocationName: Getting location name for coordinates ===");
+        try {
+            Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+            List<android.location.Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            
+            if (addresses != null && !addresses.isEmpty()) {
+                android.location.Address address = addresses.get(0);
+                String cityName = address.getLocality();
+                if (cityName == null || cityName.isEmpty()) {
+                    cityName = address.getAdminArea(); // Use state/province if city is not available
+                }
+                if (cityName == null || cityName.isEmpty()) {
+                    cityName = address.getCountryName(); // Use country if state is not available
+                }
+                
+                if (cityName != null && !cityName.isEmpty()) {
+                    locationName = cityName;
+                    cachedLocationName = cityName;
+                    Log.d(TAG, "=== updateLocationName: Location name updated to: " + locationName + " ===");
+                } else {
+                    Log.w(TAG, "=== updateLocationName: Could not get location name, using default ===");
+                }
+            } else {
+                Log.w(TAG, "=== updateLocationName: No addresses found for coordinates ===");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "=== updateLocationName: Error getting location name: " + e.getMessage() + " ===");
+        }
+    }
+
+    private static String getWeatherApiUrl() {
+        // Ensure location is obtained before calling API
+        if (appContext != null) {
+            updateLocation(appContext);
+        }
+        
+        // Use default coordinates if still not set
+        if (lastLatitude == -1 || lastLongitude == -1) {
+            // lastLatitude = 10.762622; // Default to Ho Chi Minh City
+            // lastLongitude = 106.660172; // Default to Ho Chi Minh City
+            Log.d(TAG, "=== getWeatherApiUrl: Using default coordinates - Lat: " + lastLatitude + ", Long: " + lastLongitude + " ===");
+            return null;
+        }
+        
+        String url = WEATHER_API_BASE_URL + "?latitude=" + lastLatitude + "&longitude=" + lastLongitude + "&current_weather=true";
+        Log.d(TAG, "=== getWeatherApiUrl: Generated URL: " + url + " ===");
+        return url;
+    }
+
     private static class FetchWeatherTask extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void... voids) {
             try {
+                String apiUrl = getWeatherApiUrl();
+                if (apiUrl == null) {
+                    Log.e(TAG, "=== FetchWeatherTask: No API URL available, returning null ===");
+                    return null;
+                }
                 Log.d(TAG, "=== FetchWeatherTask: Starting HTTP request to API ===");
-                Log.d(TAG, "Fetching weather from API: " + WEATHER_API_URL);
+                Log.d(TAG, "Fetching weather from API: " + apiUrl);
                 
-                URL url = new URL(WEATHER_API_URL);
+                URL url = new URL(apiUrl);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setConnectTimeout(10000);
@@ -152,15 +285,16 @@ public class WeatherService {
             int weatherCode = currentWeather.getInt("weathercode");
             Log.d(TAG, "=== parseWeatherResponse: Raw temperature: " + temperature + ", weather code: " + weatherCode + " ===");
             
-            // Format temperature with one decimal place
-            String tempString = String.format(Locale.US, "%.1f°C", temperature);
+            // Format temperature with round up value and zero decimal place
+            String tempString = String.format(Locale.US, "%.0f°C", Math.ceil(temperature));
             
             // Add weather icon based on weather code
             String weatherIcon = getWeatherIcon(weatherCode);
             Log.d(TAG, "=== parseWeatherResponse: Formatted temp: " + tempString + ", weather icon: " + weatherIcon + " ===");
             
+            // Return only weather info (location name is handled separately)
             String weatherInfo = tempString + " " + weatherIcon;
-            Log.d(TAG, "Parsed weather: " + weatherInfo + " (temp: " + temperature + ", code: " + weatherCode + ")");
+            Log.d(TAG, "Parsed weather: " + weatherInfo + " (temp: " + temperature + ", code: " + weatherCode + ", location: " + locationName + ")");
             Log.d(TAG, "=== parseWeatherResponse: Final weather info: " + weatherInfo + " ===");
             
             return weatherInfo;

@@ -55,7 +55,7 @@ public class WidgetPreferences {
     }
     
     public String getLanguage() {
-        return preferences.getString(KEY_LANGUAGE, "en"); // Default English
+        return preferences.getString(KEY_LANGUAGE, "vi"); // Default English
     }
     
     public Locale getLocale() {

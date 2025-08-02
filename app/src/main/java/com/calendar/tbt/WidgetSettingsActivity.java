@@ -196,22 +196,22 @@ public class WidgetSettingsActivity extends Activity {
             public void onClick(View v) {
                 // Reset to defaults
                 preferences.setWeekFontSize(24);
-                preferences.setTimeFontSize(48);
+                preferences.setTimeFontSize(56);
                 preferences.setDayFontSize(24);
-                preferences.setLanguage("en");
+                preferences.setLanguage("vi");
                 
                 // Update seekbars
-                weekFontSeekBar.setProgress(12);
+                weekFontSeekBar.setProgress(16);
                 timeFontSeekBar.setProgress(24);
                 dayFontSeekBar.setProgress(8);
                 
                 // Update text
-                weekFontSizeText.setText("Week Font Size: 24sp");
-                timeFontSizeText.setText("Time Font Size: 48sp");
-                dayFontSizeText.setText("Day Font Size: 24sp");
+                weekFontSizeText.setText("Week Font Size: "+preferences.getWeekFontSize()+"sp");
+                timeFontSizeText.setText("Time Font Size: "+preferences.getTimeFontSize()+"sp");
+                dayFontSizeText.setText("Day Font Size: "+preferences.getDayFontSize()+"sp");
                 
                 // Update language selection
-                languageRadioGroup.check(R.id.radio_english);
+                languageRadioGroup.check(R.id.radio_vietnamese);
                 
                 updateWidget();
                 Toast.makeText(WidgetSettingsActivity.this, "Settings reset to defaults!", Toast.LENGTH_SHORT).show();
