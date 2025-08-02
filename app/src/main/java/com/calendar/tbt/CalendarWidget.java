@@ -242,11 +242,15 @@ public class CalendarWidget extends AppWidgetProvider {
         SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", locale);
         SimpleDateFormat dayNumberFormat = new SimpleDateFormat("d", locale);
         SimpleDateFormat monthNumberFormat = new SimpleDateFormat("M", locale);
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy", locale);
 
         String currentTime = timeFormat.format(now);
         String dayName = dayFormat.format(now);
         String dayNumber = dayNumberFormat.format(now);
         String monthNumber = monthNumberFormat.format(now);
+        String year = yearFormat.format(now);
+
+        String monthText="Tháng";
 
         // Add detailed time logging (reduced frequency)
         if (System.currentTimeMillis() % 30000 < 5000) { // Only log every 30 seconds
@@ -285,7 +289,7 @@ public class CalendarWidget extends AppWidgetProvider {
                     break;
             }
         }
-        dayDateString = dayName + " " + dayNumber + "/" + monthNumber;
+        dayDateString = dayName;
 
         // Calculate current week dates
         Calendar weekCalendar = Calendar.getInstance();
@@ -328,6 +332,8 @@ public class CalendarWidget extends AppWidgetProvider {
         views.setTextViewText(R.id.widget_moon_calendar, lunarDate);
         views.setTextViewText(R.id.widget_weather, weatherInfo);
         views.setTextViewText(R.id.location_name, locationName);
+       
+        
         android.util.Log.d("CalendarWidget", "=== Weather and location text set to widget view successfully ===");
 
         // Set font sizes from preferences
@@ -337,6 +343,7 @@ public class CalendarWidget extends AppWidgetProvider {
                 preferences.getDayFontSize());
         views.setTextViewTextSize(R.id.widget_weather, android.util.TypedValue.COMPLEX_UNIT_SP,
                 preferences.getWeatherFontSize());
+
 
         // Set day labels based on language
         if ("vi".equals(language)) {
@@ -349,6 +356,7 @@ public class CalendarWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.label_day_sat, "T7");
             views.setTextViewText(R.id.label_day_sun, "CN");
         } else {
+            monthText="Month";
             // English day labels
             views.setTextViewText(R.id.label_day_mon, "M");
             views.setTextViewText(R.id.label_day_tue, "T");
@@ -358,6 +366,7 @@ public class CalendarWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.label_day_sat, "S");
             views.setTextViewText(R.id.label_day_sun, "S");
         }
+        views.setTextViewText(R.id.label_month, monthText+" "+monthNumber+" / "+year);
 
         // Set week dates with custom font size
         views.setTextViewText(R.id.day_mon, String.valueOf(weekDates[0]));

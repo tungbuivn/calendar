@@ -196,7 +196,7 @@ public class WidgetSettingsActivity extends Activity {
             public void onClick(View v) {
                 // Reset to defaults
                 preferences.setWeekFontSize(24);
-                preferences.setTimeFontSize(56);
+                preferences.setTimeFontSize(48);
                 preferences.setDayFontSize(24);
                 preferences.setLanguage("vi");
                 
