@@ -299,7 +299,7 @@ public class LunarCalendar {
         
         @Override
         public String toString() {
-            return String.format("%d/%d", day, month);
+            return String.format("%d / %d", day, month);
         }
     }
 } 

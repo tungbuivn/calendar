@@ -32,22 +32,14 @@
             </intent-filter>
         </activity>
         
-        <activity android:name=".IconPreviewActivity"
-            android:exported="true"
-            android:label="Icon Preview"
-            android:theme="@style/AppTheme" />
+
         
         <activity android:name=".WidgetSettingsActivity"
             android:exported="false"
             android:label="Widget Settings"
             android:theme="@style/AppTheme" />
         
-        <service android:name=".WidgetUpdateJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="true" />
-        
-        <receiver android:name=".MyWidgetProvider"
-            android:exported="true" />
+
        
         <receiver android:name=".CalendarWidget"
             android:exported="true">

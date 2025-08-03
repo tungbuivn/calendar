@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
-        android:minHeight="70dp"
+        
         android:orientation="vertical"
         android:padding="0dp">
         <LinearLayout
@@ -40,7 +40,7 @@
             android:id="@+id/widget_top_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="0dp"
             android:orientation="horizontal">
 
             <TextView
@@ -136,7 +136,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="0"
             android:background="@drawable/calendar_section_background"
-            android:minHeight="50dp"
+            
             android:orientation="horizontal"
             android:padding="6dp">
 

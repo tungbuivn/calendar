@@ -11,6 +11,7 @@ public class WidgetPreferences {
     private static final String KEY_DAY_FONT_SIZE = "day_font_size";
     private static final String KEY_WEATHER_FONT_SIZE = "weather_font_size";
     private static final String KEY_LANGUAGE = "language";
+    private static final String KEY_HIDE_TOP_SECTION = "hide_top_section";
     
     private SharedPreferences preferences;
     
@@ -67,5 +68,13 @@ public class WidgetPreferences {
             default:
                 return new Locale("en", "US");
         }
+    }
+    
+    public void setHideTopSection(boolean hide) {
+        preferences.edit().putBoolean(KEY_HIDE_TOP_SECTION, hide).apply();
+    }
+    
+    public boolean getHideTopSection() {
+        return preferences.getBoolean(KEY_HIDE_TOP_SECTION, false); // Default to show
     }
 } 

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.CheckBox;
 
 public class WidgetSettingsActivity extends Activity {
     
@@ -25,6 +26,7 @@ public class WidgetSettingsActivity extends Activity {
     private TextView dayFontSizeText;
     private TextView weatherFontSizeText;
     private RadioGroup languageRadioGroup;
+    private CheckBox hideTopSectionCheckBox;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,7 @@ public class WidgetSettingsActivity extends Activity {
         initializeViews();
         setupSeekBars();
         setupLanguageSelection();
+        setupHideTopSection();
         setupButtons();
     }
     
@@ -51,6 +54,7 @@ public class WidgetSettingsActivity extends Activity {
         weatherFontSizeText = findViewById(R.id.weather_font_size_text);
         
         languageRadioGroup = findViewById(R.id.language_radio_group);
+        hideTopSectionCheckBox = findViewById(R.id.hide_top_section_checkbox);
     }
     
     private void setupSeekBars() {
@@ -179,6 +183,22 @@ public class WidgetSettingsActivity extends Activity {
         });
     }
     
+    private void setupHideTopSection() {
+        // Set initial state based on preferences
+        hideTopSectionCheckBox.setChecked(preferences.getHideTopSection());
+        
+        hideTopSectionCheckBox.setOnCheckedChangeListener(new android.widget.CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(android.widget.CompoundButton buttonView, boolean isChecked) {
+                preferences.setHideTopSection(isChecked);
+                // Immediately update the widget when this setting changes
+                updateWidget();
+                                       String message = isChecked ? "Day labels and week dates hidden" : "Day labels and week dates shown";
+                Toast.makeText(WidgetSettingsActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    
     private void setupButtons() {
         Button applyButton = findViewById(R.id.apply_button);
         Button resetButton = findViewById(R.id.reset_button);
@@ -199,6 +219,7 @@ public class WidgetSettingsActivity extends Activity {
                 preferences.setTimeFontSize(48);
                 preferences.setDayFontSize(24);
                 preferences.setLanguage("vi");
+                preferences.setHideTopSection(false);
                 
                 // Update seekbars
                 weekFontSeekBar.setProgress(16);
@@ -212,6 +233,9 @@ public class WidgetSettingsActivity extends Activity {
                 
                 // Update language selection
                 languageRadioGroup.check(R.id.radio_vietnamese);
+                
+                // Update checkbox
+                hideTopSectionCheckBox.setChecked(false);
                 
                 updateWidget();
                 Toast.makeText(WidgetSettingsActivity.this, "Settings reset to defaults!", Toast.LENGTH_SHORT).show();

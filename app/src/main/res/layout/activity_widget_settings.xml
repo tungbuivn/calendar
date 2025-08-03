@@ -119,9 +119,27 @@
         android:id="@+id/weather_font_seekbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="24dp"
         android:progressTint="#8B4513"
         android:thumbTint="#8B4513" />
+
+    <!-- Hide Top Section -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Widget Display Options"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#8B4513"
+        android:layout_marginBottom="8dp" />
+
+            <CheckBox
+            android:id="@+id/hide_top_section_checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hide Day Labels and Week Dates"
+            android:textColor="#8B4513"
+            android:layout_marginBottom="32dp" />
 
     <!-- Buttons -->
     <LinearLayout

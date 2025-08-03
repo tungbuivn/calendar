@@ -249,6 +249,7 @@ public class CalendarWidget extends AppWidgetProvider {
         String dayNumber = dayNumberFormat.format(now);
         String monthNumber = monthNumberFormat.format(now);
         String year = yearFormat.format(now);
+        boolean hideTopSection = preferences.getHideTopSection();
 
         String monthText="Tháng";
 
@@ -366,7 +367,6 @@ public class CalendarWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.label_day_sat, "S");
             views.setTextViewText(R.id.label_day_sun, "S");
         }
-        views.setTextViewText(R.id.label_month, monthText+" "+monthNumber+" / "+year);
 
         // Set week dates with custom font size
         views.setTextViewText(R.id.day_mon, String.valueOf(weekDates[0]));
@@ -391,6 +391,20 @@ public class CalendarWidget extends AppWidgetProvider {
         views.setTextViewTextSize(R.id.day_fri, android.util.TypedValue.COMPLEX_UNIT_SP, weekFontSize);
         views.setTextViewTextSize(R.id.day_sat, android.util.TypedValue.COMPLEX_UNIT_SP, weekFontSize);
         views.setTextViewTextSize(R.id.day_sun, android.util.TypedValue.COMPLEX_UNIT_SP, weekFontSize);
+
+                // Handle hide top section preference
+        
+        if (hideTopSection) {
+            views.setViewVisibility(R.id.widget_top_section, android.view.View.GONE);
+            views.setViewVisibility(R.id.widget_middle_section, android.view.View.GONE);
+            // Show day number in month label when sections are hidden
+            views.setTextViewText(R.id.label_month, dayNumber + " / " + monthNumber + " / " + year);
+        } else {
+            views.setViewVisibility(R.id.widget_top_section, android.view.View.VISIBLE);
+            views.setViewVisibility(R.id.widget_middle_section, android.view.View.VISIBLE);
+            // Show normal month label when sections are visible
+            views.setTextViewText(R.id.label_month, monthText + " " + monthNumber + " / " + year);
+        }
 
         // Highlight current day - Fixed calculation
         Calendar currentCalendar = Calendar.getInstance();
