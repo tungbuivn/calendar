@@ -13,6 +13,7 @@ import android.widget.Toast;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.CheckBox;
+import androidx.appcompat.widget.Toolbar;
 
 public class WidgetSettingsActivity extends Activity {
     
@@ -35,11 +36,45 @@ public class WidgetSettingsActivity extends Activity {
         
         preferences = new WidgetPreferences(this);
         
+        setupToolbar();
         initializeViews();
         setupSeekBars();
         setupLanguageSelection();
         setupHideTopSection();
         setupButtons();
+    }
+    
+    private void setupToolbar() {
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            // Handle status bar height for notch devices
+            handleStatusBarHeight();
+            
+            // Set up back button
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+        }
+    }
+    
+    private void handleStatusBarHeight() {
+        // Get the status bar height
+        int statusBarHeight = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
+        
+        // Add top margin to toolbar to account for status bar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            android.view.ViewGroup.MarginLayoutParams params = (android.view.ViewGroup.MarginLayoutParams) toolbar.getLayoutParams();
+            params.topMargin = statusBarHeight;
+            toolbar.setLayoutParams(params);
+        }
     }
     
     private void initializeViews() {
