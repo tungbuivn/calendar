@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set Java 17 for Android development
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+# export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
 # Ensure debug key is in the app directory
 if [ ! -f "app/debug-key.jks" ]; then

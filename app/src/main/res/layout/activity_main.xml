@@ -54,53 +54,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
+                android:layout_weight="0"
                 android:orientation="horizontal">
 
                 <!-- Left Column - Week Info -->
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:text="TUẦN"
-                        android:textColor="#8B4513"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/week_number"
-                        android:layout_width="48sp"
-                        android:layout_height="48sp"
-                        android:background="@drawable/circle_background"
-                        android:padding="8dp"
-                        android:text="31"
-                        android:textAlignment="center"
-                        android:textColor="#FFFFFFFF"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/week_days"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:lineSpacingExtra="2dp"
-                        android:text="mon 28 4\ntue 29 5\nwed 30 6\nthu 31 7\nfri 1/8 8\nsat 2 9\nsun 3 10"
-                        android:textColor="#8B4513"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
+                <include
+                    android:id="@+id/week_info"
+                    layout="@layout/week_info"
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content" />
 
                 <!-- Center Column - Main Date -->
                 <LinearLayout
+                    android:id="@+id/main_date"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="2"
+                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -129,9 +98,9 @@
 
                 <!-- Right Column - Lunar Info -->
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:id="@+id/image_view"
+                    android:layout_width="80dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -152,7 +121,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/textView"
+                        android:id="@+id/year_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
@@ -163,34 +132,15 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/gio_tot"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:gravity="center"
-                        android:text="nam at ty"
-                        android:textColor="#8B4513"
-                        android:textSize="14sp" />
-
-                    <TextView
-                        android:id="@+id/textView2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:text="gio hoang dao"
                         android:textColor="#8B4513"
-                        android:textSize="14sp" />
+                        android:textSize="12sp" />
 
-                    <TextView
-                        android:id="@+id/textView3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:gravity="center"
-                        android:text="gio hoang dao rat la dai text "
-                        android:textAlignment="viewStart"
-                        android:textColor="#8B4513"
-                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -199,6 +149,16 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/thang_num"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center"
+                        android:text="thang 6"
+                        android:textColor="#8B4513"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/lunar_day"
@@ -215,18 +175,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="4dp"
                         android:gravity="center"
-                        android:text="Đại thử: ngày 22/07 lúc 20g30'"
-                        android:textAlignment="viewStart"
-                        android:textColor="#8B4513"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/astrological_info"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Hành Kim - Sao Nữ - Trực Thành"
-                        android:textAlignment="viewStart"
+                        android:text="Đại thử"
+                        android:textAlignment="center"
                         android:textColor="#8B4513"
                         android:textSize="12sp" />
 
@@ -243,46 +193,27 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="2dp"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:text="THÁNG QUÝ MÙI"
                         android:textColor="#8B4513"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/lunar_day_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="2dp"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:text="NGÀY QUÝ MÃO"
                         android:textColor="#8B4513"
-                        android:textSize="10sp" />
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/lunar_hour"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:gravity="start"
                         android:text="GIỜ NHÂM TÝ"
-                        android:textColor="#8B4513"
-                        android:textSize="10sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:text="Thuận lợi:"
-                        android:textColor="#8B4513"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/auspicious_activities"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Cưới hỏi, khai trương, giao dịch, an táng, cải táng, xuất hành, chuyển về nhà mới."
-                        android:textAlignment="viewStart"
                         android:textColor="#8B4513"
                         android:textSize="12sp" />
 
