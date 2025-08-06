@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Shadow Layer -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#20000000" />
+            <padding
+                android:bottom="2dp"
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+        </shape>
+    </item>
+    
+    <!-- Toolbar Background -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="45"
+                android:startColor="@color/gradientSecondaryStart"
+                android:endColor="@color/gradientSecondaryEnd"
+                android:type="linear" />
+        </shape>
+    </item>
+</layer-list> 
