@@ -571,7 +571,7 @@ public class MainActivity extends AppCompatActivity {
         lunarHour.setText("Giờ " + lunarDate.getHourName());
         // Update lunar hour based on whether it's initial load or navigation
         TextView astrologicalInfo = findViewById(R.id.gio_tot);
-        astrologicalInfo.setText("Giờ hoàng đạo: " + lunarDate.getLuckyHours());
+        astrologicalInfo.setText(lunarDate.getLuckyHours());
 
         
 
