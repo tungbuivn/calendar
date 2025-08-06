@@ -3,6 +3,7 @@
 # Set Java 17 for Android development
 # export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 
+mode=$1
 # Ensure debug key is in the app directory
 if [ ! -f "app/debug-key.jks" ]; then
     echo "Copying debug key to app directory..."
@@ -11,8 +12,13 @@ fi
 
 # Build the project
 echo "Building with Java 17..."
-./gradlew assembleDebug -x lint 
-./gradlew installDebug
+if [ "$mode" == "prod" ]; then
+    ./gradlew assembleRelease -x lint 
+    ./gradlew installRelease
+else
+    ./gradlew assembleDebug -x lint 
+    ./gradlew installDebug
+fi
 
 echo "Build completed!"
 

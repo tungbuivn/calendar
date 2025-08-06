@@ -340,7 +340,7 @@
             android:paddingLeft="4dp"
             android:text="CN"
             android:textAlignment="viewStart"
-            android:textColor="@color/textPrimary"
+            android:textColor="@color/secondaryColor"
             android:textSize="14sp" />
 
         <TextView
@@ -353,7 +353,7 @@
             android:lineSpacingExtra="1dp"
             android:text="30/12"
             android:textAlignment="viewEnd"
-            android:textColor="@color/textPrimary"
+            android:textColor="@color/secondaryColor"
             android:textSize="14sp" />
 
         <TextView
@@ -365,7 +365,7 @@
             android:lineSpacingExtra="1dp"
             android:text="30"
             android:textAlignment="viewStart"
-            android:textColor="@color/textSecondary"
+            android:textColor="@color/secondaryColor"
             android:textSize="14sp" />
     </LinearLayout>
 
