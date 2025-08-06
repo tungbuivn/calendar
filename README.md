@@ -1,10 +1,10 @@
-# Asia Calendar - Ứng dụng Lịch Châu Á - Lịch vạn niên 
+# Asian Calendar - Ứng dụng Lịch Châu Á - Lịch vạn niên 
 
 ## Giới thiệu
 
-**Asia Calendar** là một ứng dụng lịch Android hiện đại với widget đẹp mắt, được thiết kế đặc biệt cho người dùng Châu Á. Ứng dụng kết hợp lịch dương và âm lịch truyền thống, hiển thị thời gian thực, thông tin thời tiết và vị trí địa lý một cách trực quan và dễ sử dụng. 
+**Asian Calendar** là một ứng dụng lịch Android hiện đại với widget đẹp mắt, được thiết kế đặc biệt cho người dùng Châu Á. Ứng dụng kết hợp lịch dương và âm lịch truyền thống, hiển thị thời gian thực, thông tin thời tiết và vị trí địa lý một cách trực quan và dễ sử dụng. 
 
-**Asia Calendar** là ứng dụng được phát triển và hoàn thiện bởi AI (99%), với sự đóng góp nhỏ của con người trong quá trình quản lý (1%).
+**Asian Calendar** là ứng dụng được phát triển và hoàn thiện bởi AI (99%), với sự đóng góp nhỏ của con người trong quá trình quản lý (1%).
 
 ### Các màn hình
 ![alt text](imgs/main.png)
@@ -103,7 +103,7 @@
 ### 2. **Thêm widget vào màn hình chính**
 - Nhấn giữ màn hình chính
 - Chọn "Widgets"
-- Tìm "Asia Calendar" trong danh sách
+- Tìm "Asian Calendar" trong danh sách
 - Kéo thả vào màn hình chính
 
 ### 3. **Cấp quyền vị trí**
@@ -228,7 +228,7 @@ Dự án này được phát hành dưới giấy phép MIT. Xem file LICENSE đ
 
 ---
 
-**Asia Calendar** - Lịch Châu Á hiện đại cho cuộc sống thông minh! 📱📅
+**Asian Calendar** - Lịch Châu Á hiện đại cho cuộc sống thông minh! 📱📅
 
 ### **AI-Powered Features Summary:**
 ✅ **99% AI-Enhanced Calendar Engine**  

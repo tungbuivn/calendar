@@ -1,9 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="secondaryColor">#4caf50</color>
-    <color name="primaryColor">#212121</color>
-    <color name="primaryLightColor">#313131</color>
-    <color name="primaryDarkColor">#101010</color>
-    <color name="playingCardColor">#444caf50</color>
+    <!-- Primary Colors -->
+    <color name="primaryColor">#2E3B4E</color>
+    <color name="primaryLightColor">#4A5C7A</color>
+    <color name="primaryDarkColor">#1A2332</color>
+    
+    <!-- Secondary Colors -->
+    <color name="secondaryColor">#FF6B9D</color>
+    <color name="secondaryLightColor">#FF8FB1</color>
+    <color name="accentColor">#4CAF50</color>
+    
+    <!-- Background Colors -->
+    <color name="backgroundPrimary">#F8F9FA</color>
+    <color name="backgroundSecondary">#FFFFFF</color>
+    <color name="backgroundCard">#FFFFFF</color>
+    
+    <!-- Text Colors -->
+    <color name="textPrimary">#2E3B4E</color>
+    <color name="textSecondary">#6C757D</color>
+    <color name="textLight">#FFFFFF</color>
     <color name="textColor">#FAFAFA</color>
+    
+    <!-- Gradient Colors -->
+    <color name="gradientStart">#667eea</color>
+    <color name="gradientEnd">#764ba2</color>
+
+    <color name="gradientSecondaryStart">#667eea</color>
+    <color name="gradientSecondaryEnd">#764ba2</color>
+    <!-- <color name="gradientSecondaryStart">#f093fb</color>
+    <color name="gradientSecondaryEnd">#f5576c</color> -->
+    
+    <!-- Day Colors -->
+    <color name="sundayColor">#FF6B9D</color>
+    <color name="mondayColor">#4CAF50</color>
+    <color name="tuesdayColor">#2196F3</color>
+    <color name="wednesdayColor">#FF9800</color>
+    <color name="thursdayColor">#9C27B0</color>
+    <color name="fridayColor">#607D8B</color>
+    <color name="saturdayColor">#795548</color>
+    
+    <!-- Card Colors -->
+    <color name="cardShadow">#20000000</color>
+    <color name="cardBorder">#E9ECEF</color>
+    
+    <!-- Legacy Colors for Compatibility -->
+    <color name="playingCardColor">#444caf50</color>
 </resources>

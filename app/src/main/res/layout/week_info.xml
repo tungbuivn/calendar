@@ -3,38 +3,44 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/week_lbl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:text="TUẦN"
         android:textAlignment="center"
-        android:textColor="#8B4513"
-        android:textSize="14sp" />
+        android:textColor="@color/textPrimary"
+        android:textSize="12sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/week_number"
-        android:layout_width="48sp"
-        android:layout_height="48sp"
+        android:layout_width="40sp"
+        android:layout_height="40sp"
         android:layout_gravity="center_horizontal"
+        android:layout_margin="4dp"
         android:background="@drawable/circle_background"
-        android:padding="8dp"
+        android:gravity="center"
+        android:padding="4dp"
         android:text="0"
         android:textAlignment="center"
-        android:gravity="center"
-        android:textColor="#FFFFFFFF"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_margin="2dp" />
+        android:textColor="@color/textLight"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <LinearLayout
+        android:id="@+id/day_t2_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_margin="2dp"
+        android:background="@drawable/day_item_background"
+        android:orientation="horizontal"
+        android:padding="6dp">
 
         <TextView
             android:id="@+id/week_day_t2h"
@@ -42,24 +48,25 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
+            android:paddingLeft="4dp"
             android:text="T2"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t2s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="2"
             android:textAlignment="viewEnd"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t2l"
@@ -67,17 +74,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="3"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textSecondary"
+            android:textSize="11sp" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/day_t3_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_margin="2dp"
+        android:background="@drawable/day_item_background"
+        android:orientation="horizontal"
+        android:padding="6dp">
 
         <TextView
             android:id="@+id/week_day_t3h"
@@ -85,24 +96,25 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
+            android:paddingLeft="4dp"
             android:text="T3"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t3s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="2"
             android:textAlignment="viewEnd"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t3l"
@@ -110,17 +122,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="3"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textSecondary"
+            android:textSize="11sp" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/day_t4_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_margin="2dp"
+        android:background="@drawable/day_item_background"
+        android:orientation="horizontal"
+        android:padding="6dp">
 
         <TextView
             android:id="@+id/week_day_t4h"
@@ -128,24 +144,25 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
+            android:paddingLeft="4dp"
             android:text="T4"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t4s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="2"
             android:textAlignment="viewEnd"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t4l"
@@ -153,17 +170,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="3"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textSecondary"
+            android:textSize="11sp" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/day_t5_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_margin="2dp"
+        android:background="@drawable/day_item_background"
+        android:orientation="horizontal"
+        android:padding="6dp">
 
         <TextView
             android:id="@+id/week_day_t5h"
@@ -171,24 +192,25 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
+            android:paddingLeft="4dp"
             android:text="T5"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t5s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="2"
             android:textAlignment="viewEnd"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t5l"
@@ -196,17 +218,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="3"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textSecondary"
+            android:textSize="11sp" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/day_t6_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_margin="2dp"
+        android:background="@drawable/day_item_background"
+        android:orientation="horizontal"
+        android:padding="6dp">
 
         <TextView
             android:id="@+id/week_day_t6h"
@@ -214,24 +240,25 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
+            android:paddingLeft="4dp"
             android:text="T6"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t6s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="2"
             android:textAlignment="viewEnd"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t6l"
@@ -239,17 +266,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="3"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textSecondary"
+            android:textSize="11sp" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/day_t7_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_margin="2dp"
+        android:background="@drawable/day_item_background"
+        android:orientation="horizontal"
+        android:padding="6dp">
 
         <TextView
             android:id="@+id/week_day_t7h"
@@ -257,24 +288,25 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
+            android:paddingLeft="4dp"
             android:text="T7"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t7s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="2"
             android:textAlignment="viewEnd"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_t7l"
@@ -282,17 +314,21 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="3"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textSecondary"
+            android:textSize="11sp" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/day_cn_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_margin="2dp"
+        android:background="@drawable/day_item_background"
+        android:orientation="horizontal"
+        android:padding="6dp">
 
         <TextView
             android:id="@+id/week_day_cnh"
@@ -300,24 +336,25 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
+            android:paddingLeft="4dp"
             android:text="CN"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_cns"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="30/12"
             android:textAlignment="viewEnd"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textPrimary"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/week_day_cnl"
@@ -325,11 +362,11 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:lineSpacingExtra="2dp"
+            android:lineSpacingExtra="1dp"
             android:text="30"
             android:textAlignment="viewStart"
-            android:textColor="#8B4513"
-            android:textSize="12sp" />
+            android:textColor="@color/textSecondary"
+            android:textSize="11sp" />
     </LinearLayout>
 
 </LinearLayout> 

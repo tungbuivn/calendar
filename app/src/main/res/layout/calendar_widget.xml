@@ -3,7 +3,7 @@
     android:id="@+id/widget_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/widget_background"
+    android:background="@drawable/widget_background_old"
     android:orientation="vertical"
     android:padding="12dp">
 
@@ -135,7 +135,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:background="@drawable/calendar_section_background"
+            android:background="@drawable/calendar_section_background_old"
             
             android:orientation="horizontal"
             android:padding="6dp">
@@ -199,7 +199,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/current_day_background"
+                android:background="@drawable/current_day_background_old"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"

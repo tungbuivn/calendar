@@ -2,6 +2,9 @@
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -16,7 +19,9 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@drawable/toolbar_background"
+            android:elevation="8dp"
+            
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -25,111 +30,113 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="#F5F5DC"
+            android:background="@drawable/gradient_background"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:padding="16dp">
 
-            <!-- Header Section -->
+            <!-- Header Section with Card -->
             <LinearLayout
+                android:id="@+id/main_group"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:background="@drawable/card_background"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/today_date"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+
+                    android:elevation="4dp"
                     android:gravity="center"
-                    android:text="THÁNG TÁM 2025"
-                    android:textColor="#8B4513"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:id="@+id/today_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="THÁNG TÁM 2025"
+                        android:textColor="#000000"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/main_lay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+
+                    android:elevation="4dp"
+                    android:orientation="horizontal"
+                    android:padding="20dp">
+
+                    <!-- Left Column - Week Info -->
+
+                    <include
+                        android:id="@+id/week_info"
+                        layout="@layout/week_info"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content" />
+
+                    <!-- Center Column - Main Date -->
+                    <LinearLayout
+                        android:id="@+id/main_date"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="20dp">
+
+                        <TextView
+                            android:id="@+id/day_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="2"
+                            android:textAlignment="center"
+                            android:textColor="@color/secondaryColor"
+                            android:textSize="120sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/day_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:gravity="center"
+                            android:text="THỨ BẢY"
+                            android:textColor="@color/textPrimary"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-            <!-- Main Date Section -->
+            <!-- Main Date Section with Card -->
+
+            <!-- Lunar Information Section with Card -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_weight="0"
-                android:orientation="horizontal">
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/card_background"
+                android:elevation="4dp"
+                android:orientation="horizontal"
+                android:padding="20dp">
 
-                <!-- Left Column - Week Info -->
-                <include
-                    android:id="@+id/week_info"
-                    layout="@layout/week_info"
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content" />
-
-                <!-- Center Column - Main Date -->
+                <!-- Left Column - Lucky Hours -->
                 <LinearLayout
-                    android:id="@+id/main_date"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/day_number"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:text="2"
-                        android:textColor="#FF6B9D"
-                        android:textSize="80sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/day_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:gravity="center"
-                        android:text="THỨ BẢY - SATURDAY"
-                        android:textColor="#8B4513"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-
-                <!-- Right Column - Lunar Info -->
-                <LinearLayout
-                    android:id="@+id/image_view"
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- Week Days Section -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/year_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
-                        android:gravity="center"
-                        android:text="nam at ty"
-                        android:textColor="#8B4513"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/gio_tot"
@@ -137,12 +144,14 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:gravity="start"
-                        android:text="gio hoang dao"
-                        android:textColor="#8B4513"
-                        android:textSize="12sp" />
+                        android:padding="8dp"
+                        android:text="Giờ hoàng đạo"
+                        android:textColor="@color/textSecondary"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
+                <!-- Center Column - Lunar Day -->
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -156,115 +165,138 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:gravity="center"
-                        android:text="thang 6"
-                        android:textColor="#8B4513"
-                        android:textSize="14sp" />
+                        android:text="Tháng 6"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/lunar_day"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="9"
-                        android:textColor="#FF6B9D"
-                        android:textSize="40sp"
+                        android:textColor="@color/secondaryColor"
+                        android:textSize="48sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/solar_term"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="8dp"
                         android:gravity="center"
                         android:text="Đại thử"
                         android:textAlignment="center"
-                        android:textColor="#8B4513"
-                        android:textSize="12sp" />
+                        android:textColor="@color/textSecondary"
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 
+                <!-- Right Column - Lunar Details -->
                 <LinearLayout
-                    android:layout_width="100dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="0dp"
+                    android:layout_weight="1"
                     android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/year_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start"
+                        android:text="Năm Ất Tỵ"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/lunar_month"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="4dp"
                         android:gravity="start"
                         android:text="THÁNG QUÝ MÙI"
-                        android:textColor="#8B4513"
-                        android:textSize="12sp" />
+                        android:textColor="@color/textSecondary"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/lunar_day_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="4dp"
                         android:gravity="start"
                         android:text="NGÀY QUÝ MÃO"
-                        android:textColor="#8B4513"
-                        android:textSize="12sp" />
+                        android:textColor="@color/textSecondary"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/lunar_hour"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
                         android:gravity="start"
                         android:text="GIỜ NHÂM TÝ"
-                        android:textColor="#8B4513"
-                        android:textSize="12sp" />
+                        android:textColor="@color/textSecondary"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
+            <!-- Bottom Space for Flower -->
             <LinearLayout
                 android:id="@+id/bottom_image"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@color/textColor"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:padding="8dp"></LinearLayout>
+                android:padding="8dp" />
 
         </LinearLayout>
 
-        <!-- Bottom Image Section -->
-
-        <!-- Bottom Toolbar -->
+        <!-- Bottom Toolbar with Modern Design -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="?attr/colorPrimary"
+            android:layout_height="80dp"
+            android:background="@drawable/toolbar_background"
+            android:elevation="8dp"
             android:gravity="center"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:padding="16dp">
 
             <Button
-                android:id="@+id/bottom_button_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/month_calendar"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
                 android:layout_marginEnd="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/button_background"
-                android:padding="12dp"
-                android:text="Button 1"
-                android:textColor="#FFFFFF" />
+                android:background="@drawable/button_modern"
+                android:text="Lịch tháng"
+                android:textColor="@color/textLight"
+                android:textSize="14sp" />
 
             <Button
-                android:id="@+id/bottom_button_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/today"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_modern"
+                android:text="Hôm nay"
+                android:textColor="@color/textLight"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/van_khan"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
                 android:layout_marginStart="8dp"
                 android:layout_weight="1"
-                android:background="@drawable/button_background"
-                android:padding="12dp"
-                android:text="Button 2"
-                android:textColor="#FFFFFF" />
+                android:background="@drawable/button_modern"
+                android:text="Văn khấn"
+                android:textColor="@color/textLight"
+                android:textSize="14sp" />
 
         </LinearLayout>
     </LinearLayout>
@@ -275,7 +307,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#FFFFFF"
+        android:background="@color/backgroundCard"
+        android:elevation="16dp"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/nav_menu" />
 
