@@ -70,6 +70,9 @@ public class CalendarWidget extends AppWidgetProvider {
                 case "android.appwidget.action.APPWIDGET_UPDATE":
                 case "android.intent.action.BOOT_COMPLETED":
                 case "android.intent.action.MY_PACKAGE_REPLACED":
+                case "android.intent.action.TIME_SET":
+                case "android.intent.action.TIMEZONE_CHANGED":
+                case "android.intent.action.DATE_CHANGED":
                     // Force immediate update
                     android.util.Log.d("CalendarWidget", "Forcing immediate update due to: " + action);
                     AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -221,6 +224,26 @@ public class CalendarWidget extends AppWidgetProvider {
         return lunarDate.toString();
     }
 
+    /**
+     * Returns a text size (sp) that fits {@code text} into {@code availableWidthDp}
+     * without exceeding {@code maxSp}.
+     */
+    private static int fitTextSizeToWidth(Context context, String text, int maxSp,
+            float availableWidthDp) {
+        if (text == null || text.isEmpty() || availableWidthDp <= 0f) {
+            return maxSp;
+        }
+        android.util.DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        android.graphics.Paint paint = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        paint.setTextSize(maxSp * metrics.scaledDensity);
+        float measuredPx = paint.measureText(text);
+        float availablePx = availableWidthDp * metrics.density;
+        if (measuredPx <= availablePx || measuredPx <= 0f) {
+            return maxSp;
+        }
+        return Math.max(8, (int) Math.floor(maxSp * availablePx / measuredPx));
+    }
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         // Get preferences
         WidgetPreferences preferences = new WidgetPreferences(context);
@@ -292,10 +315,13 @@ public class CalendarWidget extends AppWidgetProvider {
         }
         dayDateString = dayName;
 
-        // Calculate current week dates
-        Calendar weekCalendar = Calendar.getInstance();
-        // Force week to start on Monday
-        weekCalendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        // Calculate current week dates.
+        // Always derive Monday from the same calendar used for the header above,
+        // using locale-independent day arithmetic. Calendar.set(DAY_OF_WEEK,
+        // MONDAY) jumps to the NEXT week on Sunday-first locales (e.g. en-US),
+        // which shifted every date and the highlighted cell by 7 days on
+        // Sundays. This now matches the main app's calculation exactly.
+        Calendar weekCalendar = CalendarWeekUtils.startOfWeekMonday(calendar);
 
         int[] weekDates = new int[7];
         for (int i = 0; i < 7; i++) {
@@ -337,13 +363,67 @@ public class CalendarWidget extends AppWidgetProvider {
         
         android.util.Log.d("CalendarWidget", "=== Weather and location text set to widget view successfully ===");
 
-        // Set font sizes from preferences
+        // Fit the text into the widget's actual size. The launcher reports the
+        // cell size in dp; the widget content is slightly smaller because of the
+        // cell padding. Font sizes from preferences act as maximums and are only
+        // scaled down when they would not fit, so nothing gets clipped.
+        android.os.Bundle widgetOptions = appWidgetManager.getAppWidgetOptions(appWidgetId);
+        boolean landscape = context.getResources().getConfiguration().orientation
+                == android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+        int widgetWidthDp = widgetOptions.getInt(landscape
+                ? AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH
+                : AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+        int cellHeightDp = widgetOptions.getInt(landscape
+                ? AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT
+                : AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT);
+        if (widgetWidthDp <= 0) {
+            widgetWidthDp = 384;
+        }
+        if (cellHeightDp <= 0) {
+            cellHeightDp = 254;
+        }
+        // Launchers reserve some padding around the cell; keep a safe margin.
+        int widgetHeightDp = Math.max(140, cellHeightDp - 32);
+
+        float fontScale = context.getResources().getConfiguration().fontScale;
+        int weekFont = preferences.getWeekFontSize();
+        float topSectionDp = 0f;
+        if (!hideTopSection) {
+            // month row + day-label row + margin + week-date row (min 32dp + padding)
+            topSectionDp = (20f * 1.35f * fontScale) * 2f + 4f + 8f
+                    + Math.max(32f, weekFont * 1.35f * fontScale);
+        }
+        // The bottom columns use 4dp of vertical padding each.
+        float availableMiddleDp = Math.max(40f,
+                widgetHeightDp - 24f /* root padding */ - topSectionDp - 8f);
+
+        int preferredTimeSize = preferences.getTimeFontSize();
+        int preferredDaySize = preferences.getDayFontSize();
+        float lineFactor = 1.18f * fontScale;
+        float neededDp = (preferredTimeSize + preferredDaySize) * lineFactor + 4f;
+        float fitScale = Math.min(1f, availableMiddleDp / neededDp);
+        int fittedTimeSize = Math.max(18, Math.round(preferredTimeSize * fitScale));
+        int fittedDaySize = Math.max(12, Math.round(preferredDaySize * fitScale));
+
+        float contentWidthDp = Math.max(120f, widgetWidthDp - 24f);
+        float weatherColumnDp = contentWidthDp * (0.6f / 2.1f) - 8f;
+        float moonColumnDp = contentWidthDp * (0.5f / 2.1f) - 8f;
+        int fittedWeatherSize = fitTextSizeToWidth(context, weatherInfo,
+                preferences.getWeatherFontSize(), weatherColumnDp);
+        int fittedLunarSize = fitTextSizeToWidth(context, lunarDate, 22, moonColumnDp);
+
+        android.util.Log.d("CalendarWidget", "Widget " + appWidgetId + " fit: cell="
+                + widgetWidthDp + "x" + cellHeightDp + "dp, time=" + fittedTimeSize
+                + "sp, day=" + fittedDaySize + "sp, weather=" + fittedWeatherSize + "sp");
+
         views.setTextViewTextSize(R.id.widget_time, android.util.TypedValue.COMPLEX_UNIT_SP,
-                preferences.getTimeFontSize());
+                fittedTimeSize);
         views.setTextViewTextSize(R.id.widget_day_date, android.util.TypedValue.COMPLEX_UNIT_SP,
-                preferences.getDayFontSize());
+                fittedDaySize);
         views.setTextViewTextSize(R.id.widget_weather, android.util.TypedValue.COMPLEX_UNIT_SP,
-                preferences.getWeatherFontSize());
+                fittedWeatherSize);
+        views.setTextViewTextSize(R.id.widget_moon_calendar, android.util.TypedValue.COMPLEX_UNIT_SP,
+                fittedLunarSize);
 
 
         // Set day labels based on language
@@ -379,8 +459,25 @@ public class CalendarWidget extends AppWidgetProvider {
 
         android.util.Log.d("CalendarWidget", "Set week dates to views");
 
-        // Ensure the top section is visible by setting a minimum height
-        views.setInt(R.id.widget_container, "setMinimumHeight", 200);
+        // Rest-day colours: Saturday and Sunday stand out from the working week.
+        // The current-day highlight below overrides these with white text.
+        int weekendColor = androidx.core.content.ContextCompat.getColor(context, R.color.weekendColor);
+        int weekdayTextColor = androidx.core.content.ContextCompat.getColor(context, R.color.textPrimary);
+        views.setTextColor(R.id.label_day_mon, weekdayTextColor);
+        views.setTextColor(R.id.label_day_tue, weekdayTextColor);
+        views.setTextColor(R.id.label_day_wed, weekdayTextColor);
+        views.setTextColor(R.id.label_day_thu, weekdayTextColor);
+        views.setTextColor(R.id.label_day_fri, weekdayTextColor);
+        views.setTextColor(R.id.label_day_sat, weekendColor);
+        views.setTextColor(R.id.label_day_sun, weekendColor);
+        views.setTextColor(R.id.day_mon, weekdayTextColor);
+        views.setTextColor(R.id.day_tue, weekdayTextColor);
+        views.setTextColor(R.id.day_wed, weekdayTextColor);
+        views.setTextColor(R.id.day_thu, weekdayTextColor);
+        views.setTextColor(R.id.day_fri, weekdayTextColor);
+        views.setTextColor(R.id.day_sat, weekendColor);
+        views.setTextColor(R.id.day_sun, weekendColor);
+
 
         // Set font sizes for week days
         int weekFontSize = preferences.getWeekFontSize();
@@ -395,49 +492,24 @@ public class CalendarWidget extends AppWidgetProvider {
                 // Handle hide top section preference
         
         if (hideTopSection) {
+            views.setViewVisibility(R.id.widget_week_card, android.view.View.GONE);
             views.setViewVisibility(R.id.widget_top_section, android.view.View.GONE);
             views.setViewVisibility(R.id.widget_middle_section, android.view.View.GONE);
             // Show day number in month label when sections are hidden
             views.setTextViewText(R.id.label_month, dayNumber + " / " + monthNumber + " / " + year);
         } else {
+            views.setViewVisibility(R.id.widget_week_card, android.view.View.VISIBLE);
             views.setViewVisibility(R.id.widget_top_section, android.view.View.VISIBLE);
             views.setViewVisibility(R.id.widget_middle_section, android.view.View.VISIBLE);
             // Show normal month label when sections are visible
             views.setTextViewText(R.id.label_month, monthText + " " + monthNumber + " / " + year);
         }
 
-        // Highlight current day - Fixed calculation
-        Calendar currentCalendar = Calendar.getInstance();
-        int currentDayOfWeek = currentCalendar.get(Calendar.DAY_OF_WEEK);
-
-        // Map Calendar.DAY_OF_WEEK to our 0-6 index (Monday=0, Sunday=6)
-        int currentIndex;
-        switch (currentDayOfWeek) {
-            case Calendar.MONDAY:
-                currentIndex = 0;
-                break;
-            case Calendar.TUESDAY:
-                currentIndex = 1;
-                break;
-            case Calendar.WEDNESDAY:
-                currentIndex = 2;
-                break;
-            case Calendar.THURSDAY:
-                currentIndex = 3;
-                break;
-            case Calendar.FRIDAY:
-                currentIndex = 4;
-                break;
-            case Calendar.SATURDAY:
-                currentIndex = 5;
-                break;
-            case Calendar.SUNDAY:
-                currentIndex = 6;
-                break;
-            default:
-                currentIndex = 0;
-                break;
-        }
+        // Highlight the current day in the same Monday-first week we just
+        // rendered. Deriving both from the same calendar keeps the highlighted
+        // cell and the displayed date in sync regardless of device locale.
+        int currentDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        int currentIndex = CalendarWeekUtils.indexFromMonday(calendar);
 
         android.util.Log.d("CalendarWidget",
                 "Current day of week: " + currentDayOfWeek + ", Current index: " + currentIndex);
@@ -555,10 +627,20 @@ public class CalendarWidget extends AppWidgetProvider {
         long currentTime = System.currentTimeMillis();
         long nextMinute = ((currentTime / 60000) + 1) * 60000;
 
-        alarmManager.setExactAndAllowWhileIdle(
-                AlarmManager.RTC_WAKEUP,
-                nextMinute,
-                pendingIntent);
+        try {
+            alarmManager.setExactAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    nextMinute,
+                    pendingIntent);
+        } catch (SecurityException e) {
+            // Some Android 12+ devices deny exact alarms. Fall back to an
+            // inexact alarm so the widget keeps refreshing instead of going stale.
+            android.util.Log.w("CalendarWidget", "Exact alarm not permitted - using inexact alarm", e);
+            alarmManager.setAndAllowWhileIdle(
+                    AlarmManager.RTC_WAKEUP,
+                    nextMinute,
+                    pendingIntent);
+        }
 
         android.util.Log.d("CalendarWidget", "AlarmManager scheduled for " + nextMinute + "ms intervals");
     }

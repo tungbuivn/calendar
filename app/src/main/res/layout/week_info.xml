@@ -53,6 +53,7 @@
             android:text="T2"
             android:textAlignment="viewStart"
             android:textColor="@color/textPrimary"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -66,6 +67,7 @@
             android:text="2"
             android:textAlignment="viewEnd"
             android:textColor="@color/textPrimary"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -78,6 +80,7 @@
             android:text="3"
             android:textAlignment="viewStart"
             android:textColor="@color/textSecondary"
+            android:singleLine="true"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -101,6 +104,7 @@
             android:text="T3"
             android:textAlignment="viewStart"
             android:textColor="@color/textPrimary"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -114,6 +118,7 @@
             android:text="2"
             android:textAlignment="viewEnd"
             android:textColor="@color/textPrimary"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -126,6 +131,7 @@
             android:text="3"
             android:textAlignment="viewStart"
             android:textColor="@color/textSecondary"
+            android:singleLine="true"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -149,6 +155,7 @@
             android:text="T4"
             android:textAlignment="viewStart"
             android:textColor="@color/textPrimary"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -162,6 +169,7 @@
             android:text="2"
             android:textAlignment="viewEnd"
             android:textColor="@color/textPrimary"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -174,6 +182,7 @@
             android:text="3"
             android:textAlignment="viewStart"
             android:textColor="@color/textSecondary"
+            android:singleLine="true"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -197,6 +206,7 @@
             android:text="T5"
             android:textAlignment="viewStart"
             android:textColor="@color/textPrimary"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -210,6 +220,7 @@
             android:text="2"
             android:textAlignment="viewEnd"
             android:textColor="@color/textPrimary"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -222,6 +233,7 @@
             android:text="3"
             android:textAlignment="viewStart"
             android:textColor="@color/textSecondary"
+            android:singleLine="true"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -245,6 +257,7 @@
             android:text="T6"
             android:textAlignment="viewStart"
             android:textColor="@color/textPrimary"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -258,6 +271,7 @@
             android:text="2"
             android:textAlignment="viewEnd"
             android:textColor="@color/textPrimary"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -270,6 +284,7 @@
             android:text="3"
             android:textAlignment="viewStart"
             android:textColor="@color/textSecondary"
+            android:singleLine="true"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -292,7 +307,8 @@
             android:paddingLeft="4dp"
             android:text="T7"
             android:textAlignment="viewStart"
-            android:textColor="@color/textPrimary"
+            android:textColor="@color/weekendColor"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -305,7 +321,8 @@
             android:lineSpacingExtra="1dp"
             android:text="2"
             android:textAlignment="viewEnd"
-            android:textColor="@color/textPrimary"
+            android:textColor="@color/weekendColor"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -317,7 +334,8 @@
             android:lineSpacingExtra="1dp"
             android:text="3"
             android:textAlignment="viewStart"
-            android:textColor="@color/textSecondary"
+            android:textColor="@color/weekendColor"
+            android:singleLine="true"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -340,7 +358,8 @@
             android:paddingLeft="4dp"
             android:text="CN"
             android:textAlignment="viewStart"
-            android:textColor="@color/secondaryColor"
+            android:textColor="@color/weekendColor"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -353,7 +372,8 @@
             android:lineSpacingExtra="1dp"
             android:text="30/12"
             android:textAlignment="viewEnd"
-            android:textColor="@color/secondaryColor"
+            android:textColor="@color/weekendColor"
+            android:singleLine="true"
             android:textSize="14sp" />
 
         <TextView
@@ -365,7 +385,8 @@
             android:lineSpacingExtra="1dp"
             android:text="30"
             android:textAlignment="viewStart"
-            android:textColor="@color/secondaryColor"
+            android:textColor="@color/weekendColor"
+            android:singleLine="true"
             android:textSize="14sp" />
     </LinearLayout>
 

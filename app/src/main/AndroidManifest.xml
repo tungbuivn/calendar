@@ -3,6 +3,8 @@
     
     <!-- permission to use exact alarm -->
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- permission to reschedule widget updates after reboot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.TIME_TICK" />
     <!-- permission for foreground service -->
@@ -38,6 +40,11 @@
             android:exported="false"
             android:label="Widget Settings"
             android:theme="@style/AppTheme" />
+
+        <activity android:name=".MonthCalendarActivity"
+            android:exported="false"
+            android:label="Lịch tháng"
+            android:theme="@style/AppTheme" />
         
 
        
@@ -45,6 +52,11 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
             </intent-filter>
             <meta-data
                 android:name="android.appwidget.provider"

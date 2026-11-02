@@ -32,6 +32,7 @@ import android.view.View;
 public class MainActivity extends AppCompatActivity {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
+    private static final int REQUEST_MONTH_CALENDAR = 2001;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
@@ -118,7 +119,16 @@ public class MainActivity extends AppCompatActivity {
         Button vanKhanButton = findViewById(R.id.van_khan);
 
         monthCalendarButton.setOnClickListener(v -> {
-            // Handle month calendar button click
+            Intent intent = new Intent(this, MonthCalendarActivity.class);
+            if (currentDate != null) {
+                intent.putExtra(MonthCalendarActivity.EXTRA_YEAR,
+                        currentDate.get(java.util.Calendar.YEAR));
+                intent.putExtra(MonthCalendarActivity.EXTRA_MONTH,
+                        currentDate.get(java.util.Calendar.MONTH) + 1);
+                intent.putExtra(MonthCalendarActivity.EXTRA_DAY,
+                        currentDate.get(java.util.Calendar.DAY_OF_MONTH));
+            }
+            startActivityForResult(intent, REQUEST_MONTH_CALENDAR);
         });
 
         todayButton.setOnClickListener(v -> {
@@ -198,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
     private int getDayColor(int dayOfWeek) {
         switch (dayOfWeek) {
             case java.util.Calendar.SUNDAY:
-                return getResources().getColor(R.color.sundayColor, getTheme());
+                return getResources().getColor(R.color.weekendColor, getTheme());
             case java.util.Calendar.MONDAY:
                 return getResources().getColor(R.color.mondayColor, getTheme());
             case java.util.Calendar.TUESDAY:
@@ -210,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
             case java.util.Calendar.FRIDAY:
                 return getResources().getColor(R.color.fridayColor, getTheme());
             case java.util.Calendar.SATURDAY:
-                return getResources().getColor(R.color.saturdayColor, getTheme());
+                return getResources().getColor(R.color.weekendColor, getTheme());
             default:
                 return getResources().getColor(R.color.saturdayColor, getTheme());
         }
@@ -290,6 +300,21 @@ public class MainActivity extends AppCompatActivity {
                     new String[] { Manifest.permission.ACCESS_FINE_LOCATION,
                             Manifest.permission.ACCESS_COARSE_LOCATION },
                     LOCATION_PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_MONTH_CALENDAR && resultCode == RESULT_OK && data != null) {
+            int year = data.getIntExtra(MonthCalendarActivity.EXTRA_YEAR, -1);
+            int month = data.getIntExtra(MonthCalendarActivity.EXTRA_MONTH, -1);
+            int day = data.getIntExtra(MonthCalendarActivity.EXTRA_DAY, -1);
+            if (year > 0 && month > 0 && day > 0) {
+                currentDate = java.util.Calendar.getInstance();
+                currentDate.set(year, month - 1, day, 12, 0, 0);
+                updateCalendarForDate(currentDate, false);
+            }
         }
     }
 
@@ -597,10 +622,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void updateWeekInfoForDate(java.util.Calendar targetDate) {
         // Find Monday of the week containing the target date
-        java.util.Calendar monday = (java.util.Calendar) targetDate.clone();
-        int dayOfWeek = monday.get(java.util.Calendar.DAY_OF_WEEK);
-        int daysToMonday = (dayOfWeek + 5) % 7; // Convert to Monday = 0
-        monday.add(java.util.Calendar.DAY_OF_YEAR, -daysToMonday);
+        java.util.Calendar monday = CalendarWeekUtils.startOfWeekMonday(targetDate);
 
         // Get current date for highlighting
         java.util.Calendar today = java.util.Calendar.getInstance();
@@ -666,8 +688,11 @@ public class MainActivity extends AppCompatActivity {
                         setTextColorForDayContainer(container, getResources().getColor(android.R.color.white, getTheme()));
                     } else {
                         container.setBackgroundResource(0); // Clear background
-                        // Reset text color to default for other days
-                        setTextColorForDayContainer(container, getResources().getColor(R.color.textPrimary, getTheme()));
+                        // Saturday (i == 5) and Sunday (i == 6) stand out as rest days
+                        int dayTextColor = (i >= 5)
+                                ? getResources().getColor(R.color.weekendColor, getTheme())
+                                : getResources().getColor(R.color.textPrimary, getTheme());
+                        setTextColorForDayContainer(container, dayTextColor);
                     }
                 }
             }

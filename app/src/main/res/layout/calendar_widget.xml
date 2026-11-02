@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="@drawable/widget_background_old"
     android:orientation="vertical"
     android:padding="12dp">
@@ -35,6 +35,16 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
+
+        <!-- Light week strip so Saturday/Sunday keep the same red as the app -->
+        <LinearLayout
+            android:id="@+id/widget_week_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/calendar_section_background"
+            android:orientation="vertical"
+            android:padding="2dp">
+
         <!-- Days of Week Header -->
         <LinearLayout
             android:id="@+id/widget_top_section"
@@ -135,10 +145,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:background="@drawable/calendar_section_background_old"
             
             android:orientation="horizontal"
-            android:padding="6dp">
+            android:padding="4dp">
 
             <TextView
                 android:id="@+id/day_mon"
@@ -148,7 +157,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
-                android:minHeight="40dp"
+                android:minHeight="32dp"
                 android:shadowColor="#000000"
                 android:shadowDx="1"
                 android:shadowDy="1"
@@ -166,7 +175,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
-                android:minHeight="40dp"
+                android:minHeight="32dp"
                 android:shadowColor="#000000"
                 android:shadowDx="1"
                 android:shadowDy="1"
@@ -184,7 +193,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
-                android:minHeight="40dp"
+                android:minHeight="32dp"
                 android:shadowColor="#000000"
                 android:shadowDx="1"
                 android:shadowDy="1"
@@ -199,11 +208,10 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@drawable/current_day_background_old"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
-                android:minHeight="40dp"
+                android:minHeight="32dp"
                 android:shadowColor="#000000"
                 android:shadowDx="1"
                 android:shadowDy="1"
@@ -221,7 +229,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
-                android:minHeight="40dp"
+                android:minHeight="32dp"
                 android:shadowColor="#000000"
                 android:shadowDx="1"
                 android:shadowDy="1"
@@ -239,7 +247,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
-                android:minHeight="40dp"
+                android:minHeight="32dp"
                 android:shadowColor="#000000"
                 android:shadowDx="1"
                 android:shadowDy="1"
@@ -257,7 +265,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:minWidth="40dp"
-                android:minHeight="40dp"
+                android:minHeight="32dp"
                 android:shadowColor="#000000"
                 android:shadowDx="1"
                 android:shadowDy="1"
@@ -266,6 +274,8 @@
                 android:textColor="#FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+
+        </LinearLayout>
 
         </LinearLayout>
 
@@ -288,7 +298,7 @@
             android:layout_weight="0.5"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:padding="4dp">
 
             <TextView
                 android:id="@+id/widget_moon_calendar_title"
@@ -296,6 +306,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif-light"
+                android:includeFontPadding="false"
                 android:gravity="center"
                 android:singleLine="true"
                 android:text="Âm lịch"
@@ -309,6 +320,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:fontFamily="sans-serif-light"
+                android:includeFontPadding="false"
                 android:text="10/09"
                 android:textColor="#FFD700"
                 android:textSize="22sp"
@@ -323,7 +335,7 @@
             android:layout_weight="1.0"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:padding="4dp">
 
             <!-- Time -->
             <TextView
@@ -331,6 +343,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
+                android:includeFontPadding="false"
+                android:maxLines="1"
                 android:text="10:09"
                 android:textColor="#FFFFFF"
                 android:textSize="52sp"
@@ -341,9 +355,10 @@
                 android:id="@+id/widget_day_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="2dp"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
+                android:includeFontPadding="false"
                 android:singleLine="true"
                 android:text="Wed Thu 11"
                 android:textColor="#E8E8E8"
@@ -358,7 +373,7 @@
             android:layout_weight="0.6"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="8dp">
+            android:padding="4dp">
 
             <TextView
                 android:id="@+id/location_name"
@@ -366,6 +381,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
+                android:includeFontPadding="false"
                 android:singleLine="false"
                 android:text="Hồ Chí Minh"
                 android:textColor="#FFFFFF"
@@ -379,6 +395,7 @@
                 android:layout_marginTop="4dp"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
+                android:includeFontPadding="false"
                 android:singleLine="true"
                 android:text="28°C"
                 android:textColor="#FFD700"
