@@ -1,0 +1,38 @@
+{
+  "groups": [
+    { "id": "auto", "title": "Tự động theo ngày đang xem" },
+    { "id": "chu_le", "title": "Người đứng lễ" },
+    { "id": "gio", "title": "Người được cúng giỗ" },
+    { "id": "le", "title": "Hoàn cảnh buổi lễ" }
+  ],
+  "fields": [
+    { "id": "ngay_am", "label": "Ngày âm lịch", "group": "auto", "source": "date", "hint": "Tự điền: mồng một, rằm, hai mươi ba…" },
+    { "id": "thang_am", "label": "Tháng âm lịch", "group": "auto", "source": "date", "hint": "Tự điền: Giêng, Hai, Bảy, Chạp…" },
+    { "id": "nam_am", "label": "Năm âm lịch", "group": "auto", "source": "date", "hint": "Tự điền theo can chi: Ất Tỵ…" },
+
+    { "id": "ho_ten", "label": "Họ tên người đứng lễ", "group": "chu_le", "source": "profile", "hint": "Nguyễn Văn A" },
+    { "id": "nam_sinh", "label": "Năm sinh dương lịch", "group": "chu_le", "source": "profile", "hint": "Dùng để tính tuổi khi bạn không điền tuổi" },
+    { "id": "tuoi", "label": "Tuổi", "group": "chu_le", "source": "profile", "hint": "Để trống thì tự tính từ năm sinh" },
+    { "id": "dia_chi", "label": "Nơi cư trú", "group": "chu_le", "source": "profile", "hint": "Số nhà, đường, phường/xã, quận/huyện, tỉnh" },
+    { "id": "nghe_nghiep", "label": "Nghề nghiệp", "group": "chu_le", "source": "profile", "hint": "Chỉ dùng trong một số bài khấn cửa hàng, đền sư tổ" },
+
+    { "id": "huong_linh", "label": "Tên người đã khuất", "group": "gio", "source": "memorial", "hint": "Lấy theo tên người mất trong danh sách ngày giỗ; nên kèm chức xưng (hiển khảo, hiển tỷ…)" },
+    { "id": "quan_he", "label": "Quan hệ với người đứng lễ", "group": "gio", "source": "memorial", "hint": "Tự tính từ gia phả: ông, bà, cụ, cha, mẹ… tuỳ người đứng khấn là ai" },
+    { "id": "ngay_mat", "label": "Ngày mất (âm lịch)", "group": "gio", "source": "memorial", "hint": "Lấy theo ngày mất đã lưu ở ngày giỗ" },
+    { "id": "thang_mat", "label": "Tháng mất (âm lịch)", "group": "gio", "source": "memorial", "hint": "Lấy theo ngày mất đã lưu ở ngày giỗ" },
+    { "id": "nam_mat", "label": "Năm mất (âm lịch)", "group": "gio", "source": "memorial", "hint": "Lấy theo ngày mất đã lưu ở ngày giỗ" },
+    { "id": "an_tang_tai", "label": "Nơi an táng", "group": "gio", "source": "memorial", "hint": "Ruộng đất, nghĩa trang, chùa… nơi phần mộ toạ lạc" },
+
+    { "id": "ten_chua_den", "label": "Tên chùa, đền, phủ, đình, miếu", "group": "le", "source": "manual", "hint": "Nơi bạn đến làm lễ" },
+    { "id": "noi_dat", "label": "Thửa đất, nơi cải táng", "group": "le", "source": "manual", "hint": "Dùng khi động thổ, bồi hoàn địa mạch, cải cát" },
+    { "id": "ten_nguoi_than", "label": "Tên người thân được khấn", "group": "le", "source": "manual", "hint": "Con, cháu, người nhà mà lễ hướng tới" },
+    { "id": "ten_cha", "label": "Tên cha của cháu", "group": "le", "source": "manual", "hint": "Dùng trong lễ cúng mụ đầy tháng, đầy năm" },
+    { "id": "ten_me", "label": "Tên mẹ của cháu", "group": "le", "source": "manual", "hint": "Dùng trong lễ cúng mụ đầy tháng, đầy năm" },
+    { "id": "ten_doi_theo", "label": "Tên vợ hoặc chồng", "group": "le", "source": "manual", "hint": "Dùng trong lễ cưới hỏi" },
+    { "id": "noi_hoc", "label": "Nơi học tập", "group": "le", "source": "manual", "hint": "Trường, lớp của con cháu" },
+    { "id": "ten_co_so", "label": "Tên cửa hàng, công ty", "group": "le", "source": "manual", "hint": "Dùng khi khai trương" },
+    { "id": "ten_benh", "label": "Tên bệnh", "group": "le", "source": "manual", "hint": "Dùng trong bài khấn giải trừ bệnh tật" },
+    { "id": "so_nam", "label": "Số năm (mộ phần)", "group": "le", "source": "manual", "hint": "Số năm đã để mộ cũ khi bốc cốt" },
+    { "id": "dieu_lo", "label": "Điều lo lắng cần bạch", "group": "le", "source": "manual", "hint": "Việc đang vướng mắc, trình bày với Phật bà" }
+  ]
+}

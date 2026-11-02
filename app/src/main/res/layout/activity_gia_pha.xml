@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/month_screen_background"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/toolbar_background"
+        android:elevation="8dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="Gia phả" />
+
+    <TextView
+        android:id="@+id/gia_pha_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="Mỗi hàng là một thế hệ tính từ người đứng khấn. Chạm vào một người để lấy người đó làm mốc: vai vế của cả nhà sẽ tính lại. Giữ lâu để sửa thông tin. Ô nền xám là người đã khuất. Cặp chưa nối được qua cha mẹ – vợ chồng (thông gia, con nuôi…) thì ghi ở mục Quan hệ nhập tay."
+        android:textColor="@color/textSecondary"
+        android:textSize="13sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/gia_pha_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="12dp"
+        android:background="@drawable/month_card_background"
+        android:clipToPadding="false"
+        android:paddingBottom="12dp" />
+
+    <TextView
+        android:id="@+id/gia_pha_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingVertical="16dp"
+        android:text="Chưa có ai trong gia phả. Hãy thêm người đứng khấn trước."
+        android:textColor="@color/textSecondary"
+        android:textSize="13sp"
+        android:textStyle="italic" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/add_person_button"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/month_primary_button_background"
+            android:text="Thêm người"
+            android:textColor="@color/textLight"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/relation_button"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_modern"
+            android:text="Quan hệ nhập tay"
+            android:textColor="@color/textLight"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -48,4 +48,15 @@
 
     <!-- Legacy Colors for Compatibility -->
     <color name="playingCardColor">#444caf50</color>
+
+    <!-- Văn khấn: chỗ tự điền / còn trống / đang cấu hình -->
+    <color name="prayerFilledBackground">#332E7D32</color>
+    <color name="prayerMissingBackground">#40FFB300</color>
+    <color name="prayerFocusBackground">#4DC2185B</color>
+
+    <!-- Gia phả: người đã khuất -->
+    <color name="deceasedAvatar">#4B5563</color>
+    <color name="deceasedCard">#EDEFF2</color>
+    <color name="deceasedCardBorder">#C7CCD4</color>
+    <color name="deceasedText">#3A4149</color>
 </resources>

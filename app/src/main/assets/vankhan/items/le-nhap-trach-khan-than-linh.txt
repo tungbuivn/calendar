@@ -1,0 +1,19 @@
+# Lễ nhập trạch (Văn khấn thần linh)
+
+Nam mô A Di Đà Phật.
+Nam mô A Di Đà Phật.
+Nam mô A Di Đà Phật.
+
+Kính lạy:
+- Hoàng Thiên Hậu Thổ chư vị Tôn thần.
+- Ngài Bản cảnh Thành hoàng, ngài Bản xứ Thần linh.
+- Ngài Bản gia Đông trù Tư mệnh Táo phủ Thần quân.
+- Ngài Long mạch Tôn thần, ngài Tiền chủ Hậu chủ, các vị Thần linh Thổ địa cai quản trong khu đất này.
+
+Hôm nay là ngày {{ngay_am}} tháng {{thang_am}} năm {{nam_am}}, gia đình con dọn về ở tại {{dia_chi}}, tín chủ con là {{ho_ten}}, kính cẩn bày hương án, sắm sửa hương hoa, trà quả, xôi chè, nước sạch, tiền vàng, một mâm lễ mọn để cáo yết Thần linh.
+
+Đất mới, nhà mới, bếp mới. Con xin trình với các ngài Thần linh, Thổ địa, Táo quân cai quản nơi này: từ nay gia đình con về ở, ngày ngày nấu nướng khói hương, có điều động chạm chưa tránh hết, xin các ngài xá bỏ và nhận lời cáo yết.
+
+Cúi xin cho gia đình con ở đây an cư lạc nghiệp, cửa nhà yên ổn, người người khỏe mạnh, làm ăn thuận lợi, trên thuận dưới hòa, tai ương không đến, phúc lộc ngày thêm.
+
+Lễ mọn lòng thành, cúi xin chứng giám. Cẩn cáo.

@@ -3,6 +3,8 @@
     
     <!-- permission to use exact alarm -->
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
+    <!-- permission to show the morning prayer reminder -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- permission to reschedule widget updates after reboot -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
@@ -20,6 +22,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -45,6 +48,36 @@
             android:exported="false"
             android:label="Lịch tháng"
             android:theme="@style/AppTheme" />
+
+        <activity android:name=".VanKhanActivity"
+            android:exported="false"
+            android:label="Văn khấn"
+            android:theme="@style/AppTheme" />
+
+        <activity android:name=".VanKhanDetailActivity"
+            android:exported="false"
+            android:label="Văn khấn"
+            android:theme="@style/AppTheme" />
+
+        <activity android:name=".GioSettingsActivity"
+            android:exported="false"
+            android:label="Ngày giỗ"
+            android:theme="@style/AppTheme" />
+
+        <activity android:name=".PrayerProfileActivity"
+            android:exported="false"
+            android:label="Thông tin điền sẵn"
+            android:theme="@style/AppTheme" />
+
+        <activity android:name=".PrayerFieldActivity"
+            android:exported="false"
+            android:label="Trường điền"
+            android:theme="@style/AppTheme" />
+
+        <activity android:name=".GiaPhaActivity"
+            android:exported="false"
+            android:label="Gia phả"
+            android:theme="@style/AppTheme" />
         
 
        
@@ -61,6 +94,20 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/calendar_widget_info" />
+        </receiver>
+
+        <!-- Nhắc văn khấn mỗi sáng: tự nối báo thức sau khi mở máy hoặc đổi ngày/giờ. -->
+        <receiver
+            android:name=".PrayerReminderReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.calendar.tbt.action.PRAYER_REMIND" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
         </receiver>
     </application>
 

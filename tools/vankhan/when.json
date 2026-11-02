@@ -1,0 +1,253 @@
+{
+ "v": "Spec: lunar=M-D[,M-D…] ngày-tháng âm | lunarDay=D[,D…] ngày âm mọi tháng | lunarMonth=M[,M…] cả tháng âm | term=<tên tiết khí, không dấu> | any",
+ "items": {
+  "van-khan-ong-tao-len-chau-troi": [
+   {
+    "when": "lunar=12-23",
+    "label": "23 tháng Chạp — ông Táo chầu Trời"
+   }
+  ],
+  "van-khan-than-linh-trong-nha-mung-mot-tet": [
+   {
+    "when": "lunar=1-1",
+    "label": "Mồng một Tết — khấn Thần linh"
+   }
+  ],
+  "van-khan-to-tien-mung-mot-tet": [
+   {
+    "when": "lunar=1-1",
+    "label": "Mồng một Tết — khấn gia tiên"
+   }
+  ],
+  "le-cung-giao-thua-ngoai-troi": [
+   {
+    "when": "lunar=12-30",
+    "label": "Đêm Giao thừa — lễ trừ tịch ngoài trời"
+   },
+   {
+    "when": "lunar=12-29",
+    "label": "Đêm Giao thừa (tháng Chạp thiếu)"
+   }
+  ],
+  "van-khan-giao-thua-trong-nha": [
+   {
+    "when": "lunar=12-30",
+    "label": "Đêm Giao thừa — khấn trong nhà"
+   },
+   {
+    "when": "lunar=12-29",
+    "label": "Đêm Giao thừa (tháng Chạp thiếu)"
+   }
+  ],
+  "van-khan-le-tat-nien": [
+   {
+    "when": "lunar=12-27,12-28,12-29,12-30",
+    "label": "Lễ Tất niên"
+   }
+  ],
+  "van-khan-le-chap": [
+   {
+    "when": "lunar=12-25,12-26,12-27,12-28,12-29,12-30",
+    "label": "Lễ Chạp — báo với tổ tiên cuối năm"
+   }
+  ],
+  "van-khan-tet-nguyen-tieu": [
+   {
+    "when": "lunar=1-15",
+    "label": "Tết Nguyên Tiêu — rằm tháng Giêng"
+   }
+  ],
+  "van-khan-ta-nam-moi": [
+   {
+    "when": "lunar=1-2,1-3",
+    "label": "Lễ tạ năm mới (mồng hai, mồng ba)"
+   }
+  ],
+  "van-khan-gia-tien-ngay-ram-mung-mot": [
+   {
+    "when": "lunarDay=1,15",
+    "label": "Ngày mồng một / rằm hằng tháng"
+   }
+  ],
+  "van-khan-to-cong-va-cac-vi-than": [
+   {
+    "when": "lunarDay=1,15",
+    "label": "Ngày mồng một / rằm — khấn Thổ công"
+   }
+  ],
+  "van-khan-trung-nguyen-chung-sinh": [
+   {
+    "when": "lunar=7-15",
+    "label": "Rằm tháng Bảy — tiết Trung Nguyên"
+   }
+  ],
+  "van-khan-trung-nguyen-phong-sinh": [
+   {
+    "when": "lunar=7-15",
+    "label": "Rằm tháng Bảy — phóng sinh"
+   }
+  ],
+  "van-khan-trung-nguyen-than-linh": [
+   {
+    "when": "lunar=7-15",
+    "label": "Rằm tháng Bảy — khấn Thần linh tại gia"
+   }
+  ],
+  "van-khan-trung-nguyen-to-tien": [
+   {
+    "when": "lunar=7-15",
+    "label": "Rằm tháng Bảy — khấn gia tiên"
+   }
+  ],
+  "van-khan-tet-han-thuc": [
+   {
+    "when": "lunar=3-3",
+    "label": "Tết Hàn Thực — mồng ba tháng Ba"
+   }
+  ],
+  "van-khan-tet-doan-ngo": [
+   {
+    "when": "lunar=5-5",
+    "label": "Tết Đoan Ngọ — mồng năm tháng Năm"
+   }
+  ],
+  "van-khan-to-tien-tet-trung-thu": [
+   {
+    "when": "lunar=8-15",
+    "label": "Tết Trung Thu — rằm tháng Tám"
+   }
+  ],
+  "van-khan-to-tien-tet-com-moi": [
+   {
+    "when": "lunar=10-1,10-9,10-10",
+    "label": "Tết cơm mới (tháng Mười)"
+   }
+  ],
+  "van-khan-thanh-minh-am-phan-long-mach": [
+   {
+    "when": "term=thanhminh",
+    "label": "Tiết Thanh Minh — lễ âm phần"
+   }
+  ],
+  "van-khan-thanh-minh-ngoai-mo": [
+   {
+    "when": "term=thanhminh",
+    "label": "Tiết Thanh Minh — viếng mộ"
+   }
+  ],
+  "van-khan-cung-sao-giai-han-ram-thang-gieng": [
+   {
+    "when": "lunar=1-15",
+    "label": "Rằm tháng Giêng — cúng sao giải hạn"
+   }
+  ],
+  "van-khan-giai-han-sao-ke-do": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Mùa cúng sao giải hạn đầu năm"
+   }
+  ],
+  "van-khan-giai-han-sao-la-hau": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Mùa cúng sao giải hạn đầu năm"
+   }
+  ],
+  "van-khan-giai-han-sao-moc-duc": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Mùa cúng sao giải hạn đầu năm"
+   }
+  ],
+  "van-khan-giai-han-sao-thai-am": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Mùa cúng sao giải hạn đầu năm"
+   }
+  ],
+  "van-khan-giai-han-sao-thai-bach": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Mùa cúng sao giải hạn đầu năm"
+   }
+  ],
+  "van-khan-giai-han-sao-thai-duong": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Mùa cúng sao giải hạn đầu năm"
+   }
+  ],
+  "van-khan-giai-han-sao-tho-tu": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Mùa cúng sao giải hạn đầu năm"
+   }
+  ],
+  "van-khan-giai-han-sao-thuy-dieu": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Mùa cúng sao giải hạn đầu năm"
+   }
+  ],
+  "van-khan-giai-han-sao-van-han": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Mùa cúng sao giải hạn đầu năm"
+   }
+  ],
+  "van-khan-than-tai": [
+   {
+    "when": "lunar=1-10",
+    "label": "Ngày vía Thần Tài (mồng mười tháng Giêng)"
+   }
+  ],
+  "van-khan-le-phat": [
+   {
+    "when": "lunarDay=1,15",
+    "label": "Ngày mồng một / rằm — lên chùa"
+   }
+  ],
+  "van-khan-tai-chua": [
+   {
+    "when": "lunarDay=1,15",
+    "label": "Ngày mồng một / rằm — lên chùa"
+   }
+  ],
+  "van-khan-le-quan-the-am-bo-tat": [
+   {
+    "when": "lunarDay=1,15",
+    "label": "Ngày mồng một / rằm — ban Quan Âm"
+   }
+  ],
+  "van-khan-le-dia-tang-vuong-bo-tat": [
+   {
+    "when": "lunarDay=1,15",
+    "label": "Ngày mồng một / rằm — ban Địa Tạng"
+   }
+  ],
+  "van-khan-cau-binh-an-tam-bao": [
+   {
+    "when": "lunarDay=1,15",
+    "label": "Ngày mồng một / rằm — ban Tam Bảo"
+   }
+  ],
+  "van-khan-tai-den-ba-chua-kho": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Tháng Giêng — đi vay vốn ở đền Bà Chúa Kho"
+   }
+  ],
+  "van-khan-le-thanh-hoang-dinh-den-mieu": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Tháng Giêng — lễ Thành hoàng ở đình, đền, miếu"
+   }
+  ],
+  "van-khan-le-tam-toa-thanh-mau": [
+   {
+    "when": "lunarMonth=1",
+    "label": "Tháng Giêng — mùa lễ hội tại phủ Mẫu"
+   }
+  ]
+ }
+}

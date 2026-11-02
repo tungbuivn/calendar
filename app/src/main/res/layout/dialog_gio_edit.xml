@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tên người đã khuất"
+            android:textColor="@color/textSecondary"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/gio_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nguyễn Văn Thế"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName|textCapWords"
+            android:maxLines="2"
+            android:textColor="@color/textPrimary"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Người trong gia phả (để tự tính vai vế khi khấn)"
+            android:textColor="@color/textSecondary"
+            android:textSize="12sp" />
+
+        <Spinner
+            android:id="@+id/spinner_gio_person"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/gio_relation_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/secondaryColor"
+            android:textSize="13sp"
+            android:textStyle="italic" />
+
+        <CheckBox
+            android:id="@+id/gio_add_to_family"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Thêm người này vào gia phả (người đã khuất)"
+            android:textColor="@color/textPrimary"
+            android:textSize="14sp" />
+
+        <RadioGroup
+            android:id="@+id/gio_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/mode_solar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Ngày dương"
+                android:textColor="@color/textPrimary"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/mode_lunar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="Ngày âm"
+                android:textColor="@color/textPrimary"
+                android:textSize="14sp" />
+
+        </RadioGroup>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/spinner_day"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Spinner
+                android:id="@+id/spinner_month"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <Spinner
+                android:id="@+id/spinner_year"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.2" />
+
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/gio_leap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tháng nhuận (chỉ dùng khi nhập ngày âm)"
+            android:textColor="@color/textSecondary"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/gio_convert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/month_card_background"
+            android:padding="10dp"
+            android:textColor="@color/textPrimary"
+            android:textSize="13sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Nơi an táng (không bắt buộc)"
+            android:textColor="@color/textSecondary"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/gio_burial_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nghĩa trang quê nhà, chùa…"
+            android:importantForAutofill="no"
+            android:inputType="text"
+            android:maxLines="2"
+            android:textColor="@color/textPrimary"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+</ScrollView>

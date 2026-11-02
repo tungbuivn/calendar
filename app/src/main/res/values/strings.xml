@@ -1,6 +1,9 @@
 <resources>
-    <string name="app_name">ASEAN Calendar</string>
+    <string name="app_name">Lịch Vạn Niên</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="prayer_reminder_channel">Nhắc văn khấn mỗi sáng</string>
+    <string name="prayer_reminder_title">Hôm nay có nghi thức cần khấn</string>
+    <string name="prayer_reminder_text">Chạm để xem các bài văn khấn của ngày hôm nay.</string>
     
 </resources>
