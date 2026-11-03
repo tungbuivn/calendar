@@ -27,8 +27,9 @@ import java.util.Set;
 
 /**
  * Sơ đồ gia phả vẽ tay trên Canvas: kéo để dời khung, chụm hai ngón để phóng,
- * chạm một người để lấy làm mốc, chạm hai lần để sửa, giữ lâu rồi kéo ô này thả lên
- * ô khác để nối quan hệ. Khổ ô tính theo độ dài tên thật nên không còn cảnh tên bị cắt.
+ * chạm một người để lấy làm mốc, chạm hai lần hoặc giữ lâu để sửa. Nối quan hệ
+ * bằng nút "Quan hệ" trong màn hình. Khổ ô tính theo độ dài tên thật nên không
+ * còn cảnh tên bị cắt.
  */
 public class FamilyTreeView extends View {
 
@@ -36,7 +37,7 @@ public class FamilyTreeView extends View {
         /** Chạm một lần: đổi người đứng làm mốc tính vai vế. */
         void onPickRoot(Person person);
 
-        /** Chạm hai lần: mở hộp sửa người. */
+        /** Chạm hai lần hoặc giữ lâu: mở hộp sửa người. */
         void onEditPerson(Person person);
 
         /** Thả ô đang kéo lên một ô khác: xin nối quan hệ giữa hai người. */
@@ -46,6 +47,10 @@ public class FamilyTreeView extends View {
     /** Giới hạn phóng: đủ nhỏ để coi cả gia phả, đủ to để đọc tên trên màn nhỏ. */
     private static final float MAX_SCALE = 3f;
     private static final float MIN_SCALE = 0.18f;
+    /** Số đoạn nhỏ để xấp xỉ góc bo khi dò giao điểm. */
+    private static final int CURVE_STEPS = 18;
+    /** Bán kính cầu vượt tại giao điểm. */
+    private static final float BRIDGE_RADIUS_DP = 7f;
 
     private final Paint fillPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint strokePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -106,6 +111,8 @@ public class FamilyTreeView extends View {
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setStrokeWidth(dp(1.6f));
         linePaint.setColor(color(R.color.primaryLightColor));
+        linePaint.setStrokeCap(Paint.Cap.ROUND);
+        linePaint.setStrokeJoin(Paint.Join.ROUND);
         namePaint.setTextSize(sp(13));
         namePaint.setFakeBoldText(true);
         termPaint.setTextSize(sp(11));
@@ -123,6 +130,18 @@ public class FamilyTreeView extends View {
 
     /** Dựng lại sơ đồ theo gia phả hiện tại; gọi mỗi lần dữ liệu đổi. */
     public void setModel(List<Person> people, List<Relation> relations, String rootId) {
+        // Giữ nguyên zoom/pan khi dữ liệu đổi (đổi mốc, sửa người...): neo người
+        // vừa chọn ở đúng vị trí màn hình cũ thay vì fit lại từ đầu.
+        FamilyTreeLayout.Node oldAnchor = null;
+        float anchorScreenX = 0;
+        float anchorScreenY = 0;
+        if (getWidth() > 0 && !nodes.isEmpty()) {
+            oldAnchor = byId.get(rootId);
+            if (oldAnchor != null) {
+                anchorScreenX = oldAnchor.x * scale + translateX;
+                anchorScreenY = oldAnchor.y * scale + translateY;
+            }
+        }
         nodes.clear();
         byId.clear();
         rows.clear();
@@ -147,16 +166,32 @@ public class FamilyTreeView extends View {
             nodes.add(node);
             byId.put(node.id, node);
         }
+        // Card cùng một khổ để tâm khối vợ/chồng, chấm đỏ và nhánh con thẳng hàng.
+        float uniformWidth = 0f;
+        for (FamilyTreeLayout.Node node : nodes) {
+            uniformWidth = Math.max(uniformWidth, node.width);
+        }
+        for (FamilyTreeLayout.Node node : nodes) {
+            node.width = uniformWidth;
+        }
         FamilyTreeLayout.Result layout = FamilyTreeLayout.layout(nodes);
         contentMinX = layout.minX;
         contentMinY = layout.minY;
         contentMaxX = layout.maxX;
         contentMaxY = layout.maxY;
         rows.addAll(layout.rows);
-        needsFit = true;
         if (getWidth() > 0) {
-            needsFit = false;
-            fitToContent();
+            FamilyTreeLayout.Node newAnchor = byId.get(rootId);
+            if (oldAnchor != null && newAnchor != null) {
+                translateX = anchorScreenX - newAnchor.x * scale;
+                translateY = anchorScreenY - newAnchor.y * scale;
+                needsFit = false;
+            } else {
+                needsFit = false;
+                fitToContent();
+            }
+        } else {
+            needsFit = true;
         }
         invalidate();
     }
@@ -211,37 +246,283 @@ public class FamilyTreeView extends View {
         }
     }
 
-    /** Vợ chồng nối bằng một đoạn ngang; cha mẹ – con bằng đường khuỷu xuống tận từng đứa. */
+    /** Vợ chồng nối bằng một đoạn ngang; cha mẹ – con bằng nhánh vuông góc, giao nhau thì nhảy cầu. */
     private void drawLinks(Canvas canvas) {
+        // Lượt 1: thu thập nhánh con (đen), chia làn ngang để các đoạn ngang
+        // không đè lên nhau, rồi mới vẽ.
+        List<Branch> branches = new ArrayList<>();
         Set<String> drawn = new HashSet<>();
         for (FamilyTreeLayout.Node node : nodes) {
+            if (node.generation == FamilyTreeLayout.GENERATION_UNPLACED) continue;
             if (drawn.contains(node.id)) continue;
             FamilyTreeLayout.Node spouse = node.spouseId == null ? null : byId.get(node.spouseId);
+            if (spouse != null && spouse.generation == FamilyTreeLayout.GENERATION_UNPLACED) spouse = null;
             drawn.add(node.id);
             if (spouse != null) drawn.add(spouse.id);
             List<FamilyTreeLayout.Node> children = childrenOf(node, spouse);
-            if (spouse != null) drawCouple(canvas, node, spouse, children.isEmpty());
-            if (children.isEmpty()) continue;
-            float junctionX = spouse == null ? node.x : (node.x + spouse.x) / 2;
-            float junctionY = node.y + node.height / 2;
-            float childTop = Float.MAX_VALUE;
-            for (FamilyTreeLayout.Node child : children) {
-                childTop = Math.min(childTop, child.y - child.height / 2);
+            if (!children.isEmpty()) branches.add(newBranch(node, spouse, children));
+        }
+        assignBuses(branches);
+        List<List<float[]>> drawnBranches = new ArrayList<>();
+        for (Branch branch : branches) {
+            drawChildBranches(canvas, branch, drawnBranches);
+        }
+
+        // Lượt 2: đường vợ/chồng (đỏ) vẽ sau cùng.
+        drawn.clear();
+        for (FamilyTreeLayout.Node node : nodes) {
+            if (node.generation == FamilyTreeLayout.GENERATION_UNPLACED) continue;
+            if (drawn.contains(node.id)) continue;
+            FamilyTreeLayout.Node spouse = node.spouseId == null ? null : byId.get(node.spouseId);
+            if (spouse != null && spouse.generation == FamilyTreeLayout.GENERATION_UNPLACED) spouse = null;
+            drawn.add(node.id);
+            if (spouse != null) {
+                drawn.add(spouse.id);
+                drawCouple(canvas, node, spouse);
             }
-            float branchY = (junctionY + childTop) / 2;
-            Path path = new Path();
-            path.moveTo(junctionX, junctionY);
-            path.lineTo(junctionX, branchY);
-            for (FamilyTreeLayout.Node child : children) {
-                elbow(path, junctionX, branchY, child.x, child.y - child.height / 2);
-                path.moveTo(junctionX, branchY);
-            }
-            canvas.drawPath(path, linePaint);
         }
     }
 
-    private void drawCouple(Canvas canvas, FamilyTreeLayout.Node left, FamilyTreeLayout.Node right,
-                            boolean hasChildren) {
+    private static final class Branch {
+        FamilyTreeLayout.Node node;
+        FamilyTreeLayout.Node spouse;
+        List<FamilyTreeLayout.Node> children;
+        float junctionX;
+        float parentBottom;
+        float childTop;
+        float spanLeft;
+        float spanRight;
+        float busY;
+    }
+
+    private Branch newBranch(FamilyTreeLayout.Node node, FamilyTreeLayout.Node spouse,
+                             List<FamilyTreeLayout.Node> children) {
+        Branch branch = new Branch();
+        branch.node = node;
+        branch.spouse = spouse;
+        branch.children = children;
+        branch.junctionX = coupleJunctionX(node, spouse);
+        branch.parentBottom = node.y + node.height / 2f;
+        if (spouse != null) {
+            branch.parentBottom = Math.max(branch.parentBottom, spouse.y + spouse.height / 2f);
+        }
+        float top = Float.MAX_VALUE;
+        float left = branch.junctionX;
+        float right = branch.junctionX;
+        for (FamilyTreeLayout.Node child : children) {
+            top = Math.min(top, child.y - child.height / 2f);
+            left = Math.min(left, child.x);
+            right = Math.max(right, child.x);
+        }
+        branch.childTop = top;
+        branch.spanLeft = left;
+        branch.spanRight = right;
+        return branch;
+    }
+
+    /**
+     * Chia làn cho các đoạn ngang: hai nhánh có khoảng x chồng nhau sẽ nằm ở
+     * làn khác nhau, nên các đoạn nằm ngang không bao giờ đè lên nhau.
+     */
+    private void assignBuses(List<Branch> branches) {
+        Map<Integer, List<Branch>> groups = new HashMap<>();
+        for (Branch branch : branches) {
+            List<Branch> group = groups.get(branch.node.generation);
+            if (group == null) {
+                group = new ArrayList<>();
+                groups.put(branch.node.generation, group);
+            }
+            group.add(branch);
+        }
+        for (List<Branch> group : groups.values()) {
+            java.util.Collections.sort(group, (a, b) -> Float.compare(a.spanLeft, b.spanLeft));
+            List<Float> rightEdges = new ArrayList<>();
+            for (Branch branch : group) {
+                float gap = Math.max(1f, branch.childTop - branch.parentBottom);
+                float base = branch.parentBottom + gap * 0.38f;
+                int channel = -1;
+                for (int i = 0; i < rightEdges.size(); i++) {
+                    if (branch.spanLeft > rightEdges.get(i) + dp(4)) {
+                        channel = i;
+                        break;
+                    }
+                }
+                if (channel < 0) {
+                    channel = rightEdges.size();
+                    rightEdges.add(0f);
+                }
+                rightEdges.set(channel, branch.spanRight);
+                float y = base + channel * dp(5);
+                float maxY = branch.childTop - dp(4);
+                if (y > maxY) y = maxY;
+                branch.busY = y;
+            }
+        }
+    }
+
+    private static float coupleJunctionX(FamilyTreeLayout.Node node, FamilyTreeLayout.Node spouse) {
+        if (spouse == null) return node.x;
+        FamilyTreeLayout.Node first = node.x <= spouse.x ? node : spouse;
+        FamilyTreeLayout.Node second = node.x <= spouse.x ? spouse : node;
+        return (first.x + first.width / 2f + second.x - second.width / 2f) / 2f;
+    }
+
+    private static final int TYPE_DIAGONAL = 0;
+    private static final int TYPE_HORIZONTAL = 1;
+    private static final int TYPE_VERTICAL = 2;
+
+    /** Vẽ nhánh cha mẹ – con kiểu vuông góc, có nửa đường tròn tại giao điểm. */
+    private void drawChildBranches(Canvas canvas, Branch branch,
+                                   List<List<float[]>> drawnBranches) {
+        FamilyTreeLayout.Node node = branch.node;
+        FamilyTreeLayout.Node spouse = branch.spouse;
+        List<FamilyTreeLayout.Node> children = branch.children;
+        float junctionX = branch.junctionX;
+        float junctionY = spouse == null ? node.y + node.height / 2 : node.y;
+        // Làn ngang đã được chia sẵn; không ép phải nằm giữa đáy ô và đỉnh ô.
+        float busY = branch.busY;
+
+        // Dựng nhánh vuông góc (có bo góc) thành các đoạn nhỏ để dò giao điểm.
+        List<float[]> segments = new ArrayList<>();
+        Set<Integer> starts = new HashSet<>();
+        starts.add(segments.size());
+        addSegment(segments, junctionX, junctionY, junctionX, busY);
+        for (FamilyTreeLayout.Node child : children) {
+            starts.add(segments.size());
+            float top = child.y - child.height / 2;
+            float span = Math.abs(child.x - junctionX);
+            if (span < 0.5f) {
+                addSegment(segments, junctionX, busY, child.x, top);
+                continue;
+            }
+            float direction = child.x > junctionX ? 1f : -1f;
+            float corner = Math.min(dp(14), Math.min(span / 2f, (top - busY) / 2f));
+            if (corner <= 1f) {
+                addSegment(segments, junctionX, busY, child.x, busY);
+                addSegment(segments, child.x, busY, child.x, top);
+                continue;
+            }
+            addSegment(segments, junctionX, busY, child.x - direction * corner, busY);
+            sampleQuad(segments, child.x - direction * corner, busY,
+                    child.x, busY, child.x, busY + corner);
+            addSegment(segments, child.x, busY + corner, child.x, top);
+        }
+
+        // Giao điểm với nhánh trước: {chỉ số đoạn, t, x, y}.
+        List<float[]> bridges = new ArrayList<>();
+        for (int i = 0; i < segments.size(); i++) {
+            float[] segment = segments.get(i);
+            for (List<float[]> previous : drawnBranches) {
+                for (float[] other : previous) {
+                    float[] hit = segmentIntersection(segment, other);
+                    if (hit == null) continue;
+                    float hx = hit[1];
+                    float hy = hit[2];
+                    if (Math.hypot(hx - junctionX, hy - junctionY) <= dp(14)) continue;
+                    bridges.add(new float[]{i, hit[0], hx, hy});
+                }
+            }
+        }
+        java.util.Collections.sort(bridges, (a, b) -> Float.compare(a[1], b[1]));
+
+        Path path = new Path();
+        boolean started = false;
+        for (int i = 0; i < segments.size(); i++) {
+            float[] s = segments.get(i);
+            float sx = s[0], sy = s[1], ex = s[2], ey = s[3];
+            float dx = ex - sx, dy = ey - sy;
+            float length = (float) Math.hypot(dx, dy);
+            if (length < 0.01f) continue;
+            float ux = dx / length, uy = dy / length;
+            if (starts.contains(i)) {
+                path.moveTo(sx, sy);
+                started = true;
+            } else if (!started) {
+                path.moveTo(sx, sy);
+                started = true;
+            }
+            for (float[] bridge : bridges) {
+                if ((int) bridge[0] != i) continue;
+                float t = bridge[1];
+                if (t <= 0.02f || t >= 0.98f) continue;
+                float reach = Math.min(t, 1f - t) * length;
+                float radius = Math.min(dp(BRIDGE_RADIUS_DP), reach * 0.6f);
+                if (radius < dp(1.5f)) continue;
+                float bx = sx + dx * t;
+                float by = sy + dy * t;
+                float startX = bx - ux * radius;
+                float startY = by - uy * radius;
+                float endX = bx + ux * radius;
+                float endY = by + uy * radius;
+                path.lineTo(startX, startY);
+                int type = (int) s[4];
+                if (type == TYPE_HORIZONTAL) {
+                    // Đường ngang: nửa vòng tròn vòng lên trên, đúng kiểu _____A____.
+                    RectF oval = new RectF(bx - radius, by - radius, bx + radius, by + radius);
+                    if (dx > 0) path.arcTo(oval, 180, 180);
+                    else path.arcTo(oval, 0, -180);
+                } else if (type == TYPE_VERTICAL) {
+                    // Đường dọc: nửa vòng tròn vòng sang phải.
+                    RectF oval = new RectF(bx - radius, by - radius, bx + radius, by + radius);
+                    if (dy > 0) path.arcTo(oval, 270, 180);
+                    else path.arcTo(oval, 90, -180);
+                } else {
+                    // Góc bo xiên: hiếm gặp giao điểm, dùng cung mềm cùng hướng.
+                    float nx = -uy, ny = ux;
+                    float handle = (4f / 3f) * radius;
+                    path.cubicTo(startX + nx * handle, startY + ny * handle,
+                            endX + nx * handle, endY + ny * handle,
+                            endX, endY);
+                }
+            }
+            path.lineTo(ex, ey);
+        }
+        canvas.drawPath(path, linePaint);
+        drawnBranches.add(segments);
+    }
+
+    private static void addSegment(List<float[]> out, float x1, float y1, float x2, float y2) {
+        if (Math.abs(x2 - x1) < 0.01f && Math.abs(y2 - y1) < 0.01f) return;
+        int type = TYPE_DIAGONAL;
+        if (Math.abs(y2 - y1) < 0.01f) {
+            type = TYPE_HORIZONTAL;
+        } else if (Math.abs(x2 - x1) < 0.01f) {
+            type = TYPE_VERTICAL;
+        }
+        out.add(new float[]{x1, y1, x2, y2, type});
+    }
+
+    /** Xấp xỉ góc bo (Bezier bậc hai) thành các đoạn nhỏ. */
+    private static void sampleQuad(List<float[]> out, float x0, float y0, float cx, float cy,
+                                   float x1, float y1) {
+        float px = x0;
+        float py = y0;
+        for (int i = 1; i <= CURVE_STEPS; i++) {
+            float t = i / (float) CURVE_STEPS;
+            float mt = 1f - t;
+            float x = mt * mt * x0 + 2f * mt * t * cx + t * t * x1;
+            float y = mt * mt * y0 + 2f * mt * t * cy + t * t * y1;
+            addSegment(out, px, py, x, y);
+            px = x;
+            py = y;
+        }
+    }
+
+    /** Giao hai đoạn thẳng; trả {t trên đoạn a, x, y} hoặc null. */
+    private static float[] segmentIntersection(float[] a, float[] b) {
+        float ax = a[0], ay = a[1], bx = a[2], by = a[3];
+        float cx = b[0], cy = b[1], dx = b[2], dy = b[3];
+        float r1x = bx - ax, r1y = by - ay;
+        float r2x = dx - cx, r2y = dy - cy;
+        float denominator = r1x * r2y - r1y * r2x;
+        if (Math.abs(denominator) < 1e-4f) return null;
+        float t = ((cx - ax) * r2y - (cy - ay) * r2x) / denominator;
+        float u = ((cx - ax) * r1y - (cy - ay) * r1x) / denominator;
+        if (t <= 0.02f || t >= 0.98f || u <= 0.02f || u >= 0.98f) return null;
+        return new float[]{t, ax + t * r1x, ay + t * r1y};
+    }
+
+    private void drawCouple(Canvas canvas, FamilyTreeLayout.Node left, FamilyTreeLayout.Node right) {
         FamilyTreeLayout.Node first = left.x <= right.x ? left : right;
         FamilyTreeLayout.Node second = left.x <= right.x ? right : left;
         strokePaint.setColor(color(R.color.secondaryColor));
@@ -249,29 +530,18 @@ public class FamilyTreeView extends View {
         canvas.drawLine(first.x + first.width / 2, first.y,
                 second.x - second.width / 2, second.y, strokePaint);
         strokePaint.setStrokeWidth(dp(1.2f));
-        if (hasChildren) return;
+        // Chấm đỏ ở giữa khe hai ô: đúng điểm nhánh con màu đen bám vào.
         fillPaint.setColor(color(R.color.secondaryColor));
-        canvas.drawCircle((left.x + right.x) / 2, left.y, dp(3.5f), fillPaint);
+        float dotX = (first.x + first.width / 2f + second.x - second.width / 2f) / 2f;
+        canvas.drawCircle(dotX, left.y, dp(3.5f), fillPaint);
     }
 
-    /** Khuỷu bo góc: đi ngang tới cột của đứa con rồi mới xuống, ra dáng cành cây. */
-    private void elbow(Path path, float fromX, float fromY, float toX, float toY) {
-        float span = Math.abs(toX - fromX);
-        if (span < 0.5f) {
-            path.lineTo(toX, toY);
-            return;
-        }
-        float direction = toX > fromX ? 1 : -1;
-        float corner = Math.min(dp(14), span / 2);
-        path.lineTo(toX - direction * corner, fromY);
-        path.quadTo(toX, fromY, toX, fromY + corner);
-        path.lineTo(toX, toY);
-    }
 
     private List<FamilyTreeLayout.Node> childrenOf(FamilyTreeLayout.Node left,
                                                   FamilyTreeLayout.Node right) {
         List<FamilyTreeLayout.Node> result = new ArrayList<>();
         for (FamilyTreeLayout.Node candidate : nodes) {
+            if (candidate.generation == FamilyTreeLayout.GENERATION_UNPLACED) continue;
             if (candidate.id.equals(left.id)) continue;
             if (right != null && candidate.id.equals(right.id)) continue;
             boolean child = left.id.equals(candidate.fatherId) || left.id.equals(candidate.motherId)
@@ -383,14 +653,10 @@ public class FamilyTreeView extends View {
 
         @Override
         public void onLongPress(MotionEvent event) {
-            if (pressNode == null || linkSource != null) return;
-            linkSource = pressNode;
-            linkTarget = null;
-            linkX = event.getX();
-            linkY = event.getY();
-            toWorld();
+            FamilyTreeLayout.Node node = nodeAt(event.getX(), event.getY());
+            if (node == null || listener == null) return;
             performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-            invalidate();
+            listener.onEditPerson(((Item) node.tag).person);
         }
 
         @Override

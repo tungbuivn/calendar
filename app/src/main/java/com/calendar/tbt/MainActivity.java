@@ -19,6 +19,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.navigation.NavigationView;
 import android.view.Menu;
@@ -31,11 +35,11 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1002;
     private static final int REQUEST_MONTH_CALENDAR = 2001;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+    private DonationManager donationManager;
 
     // Current date for navigation
     private java.util.Calendar currentDate;
@@ -48,22 +52,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_main);
+        KinshipTerms.load(this);
+        donationManager = new DonationManager(this);
 
         // Initialize navigation drawer
         setupNavigationDrawer();
 
-        // Initialize bottom toolbar buttons
-        setupBottomToolbar();
-
-        // Request location permissions
-        requestLocationPermissions();
+        // Initialize Material 3 bottom navigation
+        setupBottomNavigation();
+        applyBottomNavigationInset();
+        applyTopStatusInset();
 
         // Android 13+ needs explicit consent before the morning reminder can show
         requestNotificationPermission();
-
-        // Request battery optimization permission for Android 6.0+
-        requestBatteryOptimizationPermission();
 
         // Force update all widgets to ensure they show current data
         forceUpdateAllWidgets();
@@ -93,8 +96,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Handle status bar height for notch devices
-        handleStatusBarHeight();
 
         // Set up navigation item selection listener
         navigationView.setNavigationItemSelectedListener(item -> {
@@ -107,6 +108,13 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
 
+            if (id == R.id.nav_donate) {
+                donationManager.showDialog();
+                drawerLayout.closeDrawers();
+                return true;
+            }
+
+
             return false;
         });
 
@@ -117,43 +125,81 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
     }
 
-    private void setupBottomToolbar() {
-        Button monthCalendarButton = findViewById(R.id.month_calendar);
-        Button todayButton = findViewById(R.id.today);
-        Button vanKhanButton = findViewById(R.id.van_khan);
-
-        monthCalendarButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MonthCalendarActivity.class);
-            if (currentDate != null) {
-                intent.putExtra(MonthCalendarActivity.EXTRA_YEAR,
-                        currentDate.get(java.util.Calendar.YEAR));
-                intent.putExtra(MonthCalendarActivity.EXTRA_MONTH,
-                        currentDate.get(java.util.Calendar.MONTH) + 1);
-                intent.putExtra(MonthCalendarActivity.EXTRA_DAY,
-                        currentDate.get(java.util.Calendar.DAY_OF_MONTH));
+    private void setupBottomNavigation() {
+        BottomNavigationView bottom = findViewById(R.id.bottom_navigation);
+        bottom.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.month_calendar) {
+                openMonthCalendar();
+                return true;
             }
-            startActivityForResult(intent, REQUEST_MONTH_CALENDAR);
-        });
-
-        todayButton.setOnClickListener(v -> {
-            // Jump to today's date
-            jumpToToday();
-        });
-
-        vanKhanButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, VanKhanActivity.class);
-            if (currentDate != null) {
-                intent.putExtra(VanKhanActivity.EXTRA_YEAR, currentDate.get(java.util.Calendar.YEAR));
-                intent.putExtra(VanKhanActivity.EXTRA_MONTH, currentDate.get(java.util.Calendar.MONTH) + 1);
-                intent.putExtra(VanKhanActivity.EXTRA_DAY, currentDate.get(java.util.Calendar.DAY_OF_MONTH));
+            if (id == R.id.today) {
+                jumpToToday();
+                return true;
             }
-            startActivity(intent);
+            if (id == R.id.van_khan) {
+                openVanKhan();
+                return true;
+            }
+            if (id == R.id.gia_pha) {
+                startActivity(new Intent(this, GiaPhaActivity.class));
+                return true;
+            }
+            return false;
         });
-
-        findViewById(R.id.gia_pha).setOnClickListener(v ->
-                startActivity(new Intent(this, GiaPhaActivity.class)));
     }
 
+    private void openMonthCalendar() {
+        Intent intent = new Intent(this, MonthCalendarActivity.class);
+        if (currentDate != null) {
+            intent.putExtra(MonthCalendarActivity.EXTRA_YEAR,
+                    currentDate.get(java.util.Calendar.YEAR));
+            intent.putExtra(MonthCalendarActivity.EXTRA_MONTH,
+                    currentDate.get(java.util.Calendar.MONTH) + 1);
+            intent.putExtra(MonthCalendarActivity.EXTRA_DAY,
+                    currentDate.get(java.util.Calendar.DAY_OF_MONTH));
+        }
+        startActivityForResult(intent, REQUEST_MONTH_CALENDAR);
+    }
+
+    private void openVanKhan() {
+        Intent intent = new Intent(this, VanKhanActivity.class);
+        if (currentDate != null) {
+            intent.putExtra(VanKhanActivity.EXTRA_YEAR, currentDate.get(java.util.Calendar.YEAR));
+            intent.putExtra(VanKhanActivity.EXTRA_MONTH, currentDate.get(java.util.Calendar.MONTH) + 1);
+            intent.putExtra(VanKhanActivity.EXTRA_DAY, currentDate.get(java.util.Calendar.DAY_OF_MONTH));
+        }
+        startActivity(intent);
+    }
+
+    private void applyTopStatusInset() {
+        final View main = findViewById(R.id.main_content);
+        final int baseTop = main.getPaddingTop();
+        ViewCompat.setOnApplyWindowInsetsListener(main, (view, insets) -> {
+            int statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            view.setPadding(view.getPaddingLeft(), baseTop + statusBar,
+                    view.getPaddingRight(), view.getPaddingBottom());
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(main);
+    }
+    /** Đẩy hàng nút lên trên navigation bar (gesture/3-button). */
+    private void applyBottomNavigationInset() {
+        final BottomNavigationView bottom = findViewById(R.id.bottom_navigation);
+        final int baseBottom = bottom.getPaddingBottom();
+        ViewCompat.setOnApplyWindowInsetsListener(bottom, (view, insets) -> {
+            int navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+            view.setPadding(view.getPaddingLeft(), view.getPaddingTop(),
+                    view.getPaddingRight(), baseBottom + navBar);
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(bottom);
+    }
+    @Override
+    protected void onDestroy() {
+        if (donationManager != null) donationManager.destroy();
+        super.onDestroy();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -275,47 +321,6 @@ public class MainActivity extends AppCompatActivity {
         sendBroadcast(intent);
     }
 
-    /**
-     * Request battery optimization permission for Android 6.0+
-     * This is important for widgets and background services to work properly
-     */
-    private void requestBatteryOptimizationPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            String packageName = getPackageName();
-
-            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
-                try {
-                    Intent intent = new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-                    intent.setData(Uri.parse("package:" + packageName));
-                    startActivity(intent);
-                } catch (Exception e) {
-                    // Fallback: open battery optimization settings
-                    try {
-                        Intent intent = new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-                        startActivity(intent);
-                    } catch (Exception e2) {
-                        // If both fail, just log the error
-                        android.util.Log.e("MainActivity", "Could not open battery optimization settings", e2);
-                    }
-                }
-            }
-        }
-    }
-
-    private void requestLocationPermissions() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(this,
-                    new String[] { Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION },
-                    LOCATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
     private void requestNotificationPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return;
         if (ContextCompat.checkSelfPermission(this,
@@ -350,16 +355,6 @@ public class MainActivity extends AppCompatActivity {
                 PrayerReminder.refreshNow(this);
             }
             return;
-        }
-
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Location permission granted!", Toast.LENGTH_SHORT).show();
-                // Force weather refresh with new location
-                CalendarWidget.refreshWeather(this);
-            } else {
-                Toast.makeText(this, "Location permission denied. Using default location.", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 

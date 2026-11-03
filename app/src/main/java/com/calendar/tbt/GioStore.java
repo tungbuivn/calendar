@@ -133,6 +133,73 @@ public final class GioStore {
         write(context, list);
     }
 
+    /**
+     * Bảo đảm mọi ngày giỗ đều có người tương ứng trong gia phả.
+     * Ngày giỗ cũ chưa nối sẽ được ghép theo tên hoặc tạo người mới (đã khuất).
+     */
+    public static void ensureFamilyLinks(Context context) {
+        List<Memorial> list = all(context);
+        List<FamilyStore.Person> people = FamilyStore.all(context);
+        boolean changed = false;
+        for (int i = 0; i < list.size(); i++) {
+            Memorial memorial = list.get(i);
+            FamilyStore.Person person = FamilyStore.find(people, memorial.personId);
+            if (person == null) {
+                person = FamilyStore.byName(people, memorial.name);
+                if (person == null) {
+                    person = new FamilyStore.Person(null, memorial.name,
+                            FamilyStore.UNKNOWN, 0, true, "", "", "");
+                    if (FamilyStore.saveChecked(context, person) != null) continue;
+                    people.add(person);
+                }
+                list.set(i, new Memorial(memorial.id, memorial.name, memorial.lunarDay,
+                        memorial.lunarMonth, memorial.lunarYear, memorial.lunarLeap,
+                        memorial.solarDay, memorial.solarMonth, memorial.solarYear,
+                        memorial.burialPlace, person.id));
+                changed = true;
+            }
+            if (!person.deceased) {
+                person.deceased = true;
+                FamilyStore.save(context, person);
+            }
+        }
+        if (changed) write(context, list);
+    }
+    /** Đổi tên người trong gia phả thì cập nhật mọi ngày giỗ đang nối tới người đó. */
+    public static void updatePersonName(Context context, String personId, String newName) {
+        if (personId == null || personId.trim().isEmpty() || newName == null) return;
+        String name = newName.trim();
+        if (name.isEmpty()) return;
+        List<Memorial> list = all(context);
+        boolean changed = false;
+        for (int i = 0; i < list.size(); i++) {
+            Memorial m = list.get(i);
+            if (personId.equals(m.personId) && !name.equals(m.name)) {
+                list.set(i, new Memorial(m.id, name, m.lunarDay, m.lunarMonth, m.lunarYear,
+                        m.lunarLeap, m.solarDay, m.solarMonth, m.solarYear,
+                        m.burialPlace, m.personId));
+                changed = true;
+            }
+        }
+        if (changed) write(context, list);
+    }
+
+    /** Gỡ liên kết khi người trong gia phả bị xoá; ngày giỗ vẫn được giữ lại. */
+    public static void clearPerson(Context context, String personId) {
+        if (personId == null || personId.trim().isEmpty()) return;
+        List<Memorial> list = all(context);
+        boolean changed = false;
+        for (int i = 0; i < list.size(); i++) {
+            Memorial m = list.get(i);
+            if (personId.equals(m.personId)) {
+                list.set(i, new Memorial(m.id, m.name, m.lunarDay, m.lunarMonth, m.lunarYear,
+                        m.lunarLeap, m.solarDay, m.solarMonth, m.solarYear,
+                        m.burialPlace, ""));
+                changed = true;
+            }
+        }
+        if (changed) write(context, list);
+    }
     /** Nhập ngày dương, quy đổi ra âm lịch để lưu. */
     public static Memorial fromSolar(String id, String name, int day, int month, int year,
                                      String burial, String personId) {

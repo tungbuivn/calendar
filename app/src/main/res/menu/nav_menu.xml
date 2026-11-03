@@ -6,6 +6,12 @@
             android:id="@+id/nav_widget_settings"
             android:icon="@drawable/ic_calendar"
             android:title="Widget Settings" />
+        <item
+            android:id="@+id/nav_donate"
+            android:checkable="false"
+            android:icon="@drawable/ic_donate"
+            android:title="Ủng hộ ứng dụng" />
+
     </group>
 
 </menu> 

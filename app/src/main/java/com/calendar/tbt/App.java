@@ -13,6 +13,7 @@ public final class App extends Application {
         Thread warmup = new Thread(() -> {
             ProfileStore.preload(appContext);
             GioStore.preload(appContext);
+        GioStore.ensureFamilyLinks(appContext);
             PrayerVault.preload(appContext);
             PrayerReminder.scheduleNextMorning(appContext);
         }, "calendar-warmup");

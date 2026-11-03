@@ -13,6 +13,8 @@ import android.widget.Toast;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.CheckBox;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import androidx.appcompat.widget.Toolbar;
 
 public class WidgetSettingsActivity extends Activity {
@@ -28,17 +30,20 @@ public class WidgetSettingsActivity extends Activity {
     private TextView weatherFontSizeText;
     private RadioGroup languageRadioGroup;
     private CheckBox hideTopSectionCheckBox;
+    private Spinner weatherCitySpinner;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_widget_settings);
+        AppChrome.setup(this, R.id.today);
         
         preferences = new WidgetPreferences(this);
         
         setupToolbar();
         initializeViews();
         setupSeekBars();
+        setupWeatherCity();
         setupLanguageSelection();
         setupHideTopSection();
         setupButtons();
@@ -90,6 +95,31 @@ public class WidgetSettingsActivity extends Activity {
         
         languageRadioGroup = findViewById(R.id.language_radio_group);
         hideTopSectionCheckBox = findViewById(R.id.hide_top_section_checkbox);
+        weatherCitySpinner = findViewById(R.id.weather_city_spinner);
+    }
+
+    private void setupWeatherCity() {
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, WeatherService.getCityNames());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        weatherCitySpinner.setAdapter(adapter);
+        weatherCitySpinner.setSelection(preferences.getWeatherCityIndex());
+        weatherCitySpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                if (position == preferences.getWeatherCityIndex()) return;
+                preferences.setWeatherCityIndex(position);
+                WeatherService.clearCache();
+                CalendarWidget.refreshWeather(WidgetSettingsActivity.this);
+                Toast.makeText(WidgetSettingsActivity.this,
+                        "Thành phố thời tiết: " + WeatherService.CITY_NAMES[position],
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {
+            }
+        });
     }
     
     private void setupSeekBars() {
@@ -250,16 +280,17 @@ public class WidgetSettingsActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // Reset to defaults
-                preferences.setWeekFontSize(24);
-                preferences.setTimeFontSize(48);
-                preferences.setDayFontSize(24);
+                preferences.setWeekFontSize(20);
+                preferences.setTimeFontSize(40);
+                preferences.setDayFontSize(18);
                 preferences.setLanguage("vi");
                 preferences.setHideTopSection(false);
+                preferences.setWeatherCityIndex(0);
                 
                 // Update seekbars
-                weekFontSeekBar.setProgress(16);
-                timeFontSeekBar.setProgress(24);
-                dayFontSeekBar.setProgress(8);
+                weekFontSeekBar.setProgress(8);
+                timeFontSeekBar.setProgress(16);
+                dayFontSeekBar.setProgress(2);
                 
                 // Update text
                 weekFontSizeText.setText("Week Font Size: "+preferences.getWeekFontSize()+"sp");
@@ -271,6 +302,7 @@ public class WidgetSettingsActivity extends Activity {
                 
                 // Update checkbox
                 hideTopSectionCheckBox.setChecked(false);
+                if (weatherCitySpinner != null) weatherCitySpinner.setSelection(0);
                 
                 updateWidget();
                 Toast.makeText(WidgetSettingsActivity.this, "Settings reset to defaults!", Toast.LENGTH_SHORT).show();

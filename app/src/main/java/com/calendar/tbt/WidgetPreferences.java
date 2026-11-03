@@ -12,6 +12,7 @@ public class WidgetPreferences {
     private static final String KEY_WEATHER_FONT_SIZE = "weather_font_size";
     private static final String KEY_LANGUAGE = "language";
     private static final String KEY_HIDE_TOP_SECTION = "hide_top_section";
+    private static final String KEY_WEATHER_CITY = "weather_city";
     
     private SharedPreferences preferences;
     
@@ -24,7 +25,7 @@ public class WidgetPreferences {
     }
     
     public int getWeekFontSize() {
-        return preferences.getInt(KEY_WEEK_FONT_SIZE, 24); // Default 24sp
+        return preferences.getInt(KEY_WEEK_FONT_SIZE, 20); // Default 20sp
     }
     
     public void setTimeFontSize(int size) {
@@ -32,7 +33,7 @@ public class WidgetPreferences {
     }
     
     public int getTimeFontSize() {
-        return preferences.getInt(KEY_TIME_FONT_SIZE, 48); // Default 48sp
+        return preferences.getInt(KEY_TIME_FONT_SIZE, 40); // Default 40sp
     }
     
     public void setDayFontSize(int size) {
@@ -40,7 +41,7 @@ public class WidgetPreferences {
     }
     
     public int getDayFontSize() {
-        return preferences.getInt(KEY_DAY_FONT_SIZE, 24); // Default 24sp
+        return preferences.getInt(KEY_DAY_FONT_SIZE, 18); // Default 18sp
     }
     
     public void setWeatherFontSize(int size) {
@@ -48,7 +49,7 @@ public class WidgetPreferences {
     }
     
     public int getWeatherFontSize() {
-        return preferences.getInt(KEY_WEATHER_FONT_SIZE, 14); // Default 14sp
+        return preferences.getInt(KEY_WEATHER_FONT_SIZE, 16); // Default 16sp
     }
     
     public void setLanguage(String language) {
@@ -76,5 +77,13 @@ public class WidgetPreferences {
     
     public boolean getHideTopSection() {
         return preferences.getBoolean(KEY_HIDE_TOP_SECTION, false); // Default to show
+    }
+
+    public void setWeatherCityIndex(int index) {
+        preferences.edit().putInt(KEY_WEATHER_CITY, index).apply();
+    }
+
+    public int getWeatherCityIndex() {
+        return preferences.getInt(KEY_WEATHER_CITY, 0); // Default Hà Nội
     }
 } 

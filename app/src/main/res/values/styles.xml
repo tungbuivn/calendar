@@ -1,17 +1,31 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <!-- Material 3 app theme -->
+    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorAccent">@color/secondaryColor</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="colorOnPrimary">@color/textLight</item>
+        <item name="colorPrimaryContainer">@color/monthTonal</item>
+        <item name="colorOnPrimaryContainer">@color/primaryDarkColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorOnSecondary">@color/textLight</item>
+        <item name="colorSecondaryContainer">@color/monthTonal</item>
+        <item name="colorOnSecondaryContainer">@color/primaryDarkColor</item> 
+        <item name="colorSurface">@color/backgroundPrimary</item>
+        <item name="colorOnSurface">@color/textPrimary</item>
+        <item name="colorSurfaceVariant">@color/backgroundSecondary</item>
+        <item name="colorOnSurfaceVariant">@color/textSecondary</item>
+        <item name="colorOutline">@color/cardBorder</item>
         <item name="android:windowBackground">@color/backgroundPrimary</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
         <item name="android:textColorPrimary">@color/textPrimary</item>
         <item name="android:textColorSecondary">@color/textSecondary</item>
     </style>
 
+    <!-- Backwards-compatible alias for the MainActivity trial theme -->
+    <style name="Theme.LichVanNien.Main" parent="AppTheme" />
     <!-- Modern Card Style -->
     <style name="CardStyle">
         <item name="android:background">@drawable/card_background</item>
@@ -28,4 +42,5 @@
         <item name="android:minHeight">48dp</item>
     </style>
 
+e>
 </resources>

@@ -41,6 +41,7 @@ public class GioSettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gio_settings);
+        AppChrome.setup(this, R.id.today);
 
         WindowInsetsControllerCompat controller =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
@@ -58,6 +59,8 @@ public class GioSettingsActivity extends AppCompatActivity {
         currentYear = Calendar.getInstance().get(Calendar.YEAR);
         for (int year = currentYear + 1; year >= 1900; year--) years.add(year);
 
+        setupReminderDays();
+
         list = findViewById(R.id.gio_list);
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(new GioAdapter());
@@ -65,6 +68,31 @@ public class GioSettingsActivity extends AppCompatActivity {
         findViewById(R.id.add_gio_button).setOnClickListener(v -> openEditor(null));
     }
 
+    private void setupReminderDays() {
+        Spinner spinner = findViewById(R.id.reminder_days_spinner);
+        String[] labels = new String[ReminderPreferences.MAX_DAYS + 1];
+        for (int i = 0; i <= ReminderPreferences.MAX_DAYS; i++) {
+            labels[i] = i + " ngày";
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, labels);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        int saved = ReminderPreferences.getDaysBefore(this);
+        spinner.setSelection(saved, false);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == ReminderPreferences.getDaysBefore(GioSettingsActivity.this)) return;
+                ReminderPreferences.setDaysBefore(GioSettingsActivity.this, position);
+                PrayerReminder.refreshNow(GioSettingsActivity.this);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -72,6 +100,7 @@ public class GioSettingsActivity extends AppCompatActivity {
     }
 
     private void reload() {
+        GioStore.ensureFamilyLinks(this);
         items.clear();
         items.addAll(GioStore.all(this));
         family.clear();
@@ -149,7 +178,9 @@ public class GioSettingsActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
         });
-        addToFamily.setChecked(false);
+        addToFamily.setText("Tự động thêm người này vào Gia phả");
+        addToFamily.setChecked(true);
+        addToFamily.setEnabled(false);
         addToFamily.setVisibility(linked[0].isEmpty() ? View.VISIBLE : View.GONE);
         showRelationNote(relationNote, linked[0]);
         int day = existing == null ? Calendar.getInstance().get(Calendar.DAY_OF_MONTH) : existing.lunarDay;
@@ -208,7 +239,10 @@ public class GioSettingsActivity extends AppCompatActivity {
                     String burial = burialInput.getText().toString();
                     String id = existing == null ? null : existing.id;
                     String personId = linked[0];
-                    if (personId.isEmpty() && addToFamily.isChecked()) {
+                    FamilyStore.Person linkedPerson = personId.isEmpty()
+                            ? null : FamilyStore.find(GioSettingsActivity.this, personId);
+                    if (linkedPerson == null) {
+                        // Người chưa có trong gia phả: tạo luôn để có thể sửa trong cây.
                         FamilyStore.Person created = new FamilyStore.Person(null, name,
                                 FamilyStore.UNKNOWN, 0, true, "", "", "");
                         String problem = FamilyStore.saveChecked(GioSettingsActivity.this, created);
@@ -217,6 +251,12 @@ public class GioSettingsActivity extends AppCompatActivity {
                             return;
                         }
                         personId = created.id;
+                    } else {
+                        // Sửa tên ở ngày giỗ thì cập nhật luôn người trong gia phả.
+                        boolean changed = !linkedPerson.name.equals(name) || !linkedPerson.deceased;
+                        linkedPerson.name = name;
+                        linkedPerson.deceased = true;
+                        if (changed) FamilyStore.save(GioSettingsActivity.this, linkedPerson);
                     }
                     GioStore.Memorial saved;
                     try {

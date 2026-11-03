@@ -203,7 +203,7 @@ public class CalendarWidget extends AppWidgetProvider {
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.calendar_widget);
 
             // Update time, lunar calendar, and weather
-            views.setTextViewText(R.id.widget_time, currentTime);
+            // widget_time is a TextClock; it updates itself every minute.
             views.setTextViewTextSize(R.id.widget_time, android.util.TypedValue.COMPLEX_UNIT_SP,
                     preferences.getTimeFontSize());
             views.setTextViewText(R.id.widget_moon_calendar, lunarDate);
@@ -354,11 +354,26 @@ public class CalendarWidget extends AppWidgetProvider {
         // Set the text views with custom font sizes
         android.util.Log.d("CalendarWidget", "=== Setting weather text to widget view: " + weatherInfo + " ===");
         android.util.Log.d("CalendarWidget", "=== Setting location name to widget view: " + locationName + " ===");
-        views.setTextViewText(R.id.widget_time, currentTime);
+        // widget_time is a TextClock; it updates itself every minute.
         views.setTextViewText(R.id.widget_day_date, dayDateString);
         views.setTextViewText(R.id.widget_moon_calendar, lunarDate);
         views.setTextViewText(R.id.widget_weather, weatherInfo);
         views.setTextViewText(R.id.location_name, locationName);
+
+        // Light "paper" widget palette; text colours are set here because
+        // RemoteViews keeps the XML defaults for static labels.
+        int widgetPrimary = androidx.core.content.ContextCompat.getColor(context, R.color.primaryDarkColor);
+        int widgetMuted = androidx.core.content.ContextCompat.getColor(context, R.color.widgetMuted);
+        int widgetAccent = androidx.core.content.ContextCompat.getColor(context, R.color.widgetAccent);
+        views.setTextColor(R.id.label_month, widgetPrimary);
+        views.setTextColor(R.id.widget_moon_calendar_title, widgetMuted);
+        views.setTextColor(R.id.widget_moon_calendar, widgetAccent);
+        views.setTextColor(R.id.widget_time, widgetPrimary);
+        views.setTextColor(R.id.widget_day_date, widgetMuted);
+        views.setTextColor(R.id.location_name, widgetPrimary);
+        views.setTextColor(R.id.widget_weather, widgetAccent);
+        views.setTextViewText(R.id.widget_moon_calendar_title,
+                "vi".equals(language) ? "ÂM LỊCH" : "LUNAR");
        
         
         android.util.Log.d("CalendarWidget", "=== Weather and location text set to widget view successfully ===");
@@ -384,18 +399,19 @@ public class CalendarWidget extends AppWidgetProvider {
         }
         // Launchers reserve some padding around the cell; keep a safe margin.
         int widgetHeightDp = Math.max(140, cellHeightDp - 32);
+        boolean compactWidget = widgetHeightDp < 170;
 
         float fontScale = context.getResources().getConfiguration().fontScale;
         int weekFont = preferences.getWeekFontSize();
         float topSectionDp = 0f;
         if (!hideTopSection) {
-            // month row + day-label row + margin + week-date row (min 32dp + padding)
-            topSectionDp = (20f * 1.35f * fontScale) * 2f + 4f + 8f
-                    + Math.max(32f, weekFont * 1.35f * fontScale);
+            // month row + optional day-label row + margin + week-date row
+            topSectionDp = (17f * 1.35f * fontScale) + 7f
+                    + (compactWidget ? 0f : ((11f * 1.35f * fontScale) + 4f))
+                    + Math.max(38f, weekFont * 1.35f * fontScale);
         }
-        // The bottom columns use 4dp of vertical padding each.
         float availableMiddleDp = Math.max(40f,
-                widgetHeightDp - 24f /* root padding */ - topSectionDp - 8f);
+                widgetHeightDp - 28f /* root padding */ - topSectionDp - 8f);
 
         int preferredTimeSize = preferences.getTimeFontSize();
         int preferredDaySize = preferences.getDayFontSize();
@@ -405,12 +421,19 @@ public class CalendarWidget extends AppWidgetProvider {
         int fittedTimeSize = Math.max(18, Math.round(preferredTimeSize * fitScale));
         int fittedDaySize = Math.max(12, Math.round(preferredDaySize * fitScale));
 
-        float contentWidthDp = Math.max(120f, widgetWidthDp - 24f);
-        float weatherColumnDp = contentWidthDp * (0.6f / 2.1f) - 8f;
-        float moonColumnDp = contentWidthDp * (0.5f / 2.1f) - 8f;
+        float contentWidthDp = Math.max(120f, widgetWidthDp - 28f);
+        float weatherColumnDp = contentWidthDp * (0.9f / 2.95f) - 8f;
+        float moonColumnDp = contentWidthDp * (0.8f / 2.95f) - 8f;
         int fittedWeatherSize = fitTextSizeToWidth(context, weatherInfo,
                 preferences.getWeatherFontSize(), weatherColumnDp);
-        int fittedLunarSize = fitTextSizeToWidth(context, lunarDate, 22, moonColumnDp);
+        int fittedLunarSize = fitTextSizeToWidth(context, lunarDate, 20, moonColumnDp);
+        float timeColumnDp = contentWidthDp * (1.25f / 2.95f) - 8f;
+        int fittedTimeByWidth = fitTextSizeToWidth(context, currentTime,
+                preferredTimeSize, timeColumnDp);
+        int fittedDayByWidth = fitTextSizeToWidth(context, dayDateString,
+                preferredDaySize, timeColumnDp);
+        fittedTimeSize = Math.max(14, Math.min(fittedTimeSize, fittedTimeByWidth));
+        fittedDaySize = Math.max(10, Math.min(fittedDaySize, fittedDayByWidth));
 
         android.util.Log.d("CalendarWidget", "Widget " + appWidgetId + " fit: cell="
                 + widgetWidthDp + "x" + cellHeightDp + "dp, time=" + fittedTimeSize
@@ -499,11 +522,14 @@ public class CalendarWidget extends AppWidgetProvider {
             views.setTextViewText(R.id.label_month, dayNumber + " / " + monthNumber + " / " + year);
         } else {
             views.setViewVisibility(R.id.widget_week_card, android.view.View.VISIBLE);
-            views.setViewVisibility(R.id.widget_top_section, android.view.View.VISIBLE);
+            views.setViewVisibility(R.id.widget_top_section,
+                    compactWidget ? android.view.View.GONE : android.view.View.VISIBLE);
             views.setViewVisibility(R.id.widget_middle_section, android.view.View.VISIBLE);
             // Show normal month label when sections are visible
             views.setTextViewText(R.id.label_month, monthText + " " + monthNumber + " / " + year);
         }
+        views.setViewVisibility(R.id.widget_moon_calendar_title,
+                compactWidget ? android.view.View.GONE : android.view.View.VISIBLE);
 
         // Highlight the current day in the same Monday-first week we just
         // rendered. Deriving both from the same calendar keeps the highlighted
@@ -526,31 +552,31 @@ public class CalendarWidget extends AppWidgetProvider {
         // Set current day background and text color
         switch (currentIndex) {
             case 0: // Monday
-                views.setInt(R.id.day_mon, "setBackgroundResource", R.drawable.current_day_background);
+                views.setInt(R.id.day_mon, "setBackgroundResource", R.drawable.widget_today_background);
                 views.setTextColor(R.id.day_mon, 0xFFFFFFFF);
                 break;
             case 1: // Tuesday
-                views.setInt(R.id.day_tue, "setBackgroundResource", R.drawable.current_day_background);
+                views.setInt(R.id.day_tue, "setBackgroundResource", R.drawable.widget_today_background);
                 views.setTextColor(R.id.day_tue, 0xFFFFFFFF);
                 break;
             case 2: // Wednesday
-                views.setInt(R.id.day_wed, "setBackgroundResource", R.drawable.current_day_background);
+                views.setInt(R.id.day_wed, "setBackgroundResource", R.drawable.widget_today_background);
                 views.setTextColor(R.id.day_wed, 0xFFFFFFFF);
                 break;
             case 3: // Thursday
-                views.setInt(R.id.day_thu, "setBackgroundResource", R.drawable.current_day_background);
+                views.setInt(R.id.day_thu, "setBackgroundResource", R.drawable.widget_today_background);
                 views.setTextColor(R.id.day_thu, 0xFFFFFFFF);
                 break;
             case 4: // Friday
-                views.setInt(R.id.day_fri, "setBackgroundResource", R.drawable.current_day_background);
+                views.setInt(R.id.day_fri, "setBackgroundResource", R.drawable.widget_today_background);
                 views.setTextColor(R.id.day_fri, 0xFFFFFFFF);
                 break;
             case 5: // Saturday
-                views.setInt(R.id.day_sat, "setBackgroundResource", R.drawable.current_day_background);
+                views.setInt(R.id.day_sat, "setBackgroundResource", R.drawable.widget_today_background);
                 views.setTextColor(R.id.day_sat, 0xFFFFFFFF);
                 break;
             case 6: // Sunday
-                views.setInt(R.id.day_sun, "setBackgroundResource", R.drawable.current_day_background);
+                views.setInt(R.id.day_sun, "setBackgroundResource", R.drawable.widget_today_background);
                 views.setTextColor(R.id.day_sun, 0xFFFFFFFF);
                 break;
         }

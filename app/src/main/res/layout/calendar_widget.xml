@@ -3,55 +3,49 @@
     android:id="@+id/widget_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/widget_background_old"
+    android:background="@drawable/widget_background_modern"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="10dp">
 
-    <!-- Top Section - Current Week -->
     <LinearLayout
+        android:id="@+id/widget_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <!-- Header: month + year -->
+    <TextView
+        android:id="@+id/label_month"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
-        
+        android:fontFamily="sans-serif-medium"
+        android:gravity="start|center_vertical"
+        android:letterSpacing="0.03"
+        android:maxLines="1"
+        android:text="Tháng 11 / 2026"
+        android:textColor="@color/primaryDarkColor"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <!-- Week strip -->
+    <LinearLayout
+        android:id="@+id/widget_week_card"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="7dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_week_strip_background"
+        android:gravity="center_vertical"
         android:orientation="vertical"
-        android:padding="0dp">
-        <LinearLayout
-            android:id="@+id/widget_month_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:orientation="horizontal">
+        android:padding="6dp">
 
-            <TextView
-                android:id="@+id/label_month"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:text="Thang 8"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
-        <!-- Light week strip so Saturday/Sunday keep the same red as the app -->
-        <LinearLayout
-            android:id="@+id/widget_week_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/calendar_section_background"
-            android:orientation="vertical"
-            android:padding="2dp">
-
-        <!-- Days of Week Header -->
         <LinearLayout
             android:id="@+id/widget_top_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp">
 
             <TextView
                 android:id="@+id/label_day_mon"
@@ -60,10 +54,10 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="M"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:letterSpacing="0.08"
+                android:text="T2"
+                android:textColor="@color/widgetMuted"
+                android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/label_day_tue"
@@ -72,10 +66,10 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="T"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:letterSpacing="0.08"
+                android:text="T3"
+                android:textColor="@color/widgetMuted"
+                android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/label_day_wed"
@@ -84,10 +78,10 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="W"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:letterSpacing="0.08"
+                android:text="T4"
+                android:textColor="@color/widgetMuted"
+                android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/label_day_thu"
@@ -96,10 +90,10 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="T"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:letterSpacing="0.08"
+                android:text="T5"
+                android:textColor="@color/widgetMuted"
+                android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/label_day_fri"
@@ -108,10 +102,10 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="F"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:letterSpacing="0.08"
+                android:text="T6"
+                android:textColor="@color/widgetMuted"
+                android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/label_day_sat"
@@ -120,10 +114,10 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="S"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:letterSpacing="0.08"
+                android:text="T7"
+                android:textColor="@color/weekendColor"
+                android:textSize="11sp" />
 
             <TextView
                 android:id="@+id/label_day_sun"
@@ -132,278 +126,248 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:text="S"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
+                android:letterSpacing="0.08"
+                android:text="CN"
+                android:textColor="@color/weekendColor"
+                android:textSize="11sp" />
         </LinearLayout>
 
-        <!-- Current Week Dates -->
         <LinearLayout
             android:id="@+id/widget_middle_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            
             android:orientation="horizontal"
-            android:padding="4dp">
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:paddingTop="2dp">
 
             <TextView
                 android:id="@+id/day_mon"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:minWidth="40dp"
-                android:minHeight="32dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
+                android:minHeight="38dp"
                 android:text="8"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textColor="@color/primaryDarkColor"
+                android:textSize="21sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_tue"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:minWidth="40dp"
-                android:minHeight="32dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
+                android:minHeight="38dp"
                 android:text="9"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textColor="@color/primaryDarkColor"
+                android:textSize="21sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_wed"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:minWidth="40dp"
-                android:minHeight="32dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
+                android:minHeight="38dp"
                 android:text="10"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textColor="@color/primaryDarkColor"
+                android:textSize="21sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_thu"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:minWidth="40dp"
-                android:minHeight="32dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
+                android:minHeight="38dp"
                 android:text="11"
-                android:textColor="#FFF"
-                android:textSize="20sp"
+                android:textColor="@color/primaryDarkColor"
+                android:textSize="21sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_fri"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:minWidth="40dp"
-                android:minHeight="32dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
+                android:minHeight="38dp"
                 android:text="12"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textColor="@color/primaryDarkColor"
+                android:textSize="21sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_sat"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:minWidth="40dp"
-                android:minHeight="32dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
+                android:minHeight="38dp"
                 android:text="13"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textColor="@color/weekendColor"
+                android:textSize="21sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/day_sun"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:minWidth="40dp"
-                android:minHeight="32dp"
-                android:shadowColor="#000000"
-                android:shadowDx="1"
-                android:shadowDy="1"
-                android:shadowRadius="2"
+                android:minHeight="38dp"
                 android:text="14"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textColor="@color/weekendColor"
+                android:textSize="21sp"
                 android:textStyle="bold" />
-
         </LinearLayout>
-
-        </LinearLayout>
-
     </LinearLayout>
 
-    <!-- Bottom Section - Three Columns: Moon Calendar, Time/Day, Weather -->
+    <!-- Bottom: lunar / time / weather -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="0dp">
+        android:paddingTop="5dp">
 
-        <!-- Moon Calendar Section -->
         <LinearLayout
             android:id="@+id/widget_moon_calendar_container"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="4dp">
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp">
 
             <TextView
                 android:id="@+id/widget_moon_calendar_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:fontFamily="sans-serif-light"
-                android:includeFontPadding="false"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
+                android:includeFontPadding="false"
+                android:letterSpacing="0.08"
                 android:singleLine="true"
-                android:text="Âm lịch"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:text="ÂM LỊCH"
+                android:textColor="@color/widgetMuted"
+                android:textSize="9sp" />
 
             <TextView
                 android:id="@+id/widget_moon_calendar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="sans-serif-light"
+                android:layout_marginTop="3dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
                 android:includeFontPadding="false"
                 android:text="10/09"
-                android:textColor="#FFD700"
-                android:textSize="22sp"
+                android:textColor="@color/widgetAccent"
+                android:textSize="19sp"
                 android:textStyle="bold" />
-
         </LinearLayout>
 
-        <!-- Time and Day Section -->
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@color/widgetDivider" />
+
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1.0"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.25"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="4dp">
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp">
 
-            <!-- Time -->
-            <TextView
+            <TextClock
                 android:id="@+id/widget_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
+                android:fontFamily="sans-serif-medium"
+                android:format12Hour="h:mm"
+                android:format24Hour="HH:mm"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:text="10:09"
-                android:textColor="#FFFFFF"
-                android:textSize="52sp"
+                android:textColor="@color/primaryDarkColor"
+                android:textSize="38sp"
                 android:textStyle="bold" />
 
-            <!-- Day and Date -->
             <TextView
                 android:id="@+id/widget_day_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
+                android:ellipsize="end"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:singleLine="true"
-                android:text="Wed Thu 11"
-                android:textColor="#E8E8E8"
-                android:textSize="18sp" />
-
+                android:maxLines="1"
+                android:text="Thứ Ba · 3/11"
+                android:textColor="@color/widgetMuted"
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Weather Section -->
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:background="@color/widgetDivider" />
+
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.6"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.9"
             android:gravity="center"
             android:orientation="vertical"
-            android:padding="4dp">
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp">
 
             <TextView
                 android:id="@+id/location_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
+                android:ellipsize="end"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:singleLine="false"
-                android:text="Hồ Chí Minh"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp"
+                android:maxLines="1"
+                android:text="Hà Nội"
+                android:textColor="@color/primaryDarkColor"
+                android:textSize="11sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/widget_weather"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="sans-serif-light"
+                android:layout_marginTop="3dp"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:singleLine="true"
                 android:text="28°C"
-                android:textColor="#FFD700"
-                android:textSize="22sp"
+                android:textColor="@color/widgetAccent"
+                android:textSize="18sp"
                 android:textStyle="bold" />
-
         </LinearLayout>
-
     </LinearLayout>
-
-</LinearLayout> 
+    </LinearLayout>
+</LinearLayout>

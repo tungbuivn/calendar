@@ -506,6 +506,15 @@ public final class FamilyStore {
         return id == null ? "" : id.trim();
     }
 
+    /** Thay toàn bộ gia phả (dùng cho dữ liệu mẫu); xóa quan hệ nhập tay cũ. */
+    public static void replaceAll(Context context, List<Person> people, String rootId) {
+        write(context, people);
+        prefs(context).edit()
+                .putString(KEY_RELATIONS, "[]")
+                .putString(KEY_ROOT, clean(rootId))
+                .apply();
+    }
+
     private static void write(Context context, List<Person> people) {
         JSONArray array = new JSONArray();
         try {

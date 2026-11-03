@@ -55,6 +55,7 @@ public class MonthCalendarActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_month_calendar);
+        AppChrome.setup(this, R.id.month_calendar);
 
         vietnamese = !"en".equalsIgnoreCase(new WidgetPreferences(this).getLanguage());
 

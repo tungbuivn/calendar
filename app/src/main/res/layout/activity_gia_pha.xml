@@ -3,26 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/month_screen_background"
-    android:orientation="vertical">
+    android:background="?attr/colorSurface"
+    android:orientation="vertical"
+    android:id="@+id/app_root">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <include layout="@layout/app_header" />
+    <LinearLayout
+        android:id="@+id/app_body"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/toolbar_background"
-        android:elevation="8dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Gia phả" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
 
     <TextView
         android:id="@+id/gia_pha_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:text="Chạm một người để đổi mốc, chạm hai lần để sửa. Giữ lâu rồi kéo ô này thả lên ô khác để nối cha mẹ – con hoặc vợ chồng. Kéo để dời khung, chụm hai ngón để phóng. Ô xám là người đã khuất."
+        android:text="Chạm một người để đổi mốc; chạm hai lần hoặc giữ lâu để sửa. Dùng nút Quan hệ để nối cha mẹ – con hoặc vợ chồng. Kéo để dời khung, chụm hai ngón để phóng. Ô xám là người đã khuất."
         android:textColor="@color/textSecondary"
         android:textSize="13sp" />
 
@@ -96,5 +95,9 @@
             android:textColor="@color/textLight"
             android:textSize="14sp" />
     </LinearLayout>
+
+        </LinearLayout>
+
+<include layout="@layout/app_bottom_nav" />
 
 </LinearLayout>

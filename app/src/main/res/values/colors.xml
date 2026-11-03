@@ -60,4 +60,12 @@
     <color name="deceasedCard">#EDEFF2</color>
     <color name="deceasedCardBorder">#C7CCD4</color>
     <color name="deceasedText">#3A4149</color>
+    <!-- Widget light "paper" theme -->
+    <color name="widgetCreamStart">#FFFDF8</color>
+    <color name="widgetCreamEnd">#F7EEDF</color>
+    <color name="widgetBorder">#E7D8C2</color>
+    <color name="widgetAccent">#A67C52</color>
+    <color name="widgetMuted">#8A7A66</color>
+    <color name="widgetDivider">#E8DCC8</color>
+    <color name="widgetStrip">#F2FFFFFF</color>
 </resources>

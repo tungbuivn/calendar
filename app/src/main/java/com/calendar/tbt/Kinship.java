@@ -56,7 +56,7 @@ public final class Kinship {
     }
 
     private static final String[] BANDS = {
-            "Cao tổ", "Cụ", "Ông bà", "Cha mẹ", "Cùng hàng", "Con", "Cháu", "Chắt", "Chút", "Chít"
+            "Cao tổ", "Cụ", "Ông bà", "Cha mẹ", "Cùng hàng", "Con", "Cháu", "Chắt", "Chít", "Chít"
     };
 
     private Kinship() {
@@ -77,27 +77,44 @@ public final class Kinship {
      */
     public static Result of(List<Person> people, List<FamilyStore.Relation> relations,
                             String rootId, String targetId) {
+        return KinshipTerms.localize(ofRaw(people, relations, rootId, targetId));
+    }
+
+    private static Result ofRaw(List<Person> people, List<FamilyStore.Relation> relations,
+                                String rootId, String targetId) {
         Person root = FamilyStore.find(people, rootId);
         Person target = FamilyStore.find(people, targetId);
         if (root == null || target == null) return Result.none();
         if (root.id.equals(target.id)) {
             return new Result("chính tôi", 0, band(0), "self", "", 0, true);
         }
-        Result blood = blood(people, root, target);
-        if (blood != null) return blood;
-        Result affine = affinity(people, root, target, false);
-        if (affine != null) return affine;
-        Result spouseSide = viaSpouse(people, root, target);
-        if (spouseSide != null) return spouseSide;
-        // Cả hai đều là người cưới vào cùng một gia đình, không ai nối huyết thống với ai:
-        // vai vế lấy theo cặp vợ chồng đứng trong gia phả.
-        Result bothInLaws = affinity(people, root, target, true);
-        if (bothInLaws != null) return bothInLaws;
-        Result coInLaw = coInLaw(people, root, target);
-        if (coInLaw != null) return coInLaw;
-        // Bề trên trong nhà đẻ của người cưới vào: ông bà thông gia bên bác, bên chú…
-        Result eldersOfInLaws = inLawElders(people, root, target);
-        if (eldersOfInLaws != null) return eldersOfInLaws;
+        // Một graph path duy nhất quyết định đây là quan hệ huyết thống hay hôn thú.
+        // Đường huyết thống luôn thắng vì cạnh hôn thú có giá rất cao.
+        KinshipGraph.Path path = KinshipGraph.bestPath(people, root.id, target.id);
+        if (path != null) {
+            if (!path.hasSpouse()) {
+                Result blood = blood(people, root, target);
+                if (blood != null) return blood;
+            } else {
+                Result affine = affinity(people, root, target, false);
+                if (affine != null) return affine;
+                Result spouseSide = viaSpouse(people, root, target);
+                if (spouseSide != null) return spouseSide;
+                // Hai người cùng cưới vào một nhà (vợ/chồng của họ là chị em ruột) là đồng hao,
+                // phải xét trước kiểu "anh rể" của người cưới vào cùng nhà.
+                Result dongHao = coSiblingInLaw(people, root, target);
+                if (dongHao != null) return dongHao;
+                // Cả hai đều là người cưới vào cùng một gia đình, không ai nối huyết thống:
+                // vai vế lấy theo cặp vợ chồng đứng trong gia phả.
+                Result bothInLaws = affinity(people, root, target, true);
+                if (bothInLaws != null) return bothInLaws;
+                Result coInLaw = coInLaw(people, root, target);
+                if (coInLaw != null) return coInLaw;
+                // Bề trên trong nhà đẻ của người cưới vào: ông bà thông gia bên bác, bên chú…
+                Result eldersOfInLaws = inLawElders(people, root, target);
+                if (eldersOfInLaws != null) return eldersOfInLaws;
+            }
+        }
         Result manual = manual(relations, root, target);
         return manual != null ? manual : Result.none();
     }
@@ -122,6 +139,10 @@ public final class Kinship {
 
     /** Tên hàng thế hệ cố định, dùng làm tiêu đề mỗi dải trong sơ đồ. */
     public static String band(int generation) {
+        return KinshipTerms.get(rawBand(generation));
+    }
+
+    private static String rawBand(int generation) {
         int index = 4 - generation;
         if (index < 0) return "Trên cao tổ";
         if (index >= BANDS.length) return "Dưới cháu nhiều đời";
@@ -192,6 +213,7 @@ public final class Kinship {
         if (a == 1 && b == 1) return sibling(people, root, target);
 
         if (a == 2 && b == 1) return uncle(people, match, root, target, generation);
+        if (a >= 3 && b == 1) return grandUncle(people, match, root, target, generation);
 
         if (a == 1 && b == 2) {
             return new Result(gender(target, "cháu trai", "cháu gái", "cháu"), generation,
@@ -217,8 +239,10 @@ public final class Kinship {
         if (generation == 1) return uncle(people, match, root, target, generation);
         if (generation == 0) return cousin(people, match, root, target, generation);
         if (generation == -1) {
-            return new Result(gender(target, "cháu trai", "cháu gái", "cháu"), generation,
-                    band(generation), "nephew", "", 1, true);
+            String term = a >= 2 && b >= 2
+                    ? "cháu họ"
+                    : gender(target, "cháu trai", "cháu gái", "cháu");
+            return new Result(term, generation, band(generation), "nephew", "", 1, true);
         }
         String term = generation == -2 ? gender(target, "cháu trai", "cháu gái", "cháu") + side
                 : youngerTitle(-generation) + side;
@@ -252,6 +276,69 @@ public final class Kinship {
         return new Result(term, generation, band(generation), "uncle", sub, order, true);
     }
 
+    /**
+     * Anh chị em của ông bà (ông bác/ông chú/bà cô...), của cụ (cụ bác/cụ chú/cụ cô...).
+     * {@code generation} là khoảng cách thế hệ: 2 là ông bà, 3 là cụ, 4 là kỵ...
+     */
+    private static Result grandUncle(List<Person> people, Match match, Person root,
+                                     Person target, int generation) {
+        int ancestorIndex = generation - 1;
+        if (ancestorIndex < 0 || ancestorIndex >= match.rootIds.size()) return null;
+        Person ancestor = FamilyStore.find(people, match.rootIds.get(ancestorIndex));
+        if (ancestor == null) return null;
+        boolean paternal = isMale(people, firstStep(match.rootIds, root.id));
+        int order = seniority(people, target, ancestor);
+        String title = generation == 2
+                ? gender(target, "ông", "bà", "ông/bà") : elderTitle(generation);
+        String term;
+        String sub;
+        if (target.isMale()) {
+            if (order < 0) {
+                term = title + " bác";
+                sub = generation == 2 ? "ong_bac" : "cu_bac";
+            } else if (order > 0) {
+                term = title + (paternal ? " chú" : " cậu");
+                sub = generation == 2 ? (paternal ? "ong_chu" : "ong_cau") : "cu_chu";
+            } else {
+                term = title + (paternal ? " bác/chú" : " bác/cậu");
+                sub = generation == 2 ? "ong_bac" : "cu_bac";
+            }
+        } else if (target.isFemale()) {
+            if (generation == 2) {
+                if (!ancestor.isFemale()) {
+                    term = "bà cô";
+                    sub = "ba_co";
+                } else if (order < 0) {
+                    term = "bà bác";
+                    sub = "ba_bac";
+                } else if (order > 0) {
+                    term = paternal ? "bà cô" : "bà dì";
+                    sub = paternal ? "ba_co" : "ba_di";
+                } else {
+                    term = paternal ? "bà bác/bà cô" : "bà bác/bà dì";
+                    sub = paternal ? "ba_bac" : "ba_di";
+                }
+            } else {
+                if (order < 0) {
+                    term = title + " bác";
+                    sub = "cu_bac";
+                } else if (order > 0) {
+                    term = title + " cô";
+                    sub = "cu_co";
+                } else {
+                    term = title + " bác/cô";
+                    sub = "cu_bac";
+                }
+            }
+        } else {
+            term = title + " bác/chú/cô";
+            sub = generation == 2 ? "ong_bac" : "cu_bac";
+        }
+        String kind = generation == 2 ? "granduncle"
+                : generation == 3 ? "greatgranduncle" : "ancestorcollateral";
+        return new Result(term, generation, band(generation), kind, sub, order, true);
+    }
+
     /** Anh/chị/em họ: vai lấy từ hàng bố mẹ, không lấy từ tuổi của chính hai người. */
     private static Result cousin(List<Person> people, Match match, Person root, Person target,
                                 int generation) {
@@ -271,7 +358,7 @@ public final class Kinship {
 
     /** Cách gọi người dưới bậc mốc: chắt, chút, chít rồi cháu đời thứ n. */
     private static String youngerTitle(int steps) {
-        return steps == 3 ? "chắt" : steps == 4 ? "chút" : steps == 5 ? "chít" : "cháu đời thứ " + steps;
+        return steps == 3 ? "chắt" : steps == 4 ? "chít" : steps == 5 ? "chít" : "cháu đời thứ " + steps;
     }
 
     private static Result sibling(List<Person> people, Person root, Person target) {
@@ -350,6 +437,23 @@ public final class Kinship {
             if (anchor.isFemale() && target.isMale()) return affine("cháu rể", anchorTerm);
             return null;
         }
+        if ("granduncle".equals(kind)) {
+            String sub = anchorTerm.sub;
+            if (anchor.isMale() && target.isFemale()) {
+                if ("ong_bac".equals(sub)) return affine("bà bác", anchorTerm);
+                if ("ong_chu".equals(sub)) return affine("bà thím", anchorTerm);
+                if ("ong_cau".equals(sub)) return affine("bà mợ", anchorTerm);
+            }
+            if (anchor.isFemale() && target.isMale()) {
+                if ("ba_bac".equals(sub)) return affine("ông bác", anchorTerm);
+                if ("ba_co".equals(sub)) return affine("ông dượng", anchorTerm);
+                if ("ba_di".equals(sub)) return affine("ông dượng", anchorTerm);
+            }
+            return null;
+        }
+        if ("greatgranduncle".equals(kind) || "ancestorcollateral".equals(kind)) {
+            return affine(gender(target, "cụ ông", "cụ bà", "cụ"), anchorTerm);
+        }
         if ("uncle".equals(kind)) {
             // Vai của người bạn đời giữ nguyên nên chỉ cần đổi sang cách gọi khác giới:
             // vợ của chú là "thím" nhưng chồng của cô lại là "chú", chồng của dì mới là "dượng".
@@ -413,6 +517,10 @@ public final class Kinship {
             String own = anchor.seniority < 0 ? (target.isFemale() ? "chị" : "anh")
                     : anchor.seniority > 0 ? "em" : (target.isFemale() ? "chị/em" : "anh/em");
             term = own + " " + side;
+        } else if ("uncle".equals(kind) || "granduncle".equals(kind)
+                || "greatgranduncle".equals(kind) || "ancestorcollateral".equals(kind)) {
+            // Chú/bác/cô/cậu/dì của vợ/chồng cũng gọi đúng vai đó, không cần thêm "bên vợ".
+            term = anchor.term;
         } else if ("child".equals(kind)) {
             // Con riêng của bạn đời: mình là mẹ kế/bố dượng, không phải cha mẹ đẻ.
             term = "con riêng";
@@ -430,6 +538,33 @@ public final class Kinship {
      * mà không phải vợ chồng nhau thì là thông gia. Vì xét theo cả cặp nên một người
      * đã là thông gia thì bạn đời của người đó cũng là thông gia với cả hai bên nhà kia.
      */
+    /** Hai người cùng cưới vào một nhà: vợ/chồng của họ là anh chị em ruột. */
+    private static Result coSiblingInLaw(List<Person> people, Person root, Person target) {
+        if (isSpouseOf(root, target)) return null;
+        // Đồng hao thường dùng giữa hai người cùng giới (hai ông có vợ là chị em ruột,
+        // hai bà có chồng là anh em ruột). Khác giới thì giữ cách gọi anh rể/em rể.
+        boolean bothMale = root.isMale() && target.isMale();
+        boolean bothFemale = root.isFemale() && target.isFemale();
+        if (!bothMale && !bothFemale) return null;
+        Person rootSpouse = FamilyStore.find(people, root.spouseId);
+        Person targetSpouse = FamilyStore.find(people, target.spouseId);
+        if (rootSpouse == null || targetSpouse == null) return null;
+        if (rootSpouse.id.equals(targetSpouse.id)) return null;
+        if (sharedParent(people, rootSpouse, targetSpouse) == null) return null;
+        int order = seniority(people, target, root);
+        String term;
+        if (order < 0) {
+            term = target.isMale() ? "anh đồng hao"
+                    : target.isFemale() ? "chị đồng hao" : "anh/chị đồng hao";
+        } else if (order > 0) {
+            term = "em đồng hao";
+        } else {
+            term = target.isMale() ? "anh đồng hao"
+                    : target.isFemale() ? "chị đồng hao" : "anh/chị/em đồng hao";
+        }
+        return new Result(term, 0, band(0), "inlaw", "", order, true);
+    }
+
     private static Result coInLaw(List<Person> people, Person root, Person target) {
         if (isSpouseOf(root, target)) return null;
         for (Person child : people) {
@@ -461,9 +596,38 @@ public final class Kinship {
             Result kinTerm = blood(people, root, kin);
             if (kinTerm == null) continue;
             Result up = blood(people, bridge, target);
-            if (up == null || up.generation <= 0) continue;
+            if (up == null) continue;
             int generation = kinTerm.generation + up.generation;
-            // Chỉ nhận hàng ông bà trở lên; các hàng khác chưa có cách gọi gọn thì để trống.
+
+            // Anh/chị/em của người cưới vào nhà (mẹ kế/bố dượng): cậu, dì, chú, cô…
+            if (up.generation == 0 && kinTerm.generation == 1) {
+                return stepSibling(people, bridge, target, generation);
+            }
+            // Cùng hàng với người trực tiếp thông gia: em của bà thông gia gặp
+            // bố mẹ cô dâu thì gọi anh/chị, không phải ông/bà thông gia.
+            if (up.generation == 1 && generation == 0) {
+                return peerInLaw(people, root, kin, bridge, target);
+            }
+            // Cha mẹ của người cưới vào nhà: gọi tự nhiên như bác/chú/cô,
+            // so tuổi với bố/mẹ cùng giới của mốc.
+            if (up.generation == 1 && generation == 1) {
+                Person parent = sameGenderParent(people, kin, target);
+                int order = parent == null ? 0 : seniority(people, target, parent);
+                String term;
+                String sub;
+                if (target.isMale()) {
+                    term = order > 0 ? "chú" : "bác";
+                    sub = order > 0 ? "chu" : "bac";
+                } else if (target.isFemale()) {
+                    term = order > 0 ? "cô" : "bác gái";
+                    sub = order > 0 ? "co" : "bac";
+                } else {
+                    term = order > 0 ? "chú/cô" : "bác";
+                    sub = order > 0 ? "chu" : "bac";
+                }
+                return new Result(term, generation, band(generation), "uncle", sub, order, true);
+            }
+            // Bề trên xa hơn: giữ cách gọi cũ "ông/bà bên bác", "cụ bên chú"…
             if (generation < 2) continue;
             String side = " bên " + firstWord(kinTerm.term);
             String term = generation == 2
@@ -473,6 +637,90 @@ public final class Kinship {
                     generation == 2 ? "grandparent" : "ancestor", "", -1, true);
         }
         return null;
+    }
+
+    /**
+     * Cùng hàng thông gia: lấy vai của mốc so với người trực tiếp thông gia.
+     * Nếu mốc là em của người đó thì bên kia ngang vai anh/chị; nếu mốc là anh/chị
+     * thì bên kia là em. Không dùng chữ "thông gia" cho người không phải cha mẹ
+     * trực tiếp của cặp vợ chồng.
+     */
+    private static Result peerInLaw(List<Person> people, Person root, Person kin,
+                                    Person bridge, Person target) {
+        boolean rootIsParent = isRealParent(root, kin);
+        boolean targetIsParent = isRealParent(target, bridge);
+        Person rootDirect = rootIsParent ? root : bloodParent(people, root, kin);
+        Person targetDirect = targetIsParent ? target : bloodParent(people, target, bridge);
+        boolean rootExtended = !rootIsParent && rootDirect != null;
+        boolean targetExtended = !targetIsParent && targetDirect != null;
+
+        // Mốc là người mở rộng (em/anh của người thông gia trực tiếp): bên kia
+        // ngang vai với người trực tiếp nên gọi anh/chị hay em theo vai của mốc.
+        if (rootExtended && !targetExtended) {
+            Result rootRel = rootDirect == null ? null : blood(people, root, rootDirect);
+            boolean targetOlder = rootRel != null && rootRel.seniority < 0;
+            return peerTerm(target, targetOlder, targetOlder ? -1 : 1);
+        }
+        // Ngược lại, đích là người mở rộng: xét đích là em hay anh của người
+        // thông gia trực tiếp bên ấy.
+        if (targetExtended && !rootExtended) {
+            Result targetRel = targetDirect == null ? null : blood(people, target, targetDirect);
+            boolean targetOlder = targetRel != null && targetRel.seniority > 0;
+            return peerTerm(target, targetOlder, targetOlder ? -1 : 1);
+        }
+        // Không xác định được người trực tiếp thì so tuổi trực tiếp.
+        int order = seniority(people, target, root);
+        return peerTerm(target, order < 0, order);
+    }
+
+    private static Result peerTerm(Person target, boolean targetOlder, int order) {
+        String term;
+        if (targetOlder) {
+            term = target.isMale() ? "anh" : target.isFemale() ? "chị" : "anh/chị";
+        } else {
+            term = "em";
+        }
+        return new Result(term, 0, band(0), "inlaw", "", order, true);
+    }
+
+    /** Cha/mẹ của {@code child} mà {@code person} có quan hệ huyết thống. */
+    private static Person bloodParent(List<Person> people, Person person, Person child) {
+        Person father = FamilyStore.find(people, child.fatherId);
+        if (father != null && blood(people, person, father) != null) return father;
+        Person mother = FamilyStore.find(people, child.motherId);
+        if (mother != null && blood(people, person, mother) != null) return mother;
+        return null;
+    }
+
+    /** Anh/chị/em của mẹ kế/bố dượng: cùng hàng bố mẹ, gọi như cậu/dì/chú/cô. */
+    private static Result stepSibling(List<Person> people, Person bridge, Person target,
+                                      int generation) {
+        int order = seniority(people, target, bridge);
+        boolean stepMother = bridge.isFemale();
+        String term;
+        String sub;
+        if (target.isMale()) {
+            String junior = stepMother ? "cậu" : "chú";
+            term = order < 0 ? "bác" : order > 0 ? junior : "bác/" + junior;
+            sub = order > 0 ? (stepMother ? "cau" : "chu") : "bac";
+        } else if (target.isFemale()) {
+            String junior = stepMother ? "dì" : "cô";
+            term = order < 0 ? "bác" : order > 0 ? junior : "bác/" + junior;
+            sub = order > 0 ? (stepMother ? "di" : "co") : "bac";
+        } else {
+            term = stepMother ? "bác/cậu/dì" : "bác/chú/cô";
+            sub = "bac";
+        }
+        return new Result(term, generation, band(generation), "uncle", sub, order, true);
+    }
+
+    /** Bố/mẹ cùng giới của người nối, để so tuổi với cha mẹ bên thông gia. */
+    private static Person sameGenderParent(List<Person> people, Person child, Person target) {
+        Person father = FamilyStore.find(people, child.fatherId);
+        Person mother = FamilyStore.find(people, child.motherId);
+        if (target.isMale()) return father != null ? father : mother;
+        if (target.isFemale()) return mother != null ? mother : father;
+        return father != null ? father : mother;
     }
 
     /** Chữ đầu của một cách gọi, đủ để chỉ nhánh: "bác gái" → "bác". */

@@ -7,3 +7,5 @@
 /captures
 .externalNativeBuild
 /vibe_images
+/release-key.jks
+/keystore.properties

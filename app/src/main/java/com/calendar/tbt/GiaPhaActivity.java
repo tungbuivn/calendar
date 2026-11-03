@@ -96,6 +96,8 @@ public class GiaPhaActivity extends AppCompatActivity implements FamilyTreeView.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gia_pha);
+        AppChrome.setup(this, R.id.gia_pha);
+        KinshipTerms.load(this);
 
         WindowInsetsControllerCompat controller =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
@@ -109,6 +111,14 @@ public class GiaPhaActivity extends AppCompatActivity implements FamilyTreeView.
             toolbar.setLayoutParams(params);
         }
         toolbar.setNavigationOnClickListener(v -> finish());
+        toolbar.inflateMenu(R.menu.gia_pha_menu);
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_load_demo) {
+                confirmLoadDemo();
+                return true;
+            }
+            return false;
+        });
 
         tree = findViewById(R.id.gia_pha_tree);
         tree.setListener(this);
@@ -123,6 +133,21 @@ public class GiaPhaActivity extends AppCompatActivity implements FamilyTreeView.
             showList = !showList;
             applyViewMode();
         });
+    }
+
+    /** Nạp cây mẫu phủ các nhánh trong quy-tac.md; hỏi trước vì sẽ thay dữ liệu hiện tại. */
+    private void confirmLoadDemo() {
+        new AlertDialog.Builder(this)
+                .setTitle("Dữ liệu mẫu")
+                .setMessage("Thay toàn bộ gia phả hiện tại bằng cây quan hệ mẫu?")
+                .setPositiveButton("Nạp", (dialog, which) -> {
+                    FamilyStore.replaceAll(this, DemoFamily.people(), DemoFamily.ROOT_ID);
+                    rootId = DemoFamily.ROOT_ID;
+                    reload();
+                    toast("Đã nạp dữ liệu mẫu");
+                })
+                .setNegativeButton("Bỏ qua", null)
+                .show();
     }
 
     /** Sơ đồ cây là mặc định vì tên hiện đủ; danh sách giữ cho màn nhỏ đọc dọc. */
@@ -363,6 +388,7 @@ public class GiaPhaActivity extends AppCompatActivity implements FamilyTreeView.
                         return;
                     }
                     if (root.isChecked()) FamilyStore.setRootId(this, draft.id);
+                    GioStore.updatePersonName(this, draft.id, draft.name);
                     reload();
                 })
                 .setNegativeButton("Bỏ qua", null);
@@ -681,6 +707,7 @@ public class GiaPhaActivity extends AppCompatActivity implements FamilyTreeView.
                 .setMessage("Xoá " + person.name + " khỏi gia phả? Các mối nối tham chiếu tới người này cũng bị gỡ.")
                 .setPositiveButton("Xoá", (dialog, which) -> {
                     FamilyStore.remove(this, person.id);
+                    GioStore.clearPerson(this, person.id);
                     reload();
                 })
                 .setNegativeButton("Giữ lại", null)

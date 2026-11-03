@@ -3,19 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/month_screen_background"
-    android:orientation="vertical">
+    android:background="?attr/colorSurface"
+    android:orientation="vertical"
+    android:id="@+id/app_root">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <include layout="@layout/app_header" />
+    <LinearLayout
+        android:id="@+id/app_body"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/toolbar_background"
-        android:elevation="8dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Ngày giỗ" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
 
     <TextView
         android:layout_width="match_parent"
@@ -25,6 +24,29 @@
         android:textColor="@color/textSecondary"
         android:textSize="13sp" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Nhắc trước sự kiện"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="14sp" />
+
+        <Spinner
+            android:id="@+id/reminder_days_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="96dp" />
+    </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gio_list"
         android:layout_width="match_parent"
@@ -55,5 +77,9 @@
         android:text="Thêm ngày giỗ"
         android:textColor="@color/textLight"
         android:textSize="14sp" />
+
+        </LinearLayout>
+
+<include layout="@layout/app_bottom_nav" />
 
 </LinearLayout>

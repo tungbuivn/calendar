@@ -3,19 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/month_screen_background"
-    android:orientation="vertical">
+    android:background="?attr/colorSurface"
+    android:orientation="vertical"
+    android:id="@+id/app_root">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <include layout="@layout/app_header" />
+    <LinearLayout
+        android:id="@+id/app_body"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/toolbar_background"
-        android:elevation="8dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Văn khấn" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -43,7 +42,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Văn khấn cho ngày"
-                    android:textColor="@color/primaryDarkColor"
+                    android:textColor="?attr/colorPrimary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -52,7 +51,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:textColor="@color/textSecondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="13sp" />
 
                 <LinearLayout
@@ -68,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text="Ngày này chưa có lễ tiết nào. Cài ngày giỗ hoặc mở mục lục bên dưới."
-                    android:textColor="@color/textSecondary"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="13sp"
                     android:textStyle="italic" />
 
@@ -76,27 +75,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:orientation="horizontal">
-
-                    <Button
+                    android:orientation="horizontal">                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/gio_settings_button"
+                        style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginEnd="6dp"
                         android:layout_weight="1"
-                        android:background="@drawable/month_tonal_button_background"
                         android:text="Ngày giỗ"
-                        android:textColor="@color/primaryDarkColor"
+                        android:textAllCaps="false"
                         android:textSize="13sp" />
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/profile_button"
+                        style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="0dp"
-                        android:layout_height="40dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/month_tonal_button_background"
                         android:text="Thông tin điền"
-                        android:textColor="@color/primaryDarkColor"
+                        android:textAllCaps="false"
                         android:textSize="13sp" />
 
                 </LinearLayout>
@@ -111,7 +108,7 @@
                 android:layout_marginBottom="6dp"
                 android:paddingHorizontal="2dp"
                 android:text="Mục lục toàn bộ"
-                android:textColor="@color/primaryDarkColor"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -123,4 +120,8 @@
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+        </LinearLayout>
+
+<include layout="@layout/app_bottom_nav" />
+
 </LinearLayout>

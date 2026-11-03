@@ -4,18 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5DC">
+    android:background="?attr/colorSurface"
+    android:id="@+id/app_root">
 
     <!-- Toolbar -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <include layout="@layout/app_header" />
+    <LinearLayout
+        android:id="@+id/app_body"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:title="Widget Settings" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
 
     <!-- Content -->
     <ScrollView
@@ -119,6 +119,29 @@
                 android:progressTint="#8B4513"
                 android:thumbTint="#8B4513" />
 
+            <!-- Weather City -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thành phố thời tiết"
+                android:textSize="16sp"
+                android:textColor="#8B4513"
+                android:layout_marginBottom="8dp" />
+
+            <Spinner
+                android:id="@+id/weather_city_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nguồn thời tiết: Open-Meteo"
+                android:textSize="12sp"
+                android:textColor="#8B4513"
+                android:layout_marginBottom="24dp" />
+
             <!-- Weather Font Size -->
             <TextView
                 android:id="@+id/weather_font_size_text"
@@ -185,5 +208,9 @@
 
         </LinearLayout>
     </ScrollView>
+
+        </LinearLayout>
+
+<include layout="@layout/app_bottom_nav" />
 
 </LinearLayout> 

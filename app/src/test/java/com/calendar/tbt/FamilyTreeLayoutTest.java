@@ -158,6 +158,134 @@ public class FamilyTreeLayoutTest {
         }
     }
 
+    @Test
+    public void tallSpouseCardsGetMoreHorizontalRoom() {
+        Node a = node("a", 0);
+        Node b = node("b", 0);
+        a.spouseId = b.id;
+        b.spouseId = a.id;
+        a.height = 200f;
+        b.height = 200f;
+
+        FamilyTreeLayout.layout(Arrays.asList(a, b));
+
+        Node left = a.x <= b.x ? a : b;
+        Node right = a.x <= b.x ? b : a;
+        float gap = (right.x - right.width / 2f) - (left.x + left.width / 2f);
+        assertTrue("Vợ/chồng vẫn quá sát: gap=" + gap + " (min=" + FamilyTreeLayout.SPOUSE_GAP + ")",
+                gap > FamilyTreeLayout.SPOUSE_GAP);
+    }
+
+    @Test
+    public void tallRowsKeepMoreVerticalBreathingRoom() {
+        Node top = node("top", 1);
+        Node bottom = node("bottom", 0);
+        top.height = 200f;
+        bottom.height = 200f;
+        // Nối cha-con để hai người nằm ở hai hàng liên tiếp.
+        bottom.fatherId = top.id;
+
+        FamilyTreeLayout.layout(Arrays.asList(top, bottom));
+
+        float gap = (bottom.y - bottom.height / 2f) - (top.y + top.height / 2f);
+        assertTrue("Hai hàng dính sát: gap=" + gap, gap >= 0.7f * top.height);
+    }
+
+    @Test
+    public void unrelatedPeopleInTheUnplacedRowNeverOverlap() {
+        // Chọn một người không nối với mốc: cả nhóm rơi vào hàng "Chưa nối".
+        // Cha/con trong nhóm này vẫn giữ link nhưng phải xếp cạnh nhau, không đè.
+        Node parent = node("parent", FamilyTreeLayout.GENERATION_UNPLACED);
+        Node child1 = node("child1", FamilyTreeLayout.GENERATION_UNPLACED);
+        Node child2 = node("child2", FamilyTreeLayout.GENERATION_UNPLACED);
+        child1.fatherId = parent.id;
+        child2.fatherId = parent.id;
+
+        FamilyTreeLayout.layout(Arrays.asList(parent, child1, child2));
+
+        List<Node> row = Arrays.asList(parent, child1, child2);
+        Collections.sort(row, byCenterX());
+        for (int i = 1; i < row.size(); i++) {
+            Node previous = row.get(i - 1);
+            Node current = row.get(i);
+            float gap = (current.x - current.width / 2) - (previous.x + previous.width / 2);
+            assertTrue("Ô chưa nối bị đè nhau: " + gap, gap >= 0f);
+        }
+    }
+
+    @Test
+    public void treeFamilyUsesTidyLayout() {
+        Node cha = node("cha", 1);
+        Node me = node("me", 1);
+        cha.spouseId = me.id;
+        me.spouseId = cha.id;
+        Node con = child("con", cha, 2000);
+        con.motherId = me.id;
+
+        FamilyTreeLayout.Result result =
+                FamilyTreeLayout.layout(Arrays.asList(cha, me, con));
+
+        assertTrue("Gia phả dạng cây phải dùng layout cây chuẩn", result.tidy);
+    }
+
+    @Test
+    public void inLawCoupleFallsBackSafely() {
+        Node pa = node("pa", 2);
+        Node ma = node("ma", 2);
+        pa.spouseId = ma.id;
+        ma.spouseId = pa.id;
+        Node pb = node("pb", 2);
+        Node mb = node("mb", 2);
+        pb.spouseId = mb.id;
+        mb.spouseId = pb.id;
+        Node chong = node("chong", 1);
+        Node vo = node("vo", 1);
+        chong.spouseId = vo.id;
+        vo.spouseId = chong.id;
+        chong.fatherId = pa.id;
+        chong.motherId = ma.id;
+        vo.fatherId = pb.id;
+        vo.motherId = mb.id;
+
+        FamilyTreeLayout.Result result = FamilyTreeLayout.layout(
+                Arrays.asList(pa, ma, pb, mb, chong, vo));
+
+        assertFalse("Hai bên thông gia phải dùng fallback", result.tidy);
+        for (Node node : Arrays.asList(pa, ma, pb, mb, chong, vo)) {
+            assertFalse("Ô chưa có vị trí", Float.isNaN(node.x));
+        }
+    }
+
+    @Test
+    public void tidySiblingBranchesKeepHorizontalSpansApart() {
+        Node rootA = node("rootA", 2);
+        Node rootB = node("rootB", 2);
+        rootA.spouseId = rootB.id;
+        rootB.spouseId = rootA.id;
+        Node first = node("first", 1);
+        Node firstSpouse = node("firstSpouse", 1);
+        first.spouseId = firstSpouse.id;
+        firstSpouse.spouseId = first.id;
+        first.fatherId = rootA.id;
+        Node second = node("second", 1);
+        Node secondSpouse = node("secondSpouse", 1);
+        second.spouseId = secondSpouse.id;
+        secondSpouse.spouseId = second.id;
+        second.fatherId = rootA.id;
+        Node grand1 = child("grand1", first, 2000);
+        Node grand2 = child("grand2", second, 2001);
+
+        FamilyTreeLayout.layout(Arrays.asList(
+                rootA, rootB, first, firstSpouse, second, secondSpouse, grand1, grand2));
+
+        float firstLeft = Math.min((first.x + firstSpouse.x) / 2f, grand1.x);
+        float firstRight = Math.max((first.x + firstSpouse.x) / 2f, grand1.x);
+        float secondLeft = Math.min((second.x + secondSpouse.x) / 2f, grand2.x);
+        float secondRight = Math.max((second.x + secondSpouse.x) / 2f, grand2.x);
+        assertTrue("Hai nhánh ngang chồng nhau",
+                firstRight <= secondLeft + 0.01f || secondRight <= firstLeft + 0.01f);
+    }
+
     // ---- dựng dữ liệu -----------------------------------------------------
 
     private static Node node(String id, int generation) {

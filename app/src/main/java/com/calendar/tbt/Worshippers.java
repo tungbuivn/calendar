@@ -1,5 +1,7 @@
 package com.calendar.tbt;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -25,14 +27,20 @@ public final class Worshippers {
     private Worshippers() {
     }
 
+    /** Tách từng người theo cùng quy tắc với bài khấn. */
+    public static List<String> split(String names) {
+        List<String> result = new ArrayList<>();
+        if (names == null) return result;
+        for (String part : SEPARATORS.split(names)) {
+            String trimmed = part.trim();
+            if (!trimmed.isEmpty()) result.add(trimmed);
+        }
+        return result;
+    }
+
     /** Bao nhiêu người đứng lễ; chưa điền thì tính một cho khỏi đổi xưng hô bừa. */
     public static int count(String names) {
-        if (names == null) return 1;
-        int total = 0;
-        for (String part : SEPARATORS.split(names)) {
-            if (!part.trim().isEmpty()) total++;
-        }
-        return Math.max(1, total);
+        return Math.max(1, split(names).size());
     }
 
     /** Chốt số nhiều cho toàn văn; một người thì giữ nguyên từng chữ. */

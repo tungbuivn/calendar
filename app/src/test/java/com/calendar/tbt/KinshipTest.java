@@ -472,12 +472,12 @@ public class KinshipTest {
         parent(bach, tung, nhung);
         List<Person> people = listOf(vuong, ngai, ngan, dung, chat, huyen, manh, chuoi, tung,
                 nhung, bach);
-        // Nhìn từ Chuối: bố mẹ của mẹ mới là "ông bà ngoại", bác của mẹ thì là "ông bên ngoại".
+        // Nhìn từ Chuối: bố mẹ của mẹ là "ông bà ngoại"; em trai của bà ngoại là "ông cậu".
         assertEquals("mẹ", Kinship.of(people, "ch", "ht").term);
         assertEquals("bà ngoại", Kinship.of(people, "ch", "ng").term);
         assertEquals("ông ngoại", Kinship.of(people, "ch", "bc").term);
-        assertEquals("ông bên ngoại", Kinship.of(people, "ch", "nn").term);
-        assertEquals("bà bên ngoại", Kinship.of(people, "ch", "dg").term);
+        assertEquals("ông cậu", Kinship.of(people, "ch", "nn").term);
+        assertEquals("bà mợ", Kinship.of(people, "ch", "dg").term);
         assertEquals("cụ ngoại", Kinship.of(people, "ch", "nv").term);
         assertEquals("Ông bà", Kinship.of(people, "ch", "nn").band);
         // Con của ông ngạn thì ngang hàng bố mẹ Chuối nên vẫn gọi là "bác" theo hàng.
@@ -490,8 +490,8 @@ public class KinshipTest {
         assertEquals("cha", Kinship.of(people, "bb", "tt").term);
         assertEquals("bà nội", Kinship.of(people, "bb", "ng").term);
         assertEquals("ông nội", Kinship.of(people, "bb", "bc").term);
-        assertEquals("ông bên nội", Kinship.of(people, "bb", "nn").term);
-        assertEquals("bà bên nội", Kinship.of(people, "bb", "dg").term);
+        assertEquals("ông chú", Kinship.of(people, "bb", "nn").term);
+        assertEquals("bà thím", Kinship.of(people, "bb", "dg").term);
         assertEquals("cụ nội", Kinship.of(people, "bb", "nv").term);
         assertEquals("em họ", Kinship.of(people, "bb", "ch").term);
         assertEquals("anh họ", Kinship.of(people, "ch", "bb").term);
@@ -529,6 +529,57 @@ public class KinshipTest {
         // Người nhà chồng không vì hôn thú mà mất hàng: ông bà nội của Chuối vẫn là "ngoại".
         assertEquals("ông ngoại", Kinship.of(people, "chuoi", "chat").term);
         assertEquals("bà ngoại", Kinship.of(people, "chuoi", "ngai").term);
+    }
+
+    @Test
+    public void stepMotherBrotherAndSiblingInLawParentsAreNamed() {
+        Person vuong = person("vuong", "Vượng", FamilyStore.MALE, 1920);
+        Person ngai = person("ngai", "Ngải", FamilyStore.FEMALE, 1955);
+        Person ngan = person("ngan", "Ngạn", FamilyStore.MALE, 1965);
+        parent(ngai, vuong, null);
+        parent(ngan, vuong, null);
+
+        Person chat = person("chat", "Chắt", FamilyStore.MALE, 1947);
+        Person huyen = person("huyen", "Huyền", FamilyStore.FEMALE, 1987);
+        Person tung = person("tung", "Tùng", FamilyStore.MALE, 1980);
+        parent(huyen, chat, null); // mẹ đẻ chưa rõ
+        parent(tung, chat, ngai);
+        spouse(chat, ngai); // ngai là mẹ kế của Huyền
+
+        Person khoat = person("khoat", "Khoát", FamilyStore.MALE, 1940);
+        Person xuyen = person("xuyen", "Xuyến", FamilyStore.FEMALE, 1942);
+        spouse(khoat, xuyen);
+        Person nhung = person("nhung", "Nhung", FamilyStore.FEMALE, 1977);
+        parent(nhung, khoat, xuyen);
+        spouse(tung, nhung);
+
+        List<Person> people = listOf(vuong, ngai, ngan, chat, huyen, tung,
+                khoat, xuyen, nhung);
+
+        // Huyền gọi vợ của bố là "mẹ kế"; em trai của mẹ kế là "cậu".
+        assertEquals("mẹ kế", Kinship.of(people, "huyen", "ngai").term);
+        Kinship.Result uncle = Kinship.of(people, "huyen", "ngan");
+        assertEquals("cậu", uncle.term);
+        assertEquals(1, uncle.generation);
+        assertEquals("Cha mẹ", uncle.band);
+
+        // Bố mẹ của vợ anh trai: một bậc trên Huyền, nhưng không phải bố mẹ đẻ.
+        Kinship.Result ong = Kinship.of(people, "huyen", "khoat");
+        assertTrue(ong.related);
+        assertEquals("bác", ong.term);
+        assertEquals(1, ong.generation);
+        assertEquals("Cha mẹ", ong.band);
+        assertEquals("bác gái", Kinship.of(people, "huyen", "xuyen").term);
+
+        // Ngan là em của bà thông gia Ngải, nên bố mẹ cô dâu ngang vai anh/chị.
+        Kinship.Result peer = Kinship.of(people, "ngan", "khoat");
+        assertEquals("anh", peer.term);
+        assertEquals(0, peer.generation);
+        assertEquals("Cùng hàng", peer.band);
+        assertEquals("chị", Kinship.of(people, "ngan", "xuyen").term);
+        // Chiều ngược lại: bố mẹ cô dâu lớn tuổi hơn nên gọi Ngan là em.
+        assertEquals("em", Kinship.of(people, "khoat", "ngan").term);
+        assertEquals("em", Kinship.of(people, "xuyen", "ngan").term);
     }
 
     private static FamilyStore.Relation relation(String id, String aId, String bId, String aCallsB,

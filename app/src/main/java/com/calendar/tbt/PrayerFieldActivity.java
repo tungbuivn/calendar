@@ -2,13 +2,19 @@ package com.calendar.tbt;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,13 +32,21 @@ public class PrayerFieldActivity extends AppCompatActivity {
     public static final String EXTRA_FIELD = "com.calendar.tbt.extra.PF_FIELD";
 
     private String fieldId;
-    private EditText input;
+    private MultiAutoCompleteTextView input;
     private List<PrayerCatalog.Entry> usages;
+    private LinearLayout worshipperQuick;
+    private View recentGroupSection;
+    private View recentNameSection;
+    private LinearLayout recentGroupChips;
+    private LinearLayout recentNameChips;
+    private TextView saveGroupButton;
+    private boolean worshipperField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_prayer_field);
+        AppChrome.setup(this, R.id.today);
 
         WindowInsetsControllerCompat controller =
                 WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
@@ -56,7 +70,14 @@ public class PrayerFieldActivity extends AppCompatActivity {
         Button save = findViewById(R.id.save_button);
         TextView note = findViewById(R.id.field_note);
         View gioButton = findViewById(R.id.open_gio_button);
+        worshipperQuick = findViewById(R.id.worshipper_quick);
+        recentGroupSection = findViewById(R.id.recent_group_section);
+        recentNameSection = findViewById(R.id.recent_name_section);
+        recentGroupChips = findViewById(R.id.recent_group_chips);
+        recentNameChips = findViewById(R.id.recent_name_chips);
+        saveGroupButton = findViewById(R.id.save_group_button);
 
+        worshipperField = Worshippers.NAME_FIELD.equals(fieldId);
         boolean auto = field != null && "date".equals(field.source);
         boolean memorial = field != null && "memorial".equals(field.source);
         input.setVisibility(auto ? View.GONE : View.VISIBLE);
@@ -64,9 +85,18 @@ public class PrayerFieldActivity extends AppCompatActivity {
         gioButton.setVisibility(memorial ? View.VISIBLE : View.GONE);
         note.setText(buildNote(field, auto, memorial));
         if (!auto) input.setText(ProfileStore.get(this, fieldId));
+        if (worshipperField && !auto) {
+            input.setHint("Gõ tên, cách nhau dấu phẩy");
+            setupWorshipperQuick();
+        }
         gioButton.setOnClickListener(v -> startActivity(new Intent(this, GioSettingsActivity.class)));
         save.setOnClickListener(v -> {
-            ProfileStore.set(this, fieldId, input.getText().toString());
+            String value = input.getText().toString();
+            ProfileStore.set(this, fieldId, value);
+            if (worshipperField) {
+                WorshipperHistory.record(this, value);
+                refreshWorshipperQuick();
+            }
             Toast.makeText(this, "Đã lưu. Vào lại bài khấn để thấy chỗ điền đổi theo.", Toast.LENGTH_SHORT).show();
         });
 
@@ -80,8 +110,90 @@ public class PrayerFieldActivity extends AppCompatActivity {
                 : String.format("%d bài khấn dùng trường này", usages.size()));
     }
 
+    private void setupWorshipperQuick() {
+        worshipperQuick.setVisibility(View.VISIBLE);
+        input.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        input.setThreshold(1);
+        saveGroupButton.setOnClickListener(v -> {
+            String value = input.getText().toString();
+            if (Worshippers.split(value).isEmpty()) {
+                Toast.makeText(this, "Nhập ít nhất một tên trước.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            ProfileStore.set(this, fieldId, value);
+            WorshipperHistory.record(this, value);
+            refreshWorshipperQuick();
+            Toast.makeText(this, "Đã lưu nhóm để lần sau chọn nhanh.", Toast.LENGTH_SHORT).show();
+        });
+        refreshWorshipperQuick();
+    }
+
+    private void refreshWorshipperQuick() {
+        if (!worshipperField) return;
+        recentGroupChips.removeAllViews();
+        recentNameChips.removeAllViews();
+
+        List<String> groups = WorshipperHistory.groups(this);
+        recentGroupSection.setVisibility(groups.isEmpty() ? View.GONE : View.VISIBLE);
+        for (String group : groups) {
+            recentGroupChips.addView(makeChip(group, true, v -> {
+                input.setText(group);
+                input.setSelection(input.getText().length());
+            }));
+        }
+
+        List<String> names = WorshipperHistory.names(this);
+        recentNameSection.setVisibility(names.isEmpty() ? View.GONE : View.VISIBLE);
+        for (String name : names) {
+            recentNameChips.addView(makeChip(name, false, v -> appendWorshipper(name)));
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, names);
+        input.setAdapter(adapter);
+    }
+
+    private TextView makeChip(String text, boolean group, View.OnClickListener listener) {
+        TextView chip = new TextView(this);
+        chip.setText(text);
+        chip.setTextSize(13);
+        chip.setTextColor(ContextCompat.getColor(this, R.color.textPrimary));
+        chip.setBackgroundResource(R.drawable.worshipper_chip_background);
+        chip.setPadding(dp(12), dp(6), dp(12), dp(6));
+        chip.setSingleLine(true);
+        chip.setEllipsize(TextUtils.TruncateAt.END);
+        chip.setGravity(Gravity.CENTER_VERTICAL);
+        chip.setClickable(true);
+        chip.setFocusable(true);
+        if (group) chip.setMaxWidth(dp(280));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMarginEnd(dp(6));
+        chip.setLayoutParams(params);
+        chip.setOnClickListener(listener);
+        return chip;
+    }
+
+    private void appendWorshipper(String name) {
+        String trimmed = name == null ? "" : name.trim();
+        if (trimmed.isEmpty()) return;
+        for (String existing : Worshippers.split(input.getText().toString())) {
+            if (existing.equalsIgnoreCase(trimmed)) return;
+        }
+        String current = input.getText().toString().trim();
+        if (!current.isEmpty()) current = current + ", ";
+        input.setText(current + trimmed);
+        input.setSelection(input.getText().length());
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
+    }
     private String buildNote(PrayerCatalog.Field field, boolean auto, boolean memorial) {
         if (field == null) return "Không tìm thấy trường này trong danh mục.";
+        if (Worshippers.NAME_FIELD.equals(field.id)) {
+            return field.hint + " Chọn nhóm/tên bên dưới hoặc gõ trực tiếp; từ 2 người bài khấn tự đổi sang «chúng con».";
+        }
         if (auto) {
             return "Trường này tự điền theo ngày dương đang xem (" + field.hint + "), không cần cấu hình."
                     + " Chạm một bài bên dưới để xem nội dung trình bày như thế nào.";

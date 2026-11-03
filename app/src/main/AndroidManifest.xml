@@ -1,25 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <!-- permission to use exact alarm -->
-    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <!-- permission to show the morning prayer reminder -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <!-- permission to reschedule widget updates after reboot -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
-    <uses-permission android:name="android.permission.TIME_TICK" />
-    <!-- permission for foreground service -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
-    <!-- permission to request battery optimization exemption -->
-    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <!-- permission to access internet for weather API -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="com.android.vending.BILLING" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- permission to access location for weather API -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <!-- Android 11+: phải khai báo thì mới thấy được app cung cấp giọng đọc. -->
     <queries>
@@ -37,7 +27,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.LichVanNien.Main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -86,6 +77,7 @@
             android:label="Gia phả"
             android:theme="@style/AppTheme" />
 
+
         <activity android:name=".TtsSettingsActivity"
             android:exported="false"
             android:label="Giọng đọc văn khấn"
@@ -112,7 +104,7 @@
         <!-- Nhắc văn khấn mỗi sáng: tự nối báo thức sau khi mở máy hoặc đổi ngày/giờ. -->
         <receiver
             android:name=".PrayerReminderReceiver"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.calendar.tbt.action.PRAYER_REMIND" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/month_calendar"
+        android:icon="@drawable/ic_bottom_calendar"
+        android:title="Lịch tháng" />
+    <item
+        android:id="@+id/today"
+        android:icon="@drawable/ic_bottom_today"
+        android:title="Hôm nay" />
+    <item
+        android:id="@+id/van_khan"
+        android:icon="@drawable/ic_bottom_prayer"
+        android:title="Văn khấn" />
+    <item
+        android:id="@+id/gia_pha"
+        android:icon="@drawable/ic_bottom_family"
+        android:title="Gia phả" />
+</menu>
