@@ -1,13 +1,17 @@
 package com.calendar.tbt;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -37,11 +41,13 @@ import java.util.Set;
 import java.util.TreeMap;
 
 /**
- * Sơ đồ gia phả theo hàng thế hệ: không vẽ đường nối cho rối, mỗi avatar ghi luôn
- * cách xưng hô với người đang làm mốc. Chạm avatar khác là đổi mốc, cả sơ đồ tính lại.
- * Cặp nào chưa nối được qua cha mẹ – vợ chồng thì ghi cách xưng hô nhập tay.
+ * Gia phả vẽ trên canvas: mỗi hàng một thế hệ tính từ người đứng khấn, tên vẽ đủ chữ,
+ * có đường nối cha mẹ – con và vợ chồng. Chạm để đổi mốc, chạm hai lần để sửa,
+ * giữ lâu kéo ô này thả lên ô khác để nối. Ai không muốn coi sơ đồ thì chuyển sang
+ * danh sách theo hàng thế hệ. Cặp chưa nối được qua cha mẹ – vợ chồng thì ghi vai vế
+ * nhập tay theo tag.
  */
-public class GiaPhaActivity extends AppCompatActivity {
+public class GiaPhaActivity extends AppCompatActivity implements FamilyTreeView.Listener {
 
     private static final String[] GENERATION_LABELS = {
             "Không rõ bậc",
@@ -54,6 +60,8 @@ public class GiaPhaActivity extends AppCompatActivity {
     private static final int[] GENERATION_VALUES = {
             FamilyStore.GENERATION_UNKNOWN, 2, 1, 0, -1, -2,
     };
+    /** Số tag gợi ý một lần gõ — đủ chọn nhanh mà không tràn màn hình. */
+    private static final int SUGGEST_LIMIT = 8;
 
     private static final class Entry {
         final Person person;
@@ -77,6 +85,10 @@ public class GiaPhaActivity extends AppCompatActivity {
 
     private final List<Band> bands = new ArrayList<>();
     private RecyclerView list;
+    private FamilyTreeView tree;
+    private TextView viewModeButton;
+    private boolean showList;
+    private boolean treeEmpty = true;
     private Toolbar toolbar;
     private String rootId = "";
 
@@ -98,12 +110,26 @@ public class GiaPhaActivity extends AppCompatActivity {
         }
         toolbar.setNavigationOnClickListener(v -> finish());
 
+        tree = findViewById(R.id.gia_pha_tree);
+        tree.setListener(this);
         list = findViewById(R.id.gia_pha_list);
         list.setLayoutManager(new LinearLayoutManager(this));
         list.setAdapter(new BandAdapter());
 
         findViewById(R.id.add_person_button).setOnClickListener(v -> openEditor(null));
         findViewById(R.id.relation_button).setOnClickListener(v -> openRelationList());
+        viewModeButton = findViewById(R.id.view_mode_button);
+        viewModeButton.setOnClickListener(v -> {
+            showList = !showList;
+            applyViewMode();
+        });
+    }
+
+    /** Sơ đồ cây là mặc định vì tên hiện đủ; danh sách giữ cho màn nhỏ đọc dọc. */
+    private void applyViewMode() {
+        tree.setVisibility(showList || treeEmpty ? View.GONE : View.VISIBLE);
+        list.setVisibility(showList && !treeEmpty ? View.VISIBLE : View.GONE);
+        viewModeButton.setText(showList ? "Sơ đồ" : "Danh sách");
     }
 
     @Override
@@ -158,8 +184,10 @@ public class GiaPhaActivity extends AppCompatActivity {
         }
 
         boolean empty = people.isEmpty();
+        treeEmpty = empty;
+        tree.setModel(people, relations, rootId);
         findViewById(R.id.gia_pha_empty).setVisibility(empty ? View.VISIBLE : View.GONE);
-        list.setVisibility(empty ? View.GONE : View.VISIBLE);
+        applyViewMode();
         toolbar.setSubtitle(empty ? null : "Mốc: " + nameOf(people, rootId));
         list.getAdapter().notifyDataSetChanged();
     }
@@ -187,6 +215,102 @@ public class GiaPhaActivity extends AppCompatActivity {
         FamilyStore.setRootId(this, person.id);
         reload();
         Toast.makeText(this, "Đã lấy " + person.name + " làm mốc để tính vai vế.", Toast.LENGTH_SHORT).show();
+    }
+
+    // ---- FamilyTreeView.Listener ------------------------------------------
+
+    @Override
+    public void onPickRoot(Person person) {
+        chooseRoot(person);
+    }
+
+    @Override
+    public void onEditPerson(Person person) {
+        openEditor(person);
+    }
+
+    /**
+     * Kéo A thả lên B: hỏi muốn nối gì, chỉ liệt kê những kiểu còn hợp lệ với dữ liệu
+     * hiện có để khỏi phải đoán lần lượt.
+     */
+    @Override
+    public void onLinkPersons(Person source, Person target) {
+        final List<Person> people = FamilyStore.all(this);
+        final Person from = FamilyStore.find(people, source.id);
+        final Person to = FamilyStore.find(people, target.id);
+        if (from == null || to == null) {
+            toast("Một trong hai người không còn trong gia phả.");
+            return;
+        }
+        final List<String> labels = new ArrayList<>();
+        final List<Integer> kinds = new ArrayList<>();
+        if (!isCouple(from, to)) {
+            labels.add("Vợ / chồng của " + to.name);
+            kinds.add(LINK_SPOUSE);
+        }
+        if (!to.fatherId.equals(from.id)) {
+            labels.add(from.name + " là CHA của " + to.name);
+            kinds.add(LINK_FATHER_OF);
+        }
+        if (!to.motherId.equals(from.id)) {
+            labels.add(from.name + " là MẸ của " + to.name);
+            kinds.add(LINK_MOTHER_OF);
+        }
+        if (!from.fatherId.equals(to.id) && !from.motherId.equals(to.id)) {
+            labels.add(from.name + " là CON của " + to.name);
+            kinds.add(LINK_CHILD_OF);
+        }
+        labels.add("Ghi vai vế nhập tay…");
+        kinds.add(LINK_MANUAL);
+        new AlertDialog.Builder(this)
+                .setTitle(from.name + " → " + to.name)
+                .setItems(labels.toArray(new String[0]), (dialog, which) ->
+                        applyLink(from, to, kinds.get(which)))
+                .setNegativeButton("Bỏ", null)
+                .show();
+    }
+
+    private static final int LINK_SPOUSE = 0;
+    private static final int LINK_FATHER_OF = 1;
+    private static final int LINK_MOTHER_OF = 2;
+    private static final int LINK_CHILD_OF = 3;
+    private static final int LINK_MANUAL = 4;
+
+    /** Nối được ghi qua cùng một cửa với hộp sửa người nên dữ liệu vẫn được kiểm tra lại. */
+    private void applyLink(Person from, Person to, int kind) {
+        if (kind == LINK_MANUAL) {
+            openRelationEditor(FamilyStore.all(this), null, from, to);
+            return;
+        }
+        Person edit = kind == LINK_CHILD_OF ? from : to;
+        String done;
+        if (kind == LINK_SPOUSE) {
+            // saveChecked tự soi chiều ngược nên chỉ cần nối một phía.
+            edit.spouseId = from.id;
+            done = from.name + " là vợ/chồng của " + to.name;
+        } else if (kind == LINK_FATHER_OF) {
+            edit.fatherId = from.id;
+            done = from.name + " là cha của " + to.name;
+        } else if (kind == LINK_MOTHER_OF) {
+            edit.motherId = from.id;
+            done = from.name + " là mẹ của " + to.name;
+        } else {
+            // to là cha hay mẹ của from tuỳ giới tính đã khai của to.
+            if (to.isFemale()) from.motherId = to.id;
+            else from.fatherId = to.id;
+            done = from.name + " là con của " + to.name;
+        }
+        String problem = FamilyStore.saveChecked(this, edit);
+        if (problem != null) {
+            toast(problem);
+            return;
+        }
+        reload();
+        toast("Đã nối: " + done);
+    }
+
+    private static boolean isCouple(Person from, Person to) {
+        return from.spouseId.equals(to.id) || to.spouseId.equals(from.id);
     }
 
     private void openEditor(final Person existing) {
@@ -317,13 +441,27 @@ public class GiaPhaActivity extends AppCompatActivity {
         return text.toString();
     }
 
-    private void openRelationEditor(final List<Person> people, final Relation existing) {
+    private void openRelationEditor(List<Person> people, Relation existing) {
+        openRelationEditor(people, existing, null, null);
+    }
+
+    /**
+     * @param existing    bản đang sửa, null khi tạo mới
+     * @param seedFrom    cặp vừa kéo thả trên sơ đồ, chỉ dùng để chọn sẵn hai người
+     * @param seedTo
+     */
+    private void openRelationEditor(final List<Person> people, final Relation existing,
+                                    Person seedFrom, Person seedTo) {
+        if (people.size() < 2) {
+            toast("Cần có ít nhất hai người trong gia phả rồi mới ghi được quan hệ.");
+            return;
+        }
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_gia_pha_relation, null);
         final Spinner spinnerA = view.findViewById(R.id.spinner_relation_a);
         final Spinner spinnerB = view.findViewById(R.id.spinner_relation_b);
         final Spinner spinnerGeneration = view.findViewById(R.id.spinner_relation_generation);
-        final EditText aCallsB = view.findViewById(R.id.input_a_calls_b);
-        final EditText bCallsA = view.findViewById(R.id.input_b_calls_a);
+        final AutoCompleteTextView aCallsB = view.findViewById(R.id.input_a_calls_b);
+        final AutoCompleteTextView bCallsA = view.findViewById(R.id.input_b_calls_a);
         final TextView state = view.findViewById(R.id.relation_state);
 
         final List<String> ids = new ArrayList<>();
@@ -340,15 +478,40 @@ public class GiaPhaActivity extends AppCompatActivity {
         spinnerGeneration.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, Arrays.asList(GENERATION_LABELS)));
 
-        int indexA = existing != null ? ids.indexOf(existing.aId) : ids.indexOf(rootId);
-        int indexB = existing != null ? ids.indexOf(existing.bId) : (indexA == 0 ? 1 : 0);
-        spinnerA.setSelection(Math.max(0, indexA));
-        spinnerB.setSelection(Math.max(0, Math.min(indexB, ids.size() - 1)));
+        int indexA = Math.max(0, ids.indexOf(existing != null ? existing.aId
+                : seedFrom == null ? rootId : seedFrom.id));
+        String seedB = existing != null ? existing.bId : seedTo == null ? null : seedTo.id;
+        int indexB = seedB == null ? (indexA == 0 ? 1 : 0) : Math.max(0, ids.indexOf(seedB));
+        spinnerA.setSelection(indexA);
+        spinnerB.setSelection(Math.min(indexB, ids.size() - 1));
         spinnerGeneration.setSelection(existing == null ? 0 : generationIndex(existing.bGeneration));
         if (existing != null) {
             aCallsB.setText(existing.aCallsB);
             bCallsA.setText(existing.bCallsA);
         }
+
+        // Cách gọi là tag chọn từ kho chung: tag nhà đã ghi xếp trước, rồi đến từ vựng sẵn.
+        final List<FamilyStore.Tag> storedTags = FamilyStore.tags(this);
+        List<String> userTerms = new ArrayList<>();
+        for (FamilyStore.Tag tag : storedTags) userTerms.add(tag.term);
+        final List<String> vocabulary = KinshipTags.vocabulary(userTerms);
+        aCallsB.setAdapter(new TagSuggestAdapter(vocabulary));
+        bCallsA.setAdapter(new TagSuggestAdapter(vocabulary));
+        aCallsB.setThreshold(1);
+        bCallsA.setThreshold(1);
+        final boolean[] filling = {false};
+        aCallsB.addTextChangedListener(new SimpleTextWatcher(text -> {
+            if (filling[0]) return;
+            filling[0] = true;
+            applyTag(text, bCallsA, spinnerGeneration, 1, storedTags);
+            filling[0] = false;
+        }));
+        bCallsA.addTextChangedListener(new SimpleTextWatcher(text -> {
+            if (filling[0]) return;
+            filling[0] = true;
+            applyTag(text, aCallsB, spinnerGeneration, -1, storedTags);
+            filling[0] = false;
+        }));
 
         final List<Relation> relations = FamilyStore.relations(this);
         AdapterView.OnItemSelectedListener watcher = new AdapterView.OnItemSelectedListener() {
@@ -425,6 +588,91 @@ public class GiaPhaActivity extends AppCompatActivity {
             if (GENERATION_VALUES[i] == value) return i;
         }
         return 0;
+    }
+
+    /**
+     * Tag đã có thì điền luôn chiều ngược lại và bậc: A gọi B là "chú" thì B gọi lại "cháu".
+     * Ô kia chỉ được điền khi còn trống, người dùng vẫn sửa lại được.
+     *
+     * @param sign +1 khi tag nằm ở chiều "A gọi B", -1 khi ở chiều "B gọi A"
+     */
+    private void applyTag(String term, AutoCompleteTextView otherSide, Spinner generation, int sign,
+                          List<FamilyStore.Tag> storedTags) {
+        FamilyStore.Tag custom = FamilyStore.findTag(storedTags, term);
+        String reciprocal = custom != null && !custom.reciprocal.isEmpty()
+                ? custom.reciprocal : KinshipTags.reciprocalOf(term);
+        if (reciprocal.isEmpty() && custom == null) return;
+        if (otherSide.getText().toString().trim().isEmpty() && !reciprocal.isEmpty()) {
+            otherSide.setText(reciprocal);
+        }
+        int value = custom != null ? sign * custom.generation : sign * KinshipTags.generationOf(term);
+        for (int i = 0; i < GENERATION_VALUES.length; i++) {
+            if (GENERATION_VALUES[i] == value) {
+                generation.setSelection(i);
+                return;
+            }
+        }
+    }
+
+    private interface TermListener {
+        void onTerm(String term);
+    }
+
+    /** Ô tag chỉ cần biết người dùng vừa gõ/chọn xong gì. */
+    private static final class SimpleTextWatcher implements TextWatcher {
+        private final TermListener listener;
+
+        SimpleTextWatcher(TermListener listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence text, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence text, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable text) {
+            listener.onTerm(text == null ? "" : text.toString().trim());
+        }
+    }
+
+    /** Gợi ý tag khi gõ: khớp cả tag chứa chuỗi đang gõ, lẫn chuỗi đang gõ chứa tag. */
+    private final class TagSuggestAdapter extends ArrayAdapter<String> {
+        private final List<String> vocabulary;
+        // Một Filter duy nhất: tạo mới mỗi lần gõ thì kết quả cũ có thể về sau kết quả mới.
+        private final Filter filter = new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                List<String> matches = KinshipTags.suggest(
+                        String.valueOf(constraint), vocabulary, SUGGEST_LIMIT);
+                FilterResults results = new FilterResults();
+                results.values = matches;
+                results.count = matches.size();
+                return results;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                clear();
+                addAll((List<String>) results.values);
+                notifyDataSetChanged();
+            }
+        };
+
+        TagSuggestAdapter(List<String> vocabulary) {
+            super(GiaPhaActivity.this, android.R.layout.simple_dropdown_item_1line);
+            this.vocabulary = vocabulary;
+        }
+
+        @Override
+        public Filter getFilter() {
+            return filter;
+        }
     }
 
     private void confirmDelete(final Person person) {

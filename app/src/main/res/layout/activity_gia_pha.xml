@@ -22,9 +22,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp"
-        android:text="Mỗi hàng là một thế hệ tính từ người đứng khấn. Chạm vào một người để lấy người đó làm mốc: vai vế của cả nhà sẽ tính lại. Giữ lâu để sửa thông tin. Ô nền xám là người đã khuất. Cặp chưa nối được qua cha mẹ – vợ chồng (thông gia, con nuôi…) thì ghi ở mục Quan hệ nhập tay."
+        android:text="Chạm một người để đổi mốc, chạm hai lần để sửa. Giữ lâu rồi kéo ô này thả lên ô khác để nối cha mẹ – con hoặc vợ chồng. Kéo để dời khung, chụm hai ngón để phóng. Ô xám là người đã khuất."
         android:textColor="@color/textSecondary"
         android:textSize="13sp" />
+
+    <com.calendar.tbt.FamilyTreeView
+        android:id="@+id/gia_pha_tree"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginHorizontal="12dp"
+        android:background="@drawable/month_card_background" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/gia_pha_list"
@@ -34,7 +42,8 @@
         android:layout_marginHorizontal="12dp"
         android:background="@drawable/month_card_background"
         android:clipToPadding="false"
-        android:paddingBottom="12dp" />
+        android:paddingBottom="12dp"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/gia_pha_empty"
@@ -69,9 +78,21 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
             android:layout_weight="1"
             android:background="@drawable/button_modern"
-            android:text="Quan hệ nhập tay"
+            android:text="Quan hệ"
+            android:textColor="@color/textLight"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/view_mode_button"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_modern"
+            android:text="Danh sách"
             android:textColor="@color/textLight"
             android:textSize="14sp" />
     </LinearLayout>

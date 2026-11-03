@@ -51,11 +51,12 @@
             android:textColor="@color/textSecondary"
             android:textSize="12sp" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/input_a_calls_b"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="thông gia, cha nuôi, người cùng họ…"
+            android:completionThreshold="1"
+            android:hint="chọn tag có sẵn, hoặc gõ cách gọi mới…"
             android:importantForAutofill="no"
             android:inputType="text"
             android:maxLines="1"
@@ -70,11 +71,12 @@
             android:textColor="@color/textSecondary"
             android:textSize="12sp" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/input_b_calls_a"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="thông gia, cha nuôi… (để trống nếu hai bên gọi nhau như nhau)"
+            android:completionThreshold="1"
+            android:hint="tự điền theo tag chiều ngược lại"
             android:importantForAutofill="no"
             android:inputType="text"
             android:maxLines="1"

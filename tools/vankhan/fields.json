@@ -10,7 +10,7 @@
     { "id": "thang_am", "label": "Tháng âm lịch", "group": "auto", "source": "date", "hint": "Tự điền: Giêng, Hai, Bảy, Chạp…" },
     { "id": "nam_am", "label": "Năm âm lịch", "group": "auto", "source": "date", "hint": "Tự điền theo can chi: Ất Tỵ…" },
 
-    { "id": "ho_ten", "label": "Họ tên người đứng lễ", "group": "chu_le", "source": "profile", "hint": "Nguyễn Văn A" },
+    { "id": "ho_ten", "label": "Họ tên người đứng lễ", "group": "chu_le", "source": "profile", "hint": "Nguyễn Văn A. Đứng lễ hai người trở lên thì gõ «A, B» hoặc «A và B», bài khấn tự đổi sang xưng «chúng con»." },
     { "id": "nam_sinh", "label": "Năm sinh dương lịch", "group": "chu_le", "source": "profile", "hint": "Dùng để tính tuổi khi bạn không điền tuổi" },
     { "id": "tuoi", "label": "Tuổi", "group": "chu_le", "source": "profile", "hint": "Để trống thì tự tính từ năm sinh" },
     { "id": "dia_chi", "label": "Nơi cư trú", "group": "chu_le", "source": "profile", "hint": "Số nhà, đường, phường/xã, quận/huyện, tỉnh" },

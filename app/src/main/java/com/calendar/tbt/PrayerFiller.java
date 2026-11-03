@@ -37,13 +37,33 @@ public final class PrayerFiller {
         }
     }
 
+    /**
+     * Một chỗ điền trong toàn văn, kèm khoảng ký tự nó chiếm chỗ. Có phạm vi này
+     * thì người dùng chạm đúng vào chỗ chấm là sửa được, khỏi phải tìm thẻ ở đáy màn hình.
+     */
+    public static final class Mark {
+        public final String field;
+        public final int start;
+        public final int end;
+        public final boolean filled;
+
+        Mark(String field, int start, int end, boolean filled) {
+            this.field = field;
+            this.start = start;
+            this.end = end;
+            this.filled = filled;
+        }
+    }
+
     public static final class Rendered {
         public final CharSequence text;
         public final int missing;
+        public final List<Mark> marks;
 
-        Rendered(CharSequence text, int missing) {
+        Rendered(CharSequence text, int missing, List<Mark> marks) {
             this.text = text;
             this.missing = missing;
+            this.marks = marks;
         }
     }
 
@@ -111,14 +131,17 @@ public final class PrayerFiller {
     /**
      * Toàn văn đã điền, có tô sáng, kèm số chỗ còn trống — một lần duyệt duy nhất.
      * focusField được tô đậm hơn để người dùng thấy trường mình đang cấu hình xuất hiện ở đâu.
+     * Đứng lễ từ hai người thì lời khấn tự đổi sang xưng "chúng con".
      */
     public static Rendered render(Context context, String raw, Map<String, String> values, String focusField) {
         int filledColor = ContextCompat.getColor(context, R.color.prayerFilledBackground);
         int missingColor = ContextCompat.getColor(context, R.color.prayerMissingBackground);
         int focusColor = ContextCompat.getColor(context, R.color.prayerFocusBackground);
         SpannableStringBuilder builder = new SpannableStringBuilder();
+        List<Mark> marks = new ArrayList<>();
         int missing = 0;
-        for (Segment segment : segments(raw, values)) {
+        String text = Worshippers.agree(raw, values.get(Worshippers.NAME_FIELD));
+        for (Segment segment : segments(text, values)) {
             if (segment.field == null) {
                 builder.append(segment.text);
                 continue;
@@ -139,7 +162,8 @@ public final class PrayerFiller {
             }
             builder.setSpan(new BackgroundColorSpan(color), start, builder.length(),
                     Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            marks.add(new Mark(segment.field, start, builder.length(), segment.filled));
         }
-        return new Rendered(builder, missing);
+        return new Rendered(builder, missing, marks);
     }
 }

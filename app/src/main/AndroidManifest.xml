@@ -20,6 +20,13 @@
     <!-- permission to access location for weather API -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Android 11+: phải khai báo thì mới thấy được app cung cấp giọng đọc. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
     
     <application
         android:name=".App"
@@ -78,7 +85,13 @@
             android:exported="false"
             android:label="Gia phả"
             android:theme="@style/AppTheme" />
+
+        <activity android:name=".TtsSettingsActivity"
+            android:exported="false"
+            android:label="Giọng đọc văn khấn"
+            android:theme="@style/AppTheme" />
         
+
 
        
         <receiver android:name=".CalendarWidget"

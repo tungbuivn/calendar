@@ -53,6 +53,7 @@
     <color name="prayerFilledBackground">#332E7D32</color>
     <color name="prayerMissingBackground">#40FFB300</color>
     <color name="prayerFocusBackground">#4DC2185B</color>
+    <color name="prayerSpeakingBackground">#6642A5F5</color>
 
     <!-- Gia phả: người đã khuất -->
     <color name="deceasedAvatar">#4B5563</color>

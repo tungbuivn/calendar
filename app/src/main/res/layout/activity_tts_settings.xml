@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/month_screen_background"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/toolbar_background"
+        android:elevation="8dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="Giọng đọc văn khấn" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Chỉnh cách máy đọc đọc bài khấn. Chậm lại một chút thì đọc theo dễ hơn; chọn giọng nào hợp tai thì dùng giọng đó."
+                android:textColor="@color/textSecondary"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/month_card_background"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/speech_rate_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tốc độ đọc"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <SeekBar
+                    android:id="@+id/speech_rate_seek"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="20dp"
+                    android:max="100"
+                    android:progressTint="@color/primaryColor"
+                    android:thumbTint="@color/primaryColor" />
+
+                <TextView
+                    android:id="@+id/speech_pitch_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cao độ"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <SeekBar
+                    android:id="@+id/speech_pitch_seek"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="20dp"
+                    android:max="100"
+                    android:progressTint="@color/primaryColor"
+                    android:thumbTint="@color/primaryColor" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Giọng đọc"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <Spinner
+                    android:id="@+id/speech_voice_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp" />
+
+                <TextView
+                    android:id="@+id/speech_voice_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/textSecondary"
+                    android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/speech_preview_button"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginEnd="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/month_primary_button_background"
+                        android:text="Nghe thử"
+                        android:textColor="@color/textLight"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/speech_reset_button"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/button_modern"
+                        android:text="Về mặc định"
+                        android:textColor="@color/textLight"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:text="Danh sách giọng đọc do máy cung cấp. Nếu không có giọng tiếng Việt nào, hãy cài thêm giọng trong phần Cài đặt hệ thống → Ngôn ngữ &amp; nhập liệu → Nội dung giọng nói."
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

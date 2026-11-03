@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="92dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:minWidth="92dp"
     android:background="@drawable/border_background"
     android:clickable="true"
     android:focusable="true"
@@ -24,7 +25,7 @@
 
     <TextView
         android:id="@+id/person_name"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:ellipsize="end"
@@ -36,7 +37,7 @@
 
     <TextView
         android:id="@+id/person_term"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:ellipsize="end"

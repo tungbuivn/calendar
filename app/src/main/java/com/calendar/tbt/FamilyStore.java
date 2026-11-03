@@ -27,6 +27,7 @@ public final class FamilyStore {
     private static final String KEY_PEOPLE = "people";
     private static final String KEY_ROOT = "root_id";
     private static final String KEY_RELATIONS = "relations";
+    private static final String KEY_TAGS = "relation_tags";
 
     /** Chưa rõ người kia cách mấy bậc — sơ đồ sẽ xếp vào hàng "Quan hệ nhập tay". */
     public static final int GENERATION_UNKNOWN = Integer.MIN_VALUE;
@@ -97,6 +98,23 @@ public final class FamilyStore {
             this.aCallsB = aCallsB == null ? "" : aCallsB.trim();
             this.bCallsA = bCallsA == null ? "" : bCallsA.trim();
             this.bGeneration = bGeneration;
+        }
+    }
+
+    /**
+     * Tag xưng hô mà người dùng tự đặt, giữ lại giữa các lần nhập để không phải
+     * gõ lại và để ô nhập gợi ý những cách gọi nhà đang dùng.
+     * Trùng nhau theo {@link KinshipTags#normalize} nên "Chú" và "chú " chỉ là một.
+     */
+    public static final class Tag {
+        public String term;
+        public String reciprocal;
+        public int generation;
+
+        Tag(String term, String reciprocal, int generation) {
+            this.term = term == null ? "" : term.trim();
+            this.reciprocal = reciprocal == null ? "" : reciprocal.trim();
+            this.generation = generation;
         }
     }
 
@@ -291,6 +309,13 @@ public final class FamilyStore {
         if (index < 0) relations.add(relation);
         else relations.set(index, relation);
         writeRelations(context, relations);
+        rememberTerms(context, relation);
+    }
+
+    /** Cách gọi vừa ghi được bổ sung vào kho tag để lần sau chỉ cần chọn, khỏi gõ lại. */
+    private static void rememberTerms(Context context, Relation relation) {
+        saveTag(context, relation.aCallsB, relation.bCallsA, relation.bGeneration);
+        saveTag(context, relation.bCallsA, relation.aCallsB, -relation.bGeneration);
     }
 
     public static void removeRelation(Context context, String id) {
@@ -320,6 +345,72 @@ public final class FamilyStore {
             return "Cặp " + a.name + " – " + b.name + " đã có quan hệ nhập tay rồi — hãy sửa bản đó.";
         }
         return null;
+    }
+
+    // ---- tag xưng hô -------------------------------------------------------
+
+    public static List<Tag> tags(Context context) {
+        List<Tag> result = new ArrayList<>();
+        String raw = prefs(context).getString(KEY_TAGS, "[]");
+        try {
+            JSONArray array = new JSONArray(raw);
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject json = array.optJSONObject(i);
+                if (json == null) continue;
+                String term = json.optString("term", "").trim();
+                if (term.isEmpty()) continue;
+                result.add(new Tag(term, json.optString("reciprocal", ""),
+                        json.optInt("generation", GENERATION_UNKNOWN)));
+            }
+        } catch (JSONException e) {
+            // Danh mục hỏng thì chỉ mất phần gợi ý, quan hệ đã ghi vẫn còn.
+        }
+        return result;
+    }
+
+    /** Tag người dùng đã ghi cho cách gọi này, hoặc null khi chỉ có từ vựng chuẩn. */
+    public static Tag findTag(List<Tag> tags, String term) {
+        if (term == null || term.trim().isEmpty()) return null;
+        for (Tag tag : tags) {
+            if (KinshipTags.sameTerm(tag.term, term)) return tag;
+        }
+        return null;
+    }
+
+    /** Ghi tag mới hoặc cập nhật tag trùng; tag đã có trong từ vựng chuẩn thì bỏ qua. */
+    public static void saveTag(Context context, String term, String reciprocal, int generation) {
+        String trimmed = term == null ? "" : term.trim();
+        if (trimmed.isEmpty()) return;
+        List<Tag> stored = tags(context);
+        if (findTag(stored, trimmed) != null) return;
+        if (KinshipTags.match(trimmed) != null) return;
+        stored.add(new Tag(trimmed, reciprocal, generation));
+        writeTags(context, stored);
+    }
+
+    public static void removeTag(Context context, String term) {
+        List<Tag> stored = tags(context);
+        List<Tag> kept = new ArrayList<>();
+        for (Tag tag : stored) {
+            if (!KinshipTags.sameTerm(tag.term, term)) kept.add(tag);
+        }
+        writeTags(context, kept);
+    }
+
+    private static void writeTags(Context context, List<Tag> tags) {
+        JSONArray array = new JSONArray();
+        try {
+            for (Tag tag : tags) {
+                JSONObject json = new JSONObject();
+                json.put("term", tag.term);
+                json.put("reciprocal", tag.reciprocal);
+                json.put("generation", tag.generation);
+                array.put(json);
+            }
+        } catch (JSONException e) {
+            throw new IllegalStateException(e);
+        }
+        prefs(context).edit().putString(KEY_TAGS, array.toString()).apply();
     }
 
     private static void writeRelations(Context context, List<Relation> relations) {
