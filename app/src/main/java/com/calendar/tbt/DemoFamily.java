@@ -38,7 +38,7 @@ public final class DemoFamily {
         marry(cuChu, cuBaThim);
 
         Person cuCo = add(p, "cu_co", "Cụ Cô", FamilyStore.FEMALE, 1908, kyO, kyB);
-        Person ongDuongCu = add(p, "ong_duong_cu", "Ông Dượng Cụ", FamilyStore.MALE, 1906, null, null);
+        Person ongDuongCu = add(p, "ong_duong_cu", "Chồng Cụ Cô", FamilyStore.MALE, 1906, null, null);
         marry(cuCo, ongDuongCu);
 
         // ---- ông bà nội và anh chị em của ông bà ----
@@ -51,7 +51,7 @@ public final class DemoFamily {
         marry(ongBac, baBac);
 
         Person baCo = add(p, "ba_co", "Bà Cô", FamilyStore.FEMALE, 1928, cuO, cuB);
-        Person ongDuong = add(p, "ong_duong", "Ông Dượng", FamilyStore.MALE, 1926, null, null);
+        Person ongDuong = add(p, "ong_duong", "Chồng Bà Cô", FamilyStore.MALE, 1926, null, null);
         marry(baCo, ongDuong);
 
         Person ongChu = add(p, "ong_chu", "Ông Chú", FamilyStore.MALE, 1935, cuO, cuB);
@@ -148,7 +148,7 @@ public final class DemoFamily {
 
         Person baNgoaiDi = add(p, "ba_ngoai_di", "Bà Dì Ngoại", FamilyStore.FEMALE, 1940,
                 cuBaNgoai, cuBaNgoaiB);
-        Person ongDuongNgoai = add(p, "ong_duong_ngoai", "Ông Dượng Ngoại",
+        Person ongDuongNgoai = add(p, "ong_duong_ngoai", "Chồng Bà Dì Ngoại",
                 FamilyStore.MALE, 1938, null, null);
         marry(baNgoaiDi, ongDuongNgoai);
 
@@ -164,7 +164,7 @@ public final class DemoFamily {
         marry(cau, mo);
 
         Person di = add(p, "di", "Dì", FamilyStore.FEMALE, 1967, ongNgoai, baNgoai);
-        Person duongDi = add(p, "duong_di", "Dượng", FamilyStore.MALE, 1965, null, null);
+        Person duongDi = add(p, "duong_di", "Chồng Dì", FamilyStore.MALE, 1965, null, null);
         marry(di, duongDi);
 
         // ---- anh chị em ruột và vợ/chồng ----

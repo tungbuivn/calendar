@@ -57,6 +57,14 @@ public class KinshipTagsTest {
         assertTrue(countOf(vocabulary, "bo vo") > 0);
     }
 
+    @Test
+    public void duongIsTheMothersHusbandOnly() {
+        // "Dượng" là chồng của mẹ (không sinh ra mình) nên gọi lại là "con riêng".
+        assertEquals("con riêng", KinshipTags.reciprocalOf("dượng"));
+        assertEquals(1, KinshipTags.generationOf("dượng"));
+        assertEquals("con riêng", KinshipTags.reciprocalOf("bố dượng"));
+    }
+
     private static int countOf(List<String> terms, String normalized) {
         int count = 0;
         for (String term : terms) {

@@ -53,7 +53,8 @@ public final class KinshipTags {
             {"dì", "cháu", "1"},
             {"thím", "bố chồng", "-1"},
             {"mợ", "bố vợ", "-1"},
-            {"dượng", "bố vợ", "-1"},
+            // "dượng" chỉ là chồng của mẹ (không sinh ra mình), nên gọi lại là "con riêng".
+            {"dượng", "con riêng", "1"},
             {"bố dượng", "con riêng", "1"},
             {"mẹ kế", "con riêng", "1"},
             {"anh trai", "em trai", "0"},

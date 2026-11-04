@@ -11,7 +11,7 @@ Em trai của bà nội	Ông chú (bên nội)
 Chị/em gái của bà nội	Bà bác / bà cô, tùy thứ bậc
 Vợ của ông bác	Bà bác
 Vợ của ông chú	Bà thím
-Chồng của bà cô	Ông dượng / ông chú, tùy địa phương
+Chồng của bà cô	Không dùng "dượng"; gọi theo vai của bà cô
 
 Thế hệ con của ông bà nội
 Quan hệ với bố	Mình gọi
@@ -22,7 +22,7 @@ Em gái của bố	Cô
 Vợ của bác trai	Bác gái
 Chồng của bác gái	Bác
 Vợ của chú	Thím
-Chồng của cô	Chú / dượng
+Chồng của cô	Chú
 
 Lưu ý: Trong cách gọi miền Bắc, anh trai của bố thường là bác, em trai là chú; chị gái của bố là bác, em gái là cô. Vai vế vẫn phụ thuộc tuổi và thứ bậc trong họ, không chỉ tuổi thực tế.
 2. Quan hệ bên ngoại
@@ -35,11 +35,13 @@ Em trai của mẹ	Cậu
 Chị gái của mẹ	Bác
 Em gái của mẹ	Dì
 Vợ của cậu	Mợ
-Chồng của dì	Dượng
+Chồng của dì	Không dùng "dượng"; gọi theo vai của dì
 Chồng của bác gái	Bác
 Vợ của bác trai	Bác gái
 
 Ở miền Bắc, thường gọi anh trai của mẹ là bác hoặc cậu; ở nhiều gia đình miền Nam, anh/em trai của mẹ đều gọi là cậu, chị/em gái của mẹ gọi là dì.
+
+Lưu ý: "Dượng" chỉ dùng cho chồng của mẹ — người không sinh ra mình — nên còn gọi là "bố dượng". Chồng của dì, chồng của cô, chồng của bà cô hay bà dì đều không gọi là dượng.
 3. Anh chị em ruột và họ hàng cùng thế hệ
 Quan hệ	Cách gọi
 Anh trai	Anh
@@ -108,7 +110,7 @@ Em trai của mẹ	Cậu
 Chị gái của mẹ	Bác
 Em gái của mẹ	Dì
 
-Vợ/chồng của những người này thường được gọi theo vai tương ứng: bác gái, thím, chú, cô, mợ, dượng…
+Vợ/chồng của những người này thường được gọi theo vai tương ứng: bác gái, thím, chú, cô, mợ…
 7. Quan hệ dâu, rể và các vai vế trong gia đình
 Quan hệ	Cách gọi
 Vợ của con trai	Con dâu
@@ -131,7 +133,7 @@ Cậu	Anh/em trai của mẹ
 Dì	Chị/em gái của mẹ, phổ biến ở miền Nam
 Thím	Vợ của chú
 Mợ	Vợ của cậu
-Dượng	Chồng của dì; đôi khi chồng của cô
+Dượng	Chồng của mẹ, người không sinh ra mình (bố dượng)
 Bác gái	Vợ của bác trai
 Bác trai	Anh trai của bố/mẹ hoặc chồng của bác gái
 Ông chú	Em trai của ông
@@ -139,7 +141,6 @@ Bà thím	Vợ của ông chú
 Ông bác	Anh trai của ông
 Bà bác	Vợ của ông bác
 Bà cô	Chị/em gái của ông
-Ông dượng	Chồng của bà cô, tùy cách gọi địa phương
 
 9. Cách xác định vai vế khi không biết gọi thế nào
 Có thể xác định theo thứ tự sau:

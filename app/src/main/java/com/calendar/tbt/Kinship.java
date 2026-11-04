@@ -25,7 +25,7 @@ public final class Kinship {
         public final String band;
         /** Dạng tắt để bảng hôn thú tra tiếp: self/parent/child/sibling/uncle/cousin/nephew… */
         public final String kind;
-        /** bac/chu/co/cau/di — cần cho "mợ", "thím", "dượng". */
+        /** bac/chu/co/cau/di — cần cho "mợ", "thím"; "dượng" chỉ dành cho chồng của mẹ. */
         public final String sub;
         /** -1 là trên bậc mốc, 1 là dưới bậc, 0 chưa rõ. */
         public final int seniority;
@@ -404,7 +404,8 @@ public final class Kinship {
     private static Result inLaw(Person target, Person anchor, Result anchorTerm) {
         String kind = anchorTerm.kind;
         if ("parent".equals(kind)) {
-            // Vợ/chồng mới của bố mẹ đẻ thì thành bố dượng/mẹ kế.
+            // Chồng mới của mẹ là "bố dượng" — "dượng" chỉ dùng cho chồng của mẹ,
+            // người không sinh ra mình; vợ mới của bố là "mẹ kế".
             if (anchor.isMale() && target.isFemale()) return affine("mẹ kế", anchorTerm);
             if (anchor.isFemale() && target.isMale()) return affine("bố dượng", anchorTerm);
             return null;
@@ -446,8 +447,8 @@ public final class Kinship {
             }
             if (anchor.isFemale() && target.isMale()) {
                 if ("ba_bac".equals(sub)) return affine("ông bác", anchorTerm);
-                if ("ba_co".equals(sub)) return affine("ông dượng", anchorTerm);
-                if ("ba_di".equals(sub)) return affine("ông dượng", anchorTerm);
+                // Chồng của bà cô/bà dì không phải "dượng": "dượng" chỉ dành cho
+                // chồng của mẹ, nên để lớp ngoài mô tả "chồng của bà cô/bà dì".
             }
             return null;
         }
@@ -456,7 +457,8 @@ public final class Kinship {
         }
         if ("uncle".equals(kind)) {
             // Vai của người bạn đời giữ nguyên nên chỉ cần đổi sang cách gọi khác giới:
-            // vợ của chú là "thím" nhưng chồng của cô lại là "chú", chồng của dì mới là "dượng".
+            // vợ của chú là "thím" nhưng chồng của cô lại là "chú". "Dượng" chỉ dành
+            // cho chồng của mẹ nên chồng của dì được mô tả là "chồng của dì".
             String sub = anchorTerm.sub;
             if (anchor.isMale()) {
                 if (!target.isFemale()) return null;
@@ -467,7 +469,6 @@ public final class Kinship {
             if (anchor.isFemale() && target.isMale()) {
                 if ("co".equals(sub)) return affine("chú", anchorTerm);
                 if ("bac".equals(sub)) return affine("bác", anchorTerm);
-                if ("di".equals(sub)) return affine("dượng", anchorTerm);
             }
             return null;
         }

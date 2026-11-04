@@ -30,7 +30,8 @@ public class DemoFamilyTest {
         assertEquals("ông chú", term("ong_chu"));
         assertEquals("bà thím", term("ba_thim"));
         assertEquals("bà cô", term("ba_co"));
-        assertEquals("ông dượng", term("ong_duong"));
+        // "Dượng" chỉ dành cho chồng của mẹ, nên chồng bà cô chỉ được mô tả theo vợ.
+        assertEquals("chồng của bà cô", term("ong_duong"));
 
         assertEquals("ông bác", term("ong_ba_noi_bac"));
         assertEquals("bà bác", term("ba_ba_noi_bac_vo"));
@@ -50,7 +51,7 @@ public class DemoFamilyTest {
         assertEquals("bà bác", term("ba_ngoai_bac"));
         assertEquals("ông bác", term("ong_bac_ngoai_chong"));
         assertEquals("bà dì", term("ba_ngoai_di"));
-        assertEquals("ông dượng", term("ong_duong_ngoai"));
+        assertEquals("chồng của bà dì", term("ong_duong_ngoai"));
     }
 
     @Test
@@ -76,7 +77,7 @@ public class DemoFamilyTest {
         assertEquals("cậu", term("cau"));
         assertEquals("mợ", term("mo"));
         assertEquals("dì", term("di"));
-        assertEquals("dượng", term("duong_di"));
+        assertEquals("chồng của dì", term("duong_di"));
         assertEquals("bác", term("bac_ngoai"));
         assertEquals("bác", term("bac_ngoai_chong"));
     }

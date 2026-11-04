@@ -29,7 +29,7 @@ public class KinshipTest {
     private static final Person CAU = person("cau", "Cậu", FamilyStore.MALE, 1960);
     private static final Person MO = person("mo", "Mợ", FamilyStore.FEMALE, 1962);
     private static final Person DI = person("di", "Dì", FamilyStore.FEMALE, 1961);
-    private static final Person DUONG = person("duong", "Dượng", FamilyStore.MALE, 1954);
+    private static final Person DUONG = person("duong", "Chồng Dì", FamilyStore.MALE, 1954);
     private static final Person ANH = person("anh", "Anh Trai", FamilyStore.MALE, 1980);
     private static final Person DAU = person("dau", "Chị Dâu", FamilyStore.FEMALE, 1981);
     private static final Person TOI = person("toi", "Tôi", FamilyStore.MALE, 1983);
@@ -107,7 +107,8 @@ public class KinshipTest {
     public void inLawTerms() {
         assertEquals("thím", term("toi", "thim"));
         assertEquals("mợ", term("toi", "mo"));
-        assertEquals("dượng", term("toi", "duong"));
+        // "Dượng" chỉ là chồng của mẹ, nên chồng của dì được mô tả rõ ràng.
+        assertEquals("chồng của dì", term("toi", "duong"));
         assertEquals("chị dâu", term("toi", "dau"));
         assertEquals("em rể", term("toi", "re"));
         assertEquals("cháu dâu", term("ong_noi", "dau"));
@@ -350,7 +351,7 @@ public class KinshipTest {
         assertEquals("chị dâu", Kinship.of(people, "manh", "nhung").term);
         // Chị/em ruột của chồng vẫn gọi theo phía chồng, không bị hôn thú lấn.
         assertEquals("em chồng", Kinship.of(people, "nhung", "huyen").term);
-        // Vai hôn thú của bố mẹ chồng phải đứng trên vai "dượng/dì" của người nối.
+        // Vai hôn thú của bố mẹ chồng phải đứng trên vai dì/chú của người nối.
         assertEquals("bố chồng", Kinship.of(people, "nhung", "chat").term);
         assertEquals("mẹ chồng", Kinship.of(people, "nhung", "ngai").term);
         assertEquals("bố vợ", Kinship.of(people, "manh", "chat").term);
@@ -363,7 +364,7 @@ public class KinshipTest {
         parent(tram, people.get(2), people.get(4));
         people.add(tram);
         assertEquals("cô", Kinship.of(people, "tram", "huyen").term);
-        // Em của bố là cô thì chồng của cô là chú, chỉ nhà ngoại (dì) mới là dượng.
+        // Em của bố là cô thì chồng của cô là chú; "dượng" chỉ dành cho chồng của mẹ.
         Kinship.Result chu = Kinship.of(people, "tram", "manh");
         assertEquals("chú", chu.term);
         assertEquals(1, chu.generation);
