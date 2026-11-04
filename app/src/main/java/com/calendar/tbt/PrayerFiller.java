@@ -70,6 +70,18 @@ public final class PrayerFiller {
     private PrayerFiller() {
     }
 
+    /** Keep pictographic smileys out of the prayer text, including values copied from a profile. */
+    private static String stripSmileys(String value) {
+        if (value == null || value.isEmpty()) return value;
+        StringBuilder clean = new StringBuilder(value.length());
+        value.codePoints().filter(codePoint ->
+                (codePoint < 0x1F600 || codePoint > 0x1F64F)
+                        && codePoint != 0x263A && codePoint != 0x2639
+                        && codePoint != 0xFE0F
+        ).forEach(clean::appendCodePoint);
+        return clean.toString();
+    }
+
     /** Giá trị hiện có cho từng trường: tự động theo ngày, theo ngày giỗ, và hồ sơ người cúng. */
     public static Map<String, String> values(Context context, LunarCalendar.LunarDate lunar,
                                              GioStore.Memorial memorial) {
@@ -140,8 +152,12 @@ public final class PrayerFiller {
         SpannableStringBuilder builder = new SpannableStringBuilder();
         List<Mark> marks = new ArrayList<>();
         int missing = 0;
-        String text = Worshippers.agree(raw, values.get(Worshippers.NAME_FIELD));
-        for (Segment segment : segments(text, values)) {
+        Map<String, String> cleanValues = new HashMap<>();
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            cleanValues.put(entry.getKey(), stripSmileys(entry.getValue()));
+        }
+        String text = stripSmileys(Worshippers.agree(raw, cleanValues.get(Worshippers.NAME_FIELD)));
+        for (Segment segment : segments(text, cleanValues)) {
             if (segment.field == null) {
                 builder.append(segment.text);
                 continue;

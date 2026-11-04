@@ -28,7 +28,7 @@ public final class SpeechText {
         }
     }
 
-    private static final String TERMINATORS = ".!?…";
+    private static final String TERMINATORS = ".;!?…";
 
     private SpeechText() {
     }
@@ -56,9 +56,15 @@ public final class SpeechText {
         int sentenceStart = contentStart(display, from, to);
         int cursor = sentenceStart;
         while (cursor < to) {
-            if (isTerminator(display.charAt(cursor))) {
+            char terminator = display.charAt(cursor);
+            if (terminator == '…') {
+                // Dấu chấm lửng là chỗ trống/pause trong cùng đoạn, không phải điểm kết đoạn.
+                cursor++;
+                while (cursor < to && display.charAt(cursor) == '…') cursor++;
+                continue;
+            }
+            if (isTerminator(terminator)) {
                 int run = cursor;
-                // Chuỗi dấu chấm lửng là chỗ trống, tính một lần ngắt.
                 while (run < to && isTerminator(display.charAt(run))) run++;
                 add(display, sentenceStart, run, pending);
                 cursor = skipSpace(display, run, to);
@@ -86,24 +92,9 @@ public final class SpeechText {
 
     /** Dán các câu lại thành hơi đọc không quá MAX_PIECE, bỏ mảng không có chữ. */
     private static void flush(List<Piece> pieces, List<int[]> pending, CharSequence display) {
-        int start = -1;
-        int end = -1;
-        StringBuilder text = new StringBuilder();
         for (int[] range : pending) {
-            String sentence = display.subSequence(range[0], range[1]).toString();
-            if (start < 0) {
-                start = range[0];
-            } else if (text.length() + sentence.length() + 1 > MAX_PIECE) {
-                emit(pieces, text.toString(), start, end);
-                start = range[0];
-                text.setLength(0);
-            } else {
-                text.append(' ');
-            }
-            text.append(sentence);
-            end = range[1];
+            emit(pieces, display.subSequence(range[0], range[1]).toString(), range[0], range[1]);
         }
-        if (start >= 0) emit(pieces, text.toString(), start, end);
         pending.clear();
     }
 

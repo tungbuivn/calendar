@@ -142,8 +142,4 @@
         </LinearLayout>
     </ScrollView>
 
-        </LinearLayout>
-
-<include layout="@layout/app_bottom_nav" />
-
-</LinearLayout>
+        </LinearLayout></LinearLayout>

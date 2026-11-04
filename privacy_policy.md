@@ -23,4 +23,4 @@ Cập nhật: 03/11/2026
 - Xoá dữ liệu trong ứng dụng hoặc xoá dữ liệu ứng dụng trong Cài đặt Android.
 
 ## Liên hệ
-- Email: [điền email hỗ trợ]
+- Email: tungbuivn@gmail.com

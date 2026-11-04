@@ -132,6 +132,7 @@ public class FamilyTreeView extends View {
     public void setModel(List<Person> people, List<Relation> relations, String rootId) {
         // Giữ nguyên zoom/pan khi dữ liệu đổi (đổi mốc, sửa người...): neo người
         // vừa chọn ở đúng vị trí màn hình cũ thay vì fit lại từ đầu.
+        boolean firstModel = nodes.isEmpty();
         FamilyTreeLayout.Node oldAnchor = null;
         float anchorScreenX = 0;
         float anchorScreenY = 0;
@@ -186,6 +187,9 @@ public class FamilyTreeView extends View {
                 translateX = anchorScreenX - newAnchor.x * scale;
                 translateY = anchorScreenY - newAnchor.y * scale;
                 needsFit = false;
+            } else if (firstModel) {
+                needsFit = false;
+                resetToNormal();
             } else {
                 needsFit = false;
                 fitToContent();
@@ -207,7 +211,7 @@ public class FamilyTreeView extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         if (needsFit && w > 0) {
             needsFit = false;
-            fitToContent();
+            resetToNormal();
         }
     }
 
@@ -236,7 +240,7 @@ public class FamilyTreeView extends View {
             FamilyTreeLayout.Row row = rows.get(i);
             String label = row.generation == FamilyTreeLayout.GENERATION_UNPLACED
                     ? "Chưa rõ bậc" : Kinship.band(row.generation);
-            fillPaint.setColor(color(i % 2 == 0 ? R.color.backgroundCard : R.color.monthTonal));
+            fillPaint.setColor(color(i % 2 == 0 ? R.color.backgroundCard : R.color.backgroundSecondary));
             fillPaint.setAlpha(70);
             canvas.drawRect(contentMinX - dp(8), row.yTop - dp(6),
                     contentMaxX + dp(8), row.yTop + row.height + dp(6), fillPaint);
@@ -293,6 +297,7 @@ public class FamilyTreeView extends View {
         float spanLeft;
         float spanRight;
         float busY;
+        int busChannel;
     }
 
     private Branch newBranch(FamilyTreeLayout.Node node, FamilyTreeLayout.Node spouse,
@@ -337,9 +342,8 @@ public class FamilyTreeView extends View {
         for (List<Branch> group : groups.values()) {
             java.util.Collections.sort(group, (a, b) -> Float.compare(a.spanLeft, b.spanLeft));
             List<Float> rightEdges = new ArrayList<>();
+            int maxChannel = 0;
             for (Branch branch : group) {
-                float gap = Math.max(1f, branch.childTop - branch.parentBottom);
-                float base = branch.parentBottom + gap * 0.38f;
                 int channel = -1;
                 for (int i = 0; i < rightEdges.size(); i++) {
                     if (branch.spanLeft > rightEdges.get(i) + dp(4)) {
@@ -352,10 +356,15 @@ public class FamilyTreeView extends View {
                     rightEdges.add(0f);
                 }
                 rightEdges.set(channel, branch.spanRight);
-                float y = base + channel * dp(5);
-                float maxY = branch.childTop - dp(4);
-                if (y > maxY) y = maxY;
-                branch.busY = y;
+                branch.busChannel = channel;
+                maxChannel = Math.max(maxChannel, channel);
+            }
+            // Keep overlapping branches on distinct levels throughout the available row gap.
+            // A fixed 5dp step followed by clamping made busy generations collapse onto one line.
+            for (Branch branch : group) {
+                float gap = Math.max(1f, branch.childTop - branch.parentBottom);
+                float fraction = 0.24f + 0.52f * (branch.busChannel + 1f) / (maxChannel + 1f);
+                branch.busY = branch.parentBottom + gap * fraction;
             }
         }
     }
@@ -727,6 +736,17 @@ public class FamilyTreeView extends View {
         linkY = point[1];
     }
 
+    /** Mặc định mở cây ở tỉ lệ 1:1, không tự thu nhỏ toàn bộ cây. */
+    private void resetToNormal() {
+        scale = 1f;
+        translateX = dp(12) - contentMinX;
+        translateY = dp(12) - contentMinY;
+        float availableWidth = Math.max(1f, getWidth() - dp(24));
+        float contentWidth = Math.max(1f, contentMaxX - contentMinX);
+        fitScale = Math.max(MIN_SCALE, Math.min(availableWidth / contentWidth, 1f));
+        needsFit = false;
+        invalidate();
+    }
     private void fitToContent() {
         float width = Math.max(dp(1), contentMaxX - contentMinX);
         float height = Math.max(dp(1), contentMaxY - contentMinY);

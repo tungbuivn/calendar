@@ -239,7 +239,6 @@ public class GiaPhaActivity extends AppCompatActivity implements FamilyTreeView.
         if (person.id.equals(rootId)) return;
         FamilyStore.setRootId(this, person.id);
         reload();
-        Toast.makeText(this, "Đã lấy " + person.name + " làm mốc để tính vai vế.", Toast.LENGTH_SHORT).show();
     }
 
     // ---- FamilyTreeView.Listener ------------------------------------------

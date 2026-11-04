@@ -8,5 +8,7 @@
     android:elevation="3dp"
     app:itemIconTint="@color/bottom_nav_item_color"
     app:itemTextColor="@color/bottom_nav_item_color"
+    app:itemActiveIndicatorStyle="@style/Widget.App.BottomNav.ActiveIndicator"
+    app:itemRippleColor="@android:color/transparent"
     app:labelVisibilityMode="labeled"
     app:menu="@menu/main_bottom_nav" />

@@ -43,4 +43,10 @@
     </style>
 
 e>
+    <style name="Widget.App.BottomNav.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:width">0dp</item>
+        <item name="android:height">0dp</item>
+        <item name="android:color">@android:color/transparent</item>
+    </style>
+
 </resources>

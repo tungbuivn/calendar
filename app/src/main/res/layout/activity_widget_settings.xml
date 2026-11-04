@@ -60,7 +60,7 @@
                     android:id="@+id/radio_vietnamese"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tiếng Việt"
+                    android:text="Tiáº¿ng Viá»‡t"
                     android:textColor="#8B4513" />
 
             </RadioGroup>
@@ -123,7 +123,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Thành phố thời tiết"
+                android:text="ThÃ nh phá»‘ thá»i tiáº¿t"
                 android:textSize="16sp"
                 android:textColor="#8B4513"
                 android:layout_marginBottom="8dp" />
@@ -137,7 +137,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nguồn thời tiết: Open-Meteo"
+                android:text="Nguá»“n thá»i tiáº¿t: Open-Meteo"
                 android:textSize="12sp"
                 android:textColor="#8B4513"
                 android:layout_marginBottom="24dp" />
@@ -209,8 +209,4 @@
         </LinearLayout>
     </ScrollView>
 
-        </LinearLayout>
-
-<include layout="@layout/app_bottom_nav" />
-
-</LinearLayout> 
+        </LinearLayout></LinearLayout>

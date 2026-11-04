@@ -42,6 +42,15 @@ public class SpeechTextTest {
     }
 
     @Test
+    public void semicolonAlsoEndsAPiece() {
+        List<SpeechText.Piece> pieces = SpeechText.split("Câu một; câu hai.\nCâu ba");
+        assertEquals(3, pieces.size());
+        assertEquals("Câu một;", pieces.get(0).spoken);
+        assertEquals("câu hai.", pieces.get(1).spoken);
+        assertEquals("Câu ba", pieces.get(2).spoken);
+    }
+
+    @Test
     public void blankBecomesASinglePause() {
         List<SpeechText.Piece> pieces = SpeechText.split("Tín chủ con là…………, ngụ tại………… thôi.");
         assertEquals(1, pieces.size());

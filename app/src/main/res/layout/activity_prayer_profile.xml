@@ -33,8 +33,4 @@
         android:clipToPadding="false"
         android:paddingBottom="12dp" />
 
-        </LinearLayout>
-
-<include layout="@layout/app_bottom_nav" />
-
-</LinearLayout>
+        </LinearLayout></LinearLayout>

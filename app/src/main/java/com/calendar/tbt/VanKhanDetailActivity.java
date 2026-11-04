@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.core.widget.NestedScrollView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,7 +54,8 @@ public class VanKhanDetailActivity extends AppCompatActivity {
     private SpeechReader speech;
     private List<SpeechText.Piece> pieces = Collections.emptyList();
     private final List<Object> spokenSpans = new ArrayList<>();
-    private MenuItem speakItem;
+    private FloatingActionButton speakFab;
+    private FloatingActionButton stopFab;
     private boolean speechReady;
 
     @Override
@@ -81,8 +83,15 @@ public class VanKhanDetailActivity extends AppCompatActivity {
         toolbar.setTitle(title);
         toolbar.setNavigationOnClickListener(v -> finish());
         toolbar.inflateMenu(R.menu.van_khan_detail_menu);
-        speakItem = toolbar.getMenu().findItem(R.id.action_speak);
         toolbar.setOnMenuItemClickListener(this::onToolbarItem);
+        speakFab = findViewById(R.id.fab_speak);
+        stopFab = findViewById(R.id.fab_speak_stop);
+        if (speakFab != null) speakFab.setOnClickListener(v -> toggleSpeech());
+        if (stopFab != null) stopFab.setOnClickListener(v -> {
+            speech.stop();
+            clearHighlight();
+            updateSpeakIcon();
+        });
 
         findViewById(R.id.detail_title).setVisibility(View.GONE);
         body = findViewById(R.id.detail_body);
@@ -100,18 +109,7 @@ public class VanKhanDetailActivity extends AppCompatActivity {
     }
 
     private boolean onToolbarItem(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_speak) {
-            toggleSpeech();
-            return true;
-        }
-        if (id == R.id.action_speak_stop) {
-            speech.stop();
-            clearHighlight();
-            updateSpeakIcon();
-            return true;
-        }
-        if (id == R.id.action_speak_settings) {
+        if (item.getItemId() == R.id.action_speak_settings) {
             startActivity(new Intent(this, TtsSettingsActivity.class));
             return true;
         }
@@ -247,12 +245,13 @@ public class VanKhanDetailActivity extends AppCompatActivity {
     }
 
     private void updateSpeakIcon() {
-        if (speakItem == null) return;
+        if (speakFab == null) return;
         SpeechReader.State state = speech.state();
-        speakItem.setIcon(state == SpeechReader.State.PLAYING
+        speakFab.setImageResource(state == SpeechReader.State.PLAYING
                 ? R.drawable.ic_tts_pause : R.drawable.ic_tts_play);
-        speakItem.setTitle(state == SpeechReader.State.PLAYING ? "Tạm dừng đọc"
-                : state == SpeechReader.State.PAUSED ? "Đọc tiếp" : "Đọc bài khấn");
+        String description = state == SpeechReader.State.PLAYING ? "Tạm dừng đọc"
+                : state == SpeechReader.State.PAUSED ? "Đọc tiếp" : "Đọc bài khấn";
+        speakFab.setContentDescription(description);
     }
 
     /** Tô nền đúng đoạn máy đang đọc rồi cuộn cho đoạn đó hiện lên màn hình. */

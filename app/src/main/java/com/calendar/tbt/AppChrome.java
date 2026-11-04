@@ -28,7 +28,12 @@ public final class AppChrome {
         }
 
         BottomNavigationView bottom = activity.findViewById(R.id.bottom_navigation);
-        if (bottom == null) return;
+        if (bottom == null) {
+            // Các màn con không còn bottom nav: bù inset đáy cho body.
+            View body = activity.findViewById(R.id.app_body);
+            if (body != null) applyBottomInset(body);
+            return;
+        }
         if (bottom.getMenu().findItem(selectedItemId) != null) {
             bottom.setSelectedItemId(selectedItemId);
         }
@@ -38,15 +43,18 @@ public final class AppChrome {
             open(activity, id);
             return true;
         });
+        applyBottomInset(bottom);
+    }
 
-        final int baseBottom = bottom.getPaddingBottom();
-        ViewCompat.setOnApplyWindowInsetsListener(bottom, (view, insets) -> {
+    private static void applyBottomInset(View view) {
+        final int baseBottom = view.getPaddingBottom();
+        ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
             int navBar = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
-            view.setPadding(view.getPaddingLeft(), view.getPaddingTop(),
-                    view.getPaddingRight(), baseBottom + navBar);
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(),
+                    v.getPaddingRight(), baseBottom + navBar);
             return insets;
         });
-        ViewCompat.requestApplyInsets(bottom);
+        ViewCompat.requestApplyInsets(view);
     }
 
     private static void open(Activity activity, int id) {
