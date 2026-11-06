@@ -40,6 +40,10 @@ public final class PrayerReminder {
 
     /** Đặt báo thức cho 7 giờ sáng gần nhất và tự nối tiếp nhau mỗi ngày. */
     public static void scheduleNextMorning(Context context) {
+        if (!ReminderPreferences.areNotificationsEnabled(context)) {
+            cancelAlarm(context);
+            return;
+        }
         AlarmManager alarm = (AlarmManager) context.getApplicationContext()
                 .getSystemService(Context.ALARM_SERVICE);
         if (alarm == null) return;
@@ -58,14 +62,36 @@ public final class PrayerReminder {
         }
     }
 
-    /** Đăng thông báo theo hôm nay rồi đặt báo thức cho lần nhắc kế tiếp. */
+    /** Đăng thông báo theo tôm nay rồi đặt báo thức cho lần nhắc kế tiếp. */
     public static void refreshNow(Context context) {
+        if (!ReminderPreferences.areNotificationsEnabled(context)) {
+            cancelAll(context);
+            return;
+        }
         notifyToday(context);
         scheduleNextMorning(context);
     }
 
-    /** Hiển thị (hoặc gỡ) thông báo theo đúng nội dung nghi thức của hôm nay. */
+    /** Gỡ toàn bộ thông báo đã hiển thị (dùng khi người dùng tắt tính năng). */
+    public static void cancelAll(Context context) {
+        NotificationManagerCompat manager = NotificationManagerCompat.from(context);
+        manager.cancel(NOTIFICATION_ID);
+        manager.cancel(MEMORIAL_NOTIFICATION_ID);
+        manager.cancel(EVENT_NOTIFICATION_ID);
+        cancelAlarm(context);
+    }
+
+    /** Hủy báo thức đã đặt, tránh đánh thức máy khi người dùng đã tắt nhắc. */
+    private static void cancelAlarm(Context context) {
+        AlarmManager alarm = (AlarmManager) context.getApplicationContext()
+                .getSystemService(Context.ALARM_SERVICE);
+        if (alarm == null) return;
+        alarm.cancel(remindIntent(context));
+    }
+
+    /** Hiển thị (hoặc gỡ) thông báo theo đúng nội dung nghi thức của tôm nay. */
     public static void notifyToday(Context context) {
+        if (!ReminderPreferences.areNotificationsEnabled(context)) return;
         NotificationManagerCompat manager = NotificationManagerCompat.from(context);
         if (!manager.areNotificationsEnabled()) return;
         createChannel(context);

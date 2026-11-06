@@ -5,17 +5,20 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# --- Custom Views khởi tạo từ XML layout ---
+# Cần constructor (Context, AttributeSet) để Android inflate được trong layout.
+-keepclasseswithmembers class com.calendar.tbt.FamilyTreeView {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+-keepclasseswithmembers class com.calendar.tbt.FlowLayout {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# --- Widget receiver & provider ---
+# Android khởi tạo receiver từ AndroidManifest theo tên lớp đầy đủ.
+-keep class com.calendar.tbt.CalendarWidget { *; }
+-keep class com.calendar.tbt.App { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# --- Giữ tên lớp cho stack trace dễ đọc trong Play Console ---
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile

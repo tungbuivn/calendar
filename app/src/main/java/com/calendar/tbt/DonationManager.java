@@ -17,6 +17,7 @@ import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.ConsumeParams;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
@@ -95,7 +96,10 @@ public final class DonationManager implements PurchasesUpdatedListener {
         if (billingClient == null) {
             billingClient = BillingClient.newBuilder(activity)
                     .setListener(this)
-                    .enablePendingPurchases()
+                    // Billing 8.x bắt buộc khai báo rõ loại sản phẩm cho giao dịch chờ.
+                    .enablePendingPurchases(PendingPurchasesParams.newBuilder()
+                            .enableOneTimeProducts()
+                            .build())
                     .build();
         }
         if (billingClient.isReady()) {
@@ -131,7 +135,9 @@ public final class DonationManager implements PurchasesUpdatedListener {
         QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder()
                 .setProductList(Collections.singletonList(product))
                 .build();
-        billingClient.queryProductDetailsAsync(params, (result, detailsList) -> {
+        billingClient.queryProductDetailsAsync(params, (result, queryResult) -> {
+            List<ProductDetails> detailsList = queryResult == null
+                    ? null : queryResult.getProductDetailsList();
             if (result.getResponseCode() != BillingClient.BillingResponseCode.OK
                     || detailsList == null || detailsList.isEmpty()) {
                 activity.runOnUiThread(() ->

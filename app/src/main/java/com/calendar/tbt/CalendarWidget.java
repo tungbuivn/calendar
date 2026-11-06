@@ -617,19 +617,9 @@ public class CalendarWidget extends AppWidgetProvider {
         // Use the WeatherService to get real weather data from Open-Meteo API
         android.util.Log.d("CalendarWidget", "=== About to call WeatherService.getWeatherInfo ===");
         try {
-            android.util.Log.d("CalendarWidget", "=== Testing WeatherService class loading ===");
-            Class.forName("com.calendar.tbt.WeatherService");
-            android.util.Log.d("CalendarWidget", "=== WeatherService class loaded successfully ===");
-            
-            // Test direct method call
-            android.util.Log.d("CalendarWidget", "=== Testing direct WeatherService method call ===");
             String result = WeatherService.getWeatherInfo(context);
             android.util.Log.d("CalendarWidget", "=== Direct method call result: " + result + " ===");
-            android.util.Log.d("CalendarWidget", "=== Weather data retrieved successfully: " + result + " ===");
             return result;
-        } catch (ClassNotFoundException e) {
-            android.util.Log.e("CalendarWidget", "=== WeatherService class not found: " + e.getMessage() + " ===");
-            return "~ (Class not found)";
         } catch (Exception e) {
             android.util.Log.e("CalendarWidget", "=== WeatherService error: " + e.getMessage() + " ===");
             return "~ (Error: " + e.getMessage() + ")";

@@ -1,10 +1,8 @@
 package com.calendar.tbt;
 
-import android.Manifest;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -13,12 +11,9 @@ import android.provider.Settings;
 import android.os.PowerManager;
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -35,7 +30,6 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 1002;
     private static final int REQUEST_MONTH_CALENDAR = 2001;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -65,8 +59,7 @@ public class MainActivity extends AppCompatActivity {
         applyBottomNavigationInset();
         applyTopStatusInset();
 
-        // Android 13+ needs explicit consent before the morning reminder can show
-        requestNotificationPermission();
+        // Quyền gửi thông báo chỉ được xin khi người dùng bật nhắc trước trong cài đặt.
 
         // Force update all widgets to ensure they show current data
         forceUpdateAllWidgets();
@@ -321,16 +314,6 @@ public class MainActivity extends AppCompatActivity {
         sendBroadcast(intent);
     }
 
-    private void requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return;
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[] { Manifest.permission.POST_NOTIFICATIONS },
-                    NOTIFICATION_PERMISSION_REQUEST_CODE);
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -343,18 +326,6 @@ public class MainActivity extends AppCompatActivity {
                 currentDate.set(year, month - 1, day, 12, 0, 0);
                 updateCalendarForDate(currentDate, false);
             }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                PrayerReminder.refreshNow(this);
-            }
-            return;
         }
     }
 
